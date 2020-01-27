@@ -25,6 +25,7 @@ dependencies:
   shared_preferences: ^0.5.6
   path_provider: ^1.5.1
   date_range_picker: ^1.0.3
+  neumorphic: ^0.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -49,6 +50,9 @@ flutter:
     - family: simplePrint
       fonts:
         - asset: fonts/simplePrint.ttf
+    - family: amalfi
+      fonts:
+        - asset: fonts/AmalfiCoast.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

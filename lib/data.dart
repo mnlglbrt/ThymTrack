@@ -12,11 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 final List<TimeSeriesMoods>data = [
-new TimeSeriesMoods(new DateTime(2020,1,17),10),
-  new TimeSeriesMoods(new DateTime(2020,1,18),15),
-  new TimeSeriesMoods(new DateTime(2020,1,19),20),
-  new TimeSeriesMoods(new DateTime(2020,1,20),25),
-  new TimeSeriesMoods(new DateTime(2020,1,21),30),
 
 ];
 
