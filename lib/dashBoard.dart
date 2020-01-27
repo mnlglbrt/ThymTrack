@@ -107,7 +107,7 @@ class _DashBoardState extends State<DashBoard> {
   }
 
 
-  @override
+
   var buttonRadius=BorderRadius.circular(30.0);
   var sliderColor=Colors.teal;
   var buttonColor = Colors.red;
@@ -119,21 +119,18 @@ class _DashBoardState extends State<DashBoard> {
   List<DateTime>initialRange=[DateTime(2015,1,1),DateTime.now().subtract(new Duration(days: 1))];
   var pictureDisplayed="brume";
   PageController pageController= PageController();
-  var _scrollController = ScrollController();
-
+  int nbTabs=4;
 
 
 
 
   Widget build(BuildContext context) {
-
-    print(pictures[5]);
     for(int i=0;i<pictures.length;i++){print('images/${pictures[i]}.jpg');}
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
     var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
     var selectedData=selectData(initialRange);
-    int nbTabs=4;
     var screenSize=MediaQuery.of(context).size;
+
     return DefaultTabController(length: nbTabs,
         child: new Scaffold(
             appBar: AppBar(
