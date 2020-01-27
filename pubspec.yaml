@@ -25,6 +25,7 @@ dependencies:
   shared_preferences: ^0.5.6
   path_provider: ^1.5.1
   date_range_picker: ^1.0.3
+  clay_containers: ^0.2.2
   neumorphic: ^0.0.2
 
   # The following adds the Cupertino Icons font to your application.

@@ -127,12 +127,10 @@ class _DashBoardState extends State<DashBoard> {
 
   Widget build(BuildContext context) {
 
-    var pictureWidth=MediaQuery.of(context).size.width/1.6;
     print(pictures[5]);
     for(int i=0;i<pictures.length;i++){print('images/${pictures[i]}.jpg');}
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
     var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
-    var ninetyDaysData=selectData([DateTime.now().subtract(Duration(days:89)),DateTime.now().add(new Duration(days: 1))]);
     var selectedData=selectData(initialRange);
     int nbTabs=4;
     var screenSize=MediaQuery.of(context).size;
@@ -172,9 +170,9 @@ class _DashBoardState extends State<DashBoard> {
 
             ///                                                      ADD :   AJOUT D'ENTRÉE AU JOURNAL
             Container(decoration: BoxDecoration(image: DecorationImage(image:AssetImage('images/background.png'),fit:BoxFit.cover )),
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: <Widget>[
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
 
     /*Padding(
                         padding: const EdgeInsets.only(left:20.0,right:20.0,top:10.0),
@@ -196,63 +194,64 @@ class _DashBoardState extends State<DashBoard> {
                         ));}),
                       ),
 */                    Padding(
-    padding: const EdgeInsets.only(bottom:40.0),
-    child: Text("Comment vous sentez-vous aujourd'hui ?",textScaleFactor: 1.2, textAlign: TextAlign.center,style: black,),
-    ),
-    Neumorphic(
-    child:Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-    Text(moodFromSlide.toString(),textScaleFactor: 1.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'amalfi',),),],),
-    width: 100,
-    height: 100,
-    bevel: 10,
-    status: NeumorphicStatus.concave,
-    decoration: NeumorphicDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(80)),
-    ),
-    Slider(activeColor:sliderColor,
-    min: -100.0,
-    max: 100.0,
-    value: moodFromSlide.toDouble(),
-    divisions: 40,
-    label: '$moodFromSlide',
-    onChanged: (newMood) =>
-    {setState(() {
-    sliderColor=rangeColor(newMood.toInt()).color;
-    moodFromSlide = newMood.toInt();
-    animateContainerGoGreen();
-    })},
-    ),
+                          padding: const EdgeInsets.only(bottom:40.0),
+                          child: Text("Comment vous sentez-vous aujourd'hui ?",textScaleFactor: 1.2, textAlign: TextAlign.center,style: black,),
+                           ),
+                     Neumorphic(
+                        child:Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                          Text(moodFromSlide.toString(),textScaleFactor: 1.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'amalfi',),),],),
+                            width: 100,
+                            height: 100,
+                            bevel: 10,
+                            status: NeumorphicStatus.concave,
+                            decoration: NeumorphicDecoration(
+                            color: Colors.white,
+                                borderRadius: BorderRadius.circular(80)),
+                            ),
+
+                       Slider(activeColor:sliderColor,
+                         min: -100.0,
+                         max: 100.0,
+                         value: moodFromSlide.toDouble(),
+                         divisions: 40,
+                         label: '$moodFromSlide',
+                         onChanged: (newMood) =>
+                         {setState(() {
+                           sliderColor=rangeColor(newMood.toInt()).color;
+                           moodFromSlide = newMood.toInt();
+                           animateContainerGoGreen();
+                         })},
+                       ),
 
 
-    Center(
-    child: AnimatedContainer(
-    height: buttonHeight,
-    width: buttonWidth,
-    duration: Duration(milliseconds: 400),
-    curve: Curves.linearToEaseOut,
-    child: ClipRRect(
-    borderRadius: buttonRadius,
-    child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
-    {setState(() {
-    if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
-    data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
-    dataToFile(data);
-    selectedData=selectData(initialRange);
-    animateContainerGoGrey();}
-    else{
-    dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
+                        Center(
+                          child: AnimatedContainer(
+                            height: buttonHeight,
+                            width: buttonWidth,
+                            duration: Duration(milliseconds: 400),
+                            curve: Curves.linearToEaseOut,
+                            child: ClipRRect(
+                              borderRadius: buttonRadius,
+                              child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
+                              {setState(() {
+                                if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
+                                  data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
+                                  dataToFile(data);
+                                  selectedData=selectData(initialRange);
+                                  animateContainerGoGrey();}
+                                else{
+                                  dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
 
-    })},
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
-    ),
+                              })},
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      ),
+                      ),
 
 
 
@@ -267,95 +266,95 @@ class _DashBoardState extends State<DashBoard> {
 
 
     ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
-    Column(
-    children: <Widget>[
-    Flexible(flex: 3,
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children:<Widget>[
-    Card(elevation: 10.0,
-    child: Container(
-    height: 450.0,
-    //color: Colors.grey[100],
-    child: (sevenDaysData.isEmpty == true) ? Container(
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-    Text("aucune entrée", textScaleFactor: 1.3,),
-    Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-    Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-    ],
-    )) :
+                        Column(
+                          children: <Widget>[
+                            Flexible(flex: 3,
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children:<Widget>[
+                                    Card(elevation: 10.0,
+                                      child: Container(
+                                        height: 450.0,
+                                        //color: Colors.grey[100],
+                                        child: (sevenDaysData.isEmpty == true) ? Container(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text("aucune entrée", textScaleFactor: 1.3,),
+                                                Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                                Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                              ],
+                                            )) :
 
-    SimpleTimeSeriesChart(
-    <charts.Series<TimeSeriesMoods, DateTime>>[
-    charts.Series<TimeSeriesMoods, DateTime>(
-    id: 'Moods',
-    colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
-    domainFn: (TimeSeriesMoods moods, _) => moods.time,
-    measureFn: (TimeSeriesMoods moods, _) => moods.value,
-    data: sevenDaysData,
-    )
-    ]),
-    ),
-    ),
+                                        SimpleTimeSeriesChart(
+                                            <charts.Series<TimeSeriesMoods, DateTime>>[
+                                              charts.Series<TimeSeriesMoods, DateTime>(
+                                                id: 'Moods',
+                                                colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
+                                                domainFn: (TimeSeriesMoods moods, _) => moods.time,
+                                                measureFn: (TimeSeriesMoods moods, _) => moods.value,
+                                                data: sevenDaysData,
+                                              )
+                                            ]),
+                                      ),
+                                    ),
 
 
-    ///                                                      LIST 7 :   LIST POUR 7 DERNIERS JOURS
-    (selectedData.isEmpty)?Text("Pas dentrée"):
-    Flexible(flex:2,
-    child: ListView.builder
-    (reverse:true,
-    controller: ScrollController(initialScrollOffset: 100000.0),
-    itemCount: sevenDaysData.length,
-    itemBuilder: (BuildContext ctxt, int index) {
-    return Container(
-    height: 40.0,
-    width : screenSize.width,
-    decoration : BoxDecoration(
-    border: Border(
-    left: BorderSide( //                   <--- left side
-    color: rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade],
-    width: 25.0,
-    ),
-    top: BorderSide( //                    <--- top side
-    color: Colors.grey[700],
-    width: 3.0,
-    ),
-    right: BorderSide( //                    <--- top side
-    color: Colors.grey[700],
-    width: 3.0,
-    ),
-    bottom: BorderSide( //                    <--- top side
-    color: rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade],
-    width: 3.0,
-    ),
-    ),
-    ),
-    child: Row(
-    children: <Widget>[
-    Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
-    child: Container(width: 130.0,
-    height: 40.0,
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: <Widget>[
-    new Text(dayFormatter.format(sevenDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-    new Text(hourFormatter.format(sevenDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-    ],
-    ),),),
-    new Text("     ",textAlign: TextAlign.left,),
-    new Text(sevenDaysData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade], )),
-    ],
-    ),
-    );}
-    ),
-    ),
+                                    ///                                                      LIST 7 :   LIST POUR 7 DERNIERS JOURS
+                                    (selectedData.isEmpty)?Text("Pas dentrée"):
+                                    Flexible(flex:2,
+                                      child: ListView.builder
+                                        (reverse:true,
+                                          controller: ScrollController(initialScrollOffset: 100000.0),
+                                          itemCount: sevenDaysData.length,
+                                          itemBuilder: (BuildContext ctxt, int index) {
+                                            return Container(
+                                              height: 40.0,
+                                              width : screenSize.width,
+                                              decoration : BoxDecoration(
+                                                border: Border(
+                                                  left: BorderSide( //                   <--- left side
+                                                    color: rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade],
+                                                    width: 25.0,
+                                                  ),
+                                                  top: BorderSide( //                    <--- top side
+                                                    color: Colors.grey[700],
+                                                    width: 3.0,
+                                                  ),
+                                                  right: BorderSide( //                    <--- top side
+                                                    color: Colors.grey[700],
+                                                    width: 3.0,
+                                                  ),
+                                                  bottom: BorderSide( //                    <--- top side
+                                                    color: rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade],
+                                                    width: 3.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
+                                                    child: Container(width: 130.0,
+                                                      height: 40.0,
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: <Widget>[
+                                                          new Text(dayFormatter.format(sevenDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                                                          new Text(hourFormatter.format(sevenDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
+                                                        ],
+                                                      ),),),
+                                                  new Text("     ",textAlign: TextAlign.left,),
+                                                  new Text(sevenDaysData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade], )),
+                                                ],
+                                              ),
+                                            );}
+                                      ),
+                                    ),
 
-    ]),
-    ),
-    ],
-    ),
+                                  ]),
+                            ),
+                          ],
+                        ),
 
 
 
@@ -364,97 +363,95 @@ class _DashBoardState extends State<DashBoard> {
 
 
     ///                                                      CHART 30 :   GRAPH POUR 30 DERNIERS JOURS
-    Column(
-    children: <Widget>[
-    Flexible(flex: 3,
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children:<Widget>[
-    Card(elevation: 10.0,
-    //color: Colors.teal,
-    child: Container(
-    height: 450.0,
-    //color: Colors.grey[100],
-    child: (thirtyDaysData.isEmpty == true) ? Container(
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-    Text("aucune entrée", textScaleFactor: 1.3,),
-    Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-    Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-    ],
-    )) :
+                  Column(
+                    children: <Widget>[
+                      Flexible(flex: 3,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children:<Widget>[
+                              Card(elevation: 10.0,
+                                  //color: Colors.teal,
+                                  child: Container(
+                                    height: 450.0,
+                                    //color: Colors.grey[100],
+                                    child: (thirtyDaysData.isEmpty == true) ? Container(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text("aucune entrée", textScaleFactor: 1.3,),
+                                            Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                            Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                          ],
+                                        )) :
 
-    SimpleTimeSeriesChart(
-    <charts.Series<TimeSeriesMoods, DateTime>>[
-    charts.Series<TimeSeriesMoods, DateTime>(
-    id: 'Moods',
-    colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
-    domainFn: (TimeSeriesMoods moods, _) => moods.time,
-    measureFn: (TimeSeriesMoods moods, _) => moods.value,
-    data: thirtyDaysData,
-    )
-    ]),
-    )),
-
-
-    ///                                                      LIST 30 :   LIST POUR 30 DERNIERS JOURS
-    (selectedData.isEmpty)?Text("Pas dentrée"):
-    Flexible(flex:2,
-    child: ListView.builder
-    (reverse:true,
-    controller: ScrollController(initialScrollOffset:100000.0 ),
-    itemCount: thirtyDaysData.length,
-    itemBuilder: (BuildContext ctxt, int index) {
-    return Container(
-    height: 40.0,
-    width : screenSize.width,
-    decoration : BoxDecoration(
-    border: Border(
-    left: BorderSide( //                   <--- left side
-    color: rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade],
-    width: 25.0,
-    ),
-    top: BorderSide( //                    <--- top side
-    color: Colors.grey[700],
-    width: 3.0,
-    ),
-    right: BorderSide( //                    <--- top side
-    color: Colors.grey[700],
-    width: 3.0,
-    ),
-    bottom: BorderSide( //                    <--- top side
-    color: rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade],
-    width: 3.0,
-    ),
-    ),
-    ),
-    child: Row(
-    children: <Widget>[
-    Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
-    child: Container(width: 130.0,
-    height: 40.0,
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: <Widget>[
-    new Text(dayFormatter.format(thirtyDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-    new Text(hourFormatter.format(thirtyDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-    ],
-    ),),),
-    new Text("     ",textAlign: TextAlign.left,),
-    new Text(thirtyDaysData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade], )),
-    ],
-    ),
-    );}
-    ),
-    ),
-
-    ]),
-    ),
-    ],
-    ),
+                                    SimpleTimeSeriesChart(
+                                        <charts.Series<TimeSeriesMoods, DateTime>>[
+                                          charts.Series<TimeSeriesMoods, DateTime>(
+                                            id: 'Moods',
+                                            colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
+                                            domainFn: (TimeSeriesMoods moods, _) => moods.time,
+                                            measureFn: (TimeSeriesMoods moods, _) => moods.value,
+                                            data: thirtyDaysData,
+                                          )
+                                        ]),
+                                  )),
 
 
+                              ///                                                      LIST 30 :   LIST POUR 30 DERNIERS JOURS
+                              (selectedData.isEmpty)?Text("Pas dentrée"):
+                              Flexible(flex:2,
+                                child: ListView.builder
+                                  (reverse:true,
+                                    controller: ScrollController(initialScrollOffset:100000.0 ),
+                                    itemCount: thirtyDaysData.length,
+                                    itemBuilder: (BuildContext ctxt, int index) {
+                                      return Container(
+                                        height: 40.0,
+                                        width : screenSize.width,
+                                        decoration : BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide( //                   <--- left side
+                                              color: rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade],
+                                              width: 25.0,
+                                            ),
+                                            top: BorderSide( //                    <--- top side
+                                              color: Colors.grey[700],
+                                              width: 3.0,
+                                            ),
+                                            right: BorderSide( //                    <--- top side
+                                              color: Colors.grey[700],
+                                              width: 3.0,
+                                            ),
+                                            bottom: BorderSide( //                    <--- top side
+                                              color: rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade],
+                                              width: 3.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
+                                              child: Container(width: 130.0,
+                                                height: 40.0,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: <Widget>[
+                                                    new Text(dayFormatter.format(thirtyDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                                                    new Text(hourFormatter.format(thirtyDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
+                                                  ],
+                                                ),),),
+                                            new Text("     ",textAlign: TextAlign.left,),
+                                            new Text(thirtyDaysData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade], )),
+                                          ],
+                                        ),
+                                      );}
+                                ),
+                              ),
+
+                            ]),
+                      ),
+                    ],
+                  ),
 
 
 
@@ -466,43 +463,45 @@ class _DashBoardState extends State<DashBoard> {
 
 
 
-    ///                                                     GRAPH perso POUR SELECTED RANGE
-    Column(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: <Widget>[
-    Flexible(flex: 3,
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children:<Widget>[
-    Card(elevation: 10.0,
-    child: Container(
-    height: 400.0,
-    color: Colors.grey[100],
-    child: (selectedData.isEmpty == true) ? Container(
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-    Text("aucune entrée", textScaleFactor: 1.3,),
-    Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-    Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-    ],
-    )) :
-
-    SimpleTimeSeriesChart(
-    <charts.Series<TimeSeriesMoods, DateTime>>[
-    charts.Series<TimeSeriesMoods, DateTime>(
-    id: 'Moods',
-    colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
-    domainFn: (TimeSeriesMoods moods, _) => moods.time,
-    measureFn: (TimeSeriesMoods moods, _) => moods.value,
-    data: selectedData,
-    )
-    ]),
-    )),
 
 
-    ///DATE RANGE SELECTOR
-    /*Neumorphic(
+                  ///                                                     GRAPH perso POUR SELECTED RANGE
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Flexible(flex: 3,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children:<Widget>[
+                              Card(elevation: 10.0,
+                                  child: Container(
+                                    height: 400.0,
+                                    color: Colors.grey[100],
+                                    child: (selectedData.isEmpty == true) ? Container(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text("aucune entrée", textScaleFactor: 1.3,),
+                                            Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                            Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                          ],
+                                        )) :
+
+                                    SimpleTimeSeriesChart(
+                                        <charts.Series<TimeSeriesMoods, DateTime>>[
+                                          charts.Series<TimeSeriesMoods, DateTime>(
+                                            id: 'Moods',
+                                            colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
+                                            domainFn: (TimeSeriesMoods moods, _) => moods.time,
+                                            measureFn: (TimeSeriesMoods moods, _) => moods.value,
+                                            data: selectedData,
+                                          )
+                                        ]),
+                                  )),
+
+
+                              ///DATE RANGE SELECTOR
+                              /*Neumorphic(
     child:Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
@@ -515,96 +514,96 @@ class _DashBoardState extends State<DashBoard> {
     color: Colors.white,
     borderRadius: BorderRadius.circular(80)),
     ),*/
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Neumorphic(
-      width: 100,
-      height: 50,
-      bevel: 10,
-      status: NeumorphicStatus.concave,
-      decoration: NeumorphicDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(80)),
-      child: new InkWell(
-      onTap: () async {
-      final List<DateTime> picked = await DateRangePicker.showDatePicker(
-      context: context,
-      initialFirstDate: new DateTime.now().subtract(new Duration(days: 7)),
-      initialLastDate: new DateTime.now(),
-      firstDate: new DateTime(2015),
-      lastDate: new DateTime(2050)
-      );
-      if (picked != null && picked.length == 2) {
-      setState(() {
-      initialRange=picked;
-      selectedData.clear();
-      selectedData=selectData(picked);
-      });
-      }
-      },
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  width: 100,
+                                  height: 50,
+                                  bevel: 10,
+                                  status: NeumorphicStatus.concave,
+                                  decoration: NeumorphicDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(80)),
+                                  child: new InkWell(
+                                      onTap: () async {
+                                        final List<DateTime> picked = await DateRangePicker.showDatePicker(
+                                            context: context,
+                                            initialFirstDate: new DateTime.now().subtract(new Duration(days: 7)),
+                                            initialLastDate: new DateTime.now(),
+                                            firstDate: new DateTime(2015),
+                                            lastDate: new DateTime(2050)
+                                        );
+                                        if (picked != null && picked.length == 2) {
+                                          setState(() {
+                                            initialRange=picked;
+                                            selectedData.clear();
+                                            selectedData=selectData(picked);
+                                          });
+                                        }
+                                      },
 
 
-      child: new Icon(Icons.calendar_today)
-      ),
-      ),
-    ),
+                                      child: new Icon(Icons.calendar_today)
+                                  ),
+                                ),
+                              ),
 
 
-    ///                                                      LIST PERSO
-    (selectedData.isEmpty)?Text("Pas dentrée"):
-    Flexible(flex:2,
-    child: ListView.builder
-    (reverse:true,
-    controller: ScrollController(initialScrollOffset: 100000.0),
-    itemCount: selectedData.length,
-    itemBuilder: (BuildContext ctxt, int index) {
-    return Container(
-    height: 40.0,
-    width : screenSize.width,
-    decoration : BoxDecoration(
-    border: Border(
-    left: BorderSide( //                   <--- left side
-    color: rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade],
-    width: 25.0,
-    ),
-    top: BorderSide( //                    <--- top side
-    color: Colors.grey[700],
-    width: 3.0,
-    ),
-    right: BorderSide( //                    <--- top side
-    color: Colors.grey[700],
-    width: 3.0,
-    ),
-    bottom: BorderSide( //                    <--- top side
-    color: rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade],
-    width: 3.0,
-    ),
-    ),
-    ),
-    child: Row(
-    children: <Widget>[
-    Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
-    child: Container(width: 130.0,
-    height: 40.0,
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: <Widget>[
-    new Text(dayFormatter.format(selectedData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-    new Text(hourFormatter.format(selectedData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-    ],
-    ),),),
-    new Text("     ",textAlign: TextAlign.left,),
-    new Text(selectedData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade], )),
-    ],
-    ),
-    );}
-    ),
-    ),
+                              ///                                                      LIST PERSO
+                              (selectedData.isEmpty)?Text("Pas dentrée"):
+                              Flexible(flex:2,
+                                child: ListView.builder
+                                  (reverse:true,
+                                    controller: ScrollController(initialScrollOffset: 100000.0),
+                                    itemCount: selectedData.length,
+                                    itemBuilder: (BuildContext ctxt, int index) {
+                                      return Container(
+                                        height: 40.0,
+                                        width : screenSize.width,
+                                        decoration : BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide( //                   <--- left side
+                                              color: rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade],
+                                              width: 25.0,
+                                            ),
+                                            top: BorderSide( //                    <--- top side
+                                              color: Colors.grey[700],
+                                              width: 3.0,
+                                            ),
+                                            right: BorderSide( //                    <--- top side
+                                              color: Colors.grey[700],
+                                              width: 3.0,
+                                            ),
+                                            bottom: BorderSide( //                    <--- top side
+                                              color: rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade],
+                                              width: 3.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
+                                              child: Container(width: 130.0,
+                                                height: 40.0,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: <Widget>[
+                                                    new Text(dayFormatter.format(selectedData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                                                    new Text(hourFormatter.format(selectedData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
+                                                  ],
+                                                ),),),
+                                            new Text("     ",textAlign: TextAlign.left,),
+                                            new Text(selectedData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade], )),
+                                          ],
+                                        ),
+                                      );}
+                                ),
+                              ),
 
-    ]),
-    ),
-    ],
-    ),
+                            ]),
+                      ),
+                    ],
+                  ),
 
 
 
