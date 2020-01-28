@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "345828091264",
+    "firebase_url": "https://bipolair-291d2.firebaseio.com",
+    "project_id": "bipolair-291d2",
+    "storage_bucket": "bipolair-291d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345828091264:android:8c856a7f4fa765f5c90d65",
+        "android_client_info": {
+          "package_name": "com.mgdev.bipo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345828091264-4n17vjpinca4oc12fajd6hr7d5b3m9sn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZBYtDs3ofv6F9Cexqkncxa5b8k1Wf6kE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345828091264-4n17vjpinca4oc12fajd6hr7d5b3m9sn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
