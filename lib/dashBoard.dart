@@ -1,7 +1,6 @@
 
 import 'dart:io';
 import 'package:flutter/gestures.dart';
-import 'package:neumorphic/neumorphic.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
@@ -13,6 +12,9 @@ import'package:path_provider/path_provider.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
+import 'package:flutter/material.dart';
+import 'login_page.dart';
+import 'sign_in.dart';
 
 
 class DashBoard extends StatefulWidget {
@@ -63,45 +65,6 @@ class _DashBoardState extends State<DashBoard> {
   }
 
 
-  void createFile(Map<String,dynamic> content,Directory dir, String fileName){
-    print("Creating file");
-    File file = new File(dir.path + "/" + filename);
-    file.createSync();
-    fileExists=true;
-    file.writeAsStringSync(json.encode(content));
-
-  }
-
-
-  void writeToFile (String key, String value){
-    print("writing to file");
-    Map<String, dynamic> content= {key:value};
-    if(fileExists){
-      print("file exists");
-      Map<String, dynamic> jsonFileContent=json.decode(jsonFile.readAsStringSync());
-      jsonFileContent.addAll(content);
-      jsonFile.writeAsStringSync(json.encode(jsonFileContent));
-    }else{
-      print("File does not exists");
-      createFile(content, dir, filename);
-      this.setState(()=>fileContent=json.decode(jsonFile.readAsStringSync()));
-    }}
-
-  void dataToFile(List<TimeSeriesMoods>data){
-    for (var i = 0; i < data.length; i++) {
-      writeToFile(data[i].time.toString(), data[i].value.toString());
-    }
-  }
-
-  void fileToData(File jsonFile) {
-    fileContent=json.decode(jsonFile.readAsStringSync());
-    var keyList= fileContent.keys.toList();
-    var valueList = fileContent.values.toList();
-    for (var i = 0; i <= fileContent.length-1; i++) {
-      data.add(TimeSeriesMoods(stringToDateTime(keyList[i]),stringToInt(valueList[i])));
-    }
-
-  }
 
 
 
@@ -121,12 +84,14 @@ class _DashBoardState extends State<DashBoard> {
 
 
 
+
   Widget build(BuildContext context) {
+    String message="";
+    (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
     var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
     var selectedData=selectData(initialRange);
     var screenSize=MediaQuery.of(context).size;
-    DateTime todayMidnight=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
 
     return DefaultTabController(length: nbTabs,
         child: new Scaffold(
@@ -146,6 +111,35 @@ class _DashBoardState extends State<DashBoard> {
                 ),
               ),
               leading: Image.asset('images/logo.png'),
+              actions: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Tooltip(message:'Deconnexion',
+                      child: FlatButton(
+                        onLongPress: (){
+                          signOutGoogle();
+                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {return LoginPage();}), ModalRoute.withName('/'));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right:8.0,),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                imageUrl,
+                              ),
+                              radius: 60,
+                              backgroundColor: Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               backgroundColor:Colors.teal,
               bottom: TabBar(dragStartBehavior:DragStartBehavior.down,
                   isScrollable: true,
@@ -162,87 +156,78 @@ class _DashBoardState extends State<DashBoard> {
             body: TabBarView(
                 children: <Widget>[
 
-            ///                                                      ADD :   AJOUT D'ENTRÉE AU JOURNAL
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-
-              Padding(
-                      padding: const EdgeInsets.only(bottom:40.0),
-                      child: ClayText("Comment vous sentez-vous aujourd'hui ?",parentColor:Colors.grey[100],emboss:true,size:15.2,spread: 50.0,style: TextStyle(fontFamily: 'coco'),),
-                       ),
-                ClayContainer(
-                  width: 150,
-                  height: 130,
-                  borderRadius: 75,
-                  depth: 40,
-                  spread: 10,
-                  //curveType: CurveType.convex,
-                  color: Colors.grey[100],
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(moodFromSlide.toString(),textScaleFactor: 2.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'dot',color: sliderColor),),],),
-                  ),
-                ),
-
-                   Slider(activeColor:sliderColor,
-                     min: -100.0,
-                     max: 100.0,
-                     value: moodFromSlide.toDouble(),
-                     divisions: 40,
-                     label: '$moodFromSlide',
-                     onChanged: (newMood) =>
-                     {setState(() {
-                       sliderColor=rangeColor(newMood.toInt()).color;
-                       moodFromSlide = newMood.toInt();
-                       animateContainerGoGreen();
-                     })},
-                   ),
 
 
-                    Center(
-                      child: AnimatedContainer(
-                        height: buttonHeight,
-                        width: buttonWidth,
-                        duration: Duration(milliseconds: 400),
-                        curve: Curves.linearToEaseOut,
-                        child: ClipRRect(
-                          borderRadius: buttonRadius,
-                          child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
-                          {setState(() {
-                            if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
+                  ///                                                      ADD :   AJOUT D'ENTRÉE AU JOURNAL
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
 
-                              data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
-                              dataToFile(data);
-                              selectedData=selectData(initialRange);
-                              animateContainerGoGrey();}
-                            else{
-                              dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
+                      Padding(
+                        padding: const EdgeInsets.only(bottom:40.0),
+                        child: Text(message,textScaleFactor:1.2,style: TextStyle(fontFamily: 'coco',color: Colors.grey[400]),textAlign: TextAlign.center,),
+                      ),
+                      ClayContainer(
+                        width: 150,
+                        height: 130,
+                        borderRadius: 75,
+                        depth: 40,
+                        spread: 10,
+                        //curveType: CurveType.convex,
+                        color: Colors.grey[100],
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(moodFromSlide.toString(),textScaleFactor: 2.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'dot',color: sliderColor),),],),
+                        ),
+                      ),
 
-                          })},
+                      Slider(activeColor:sliderColor,
+                        min: -100.0,
+                        max: 100.0,
+                        value: moodFromSlide.toDouble(),
+                        divisions: 40,
+                        label: '$moodFromSlide',
+                        onChanged: (newMood) =>
+                        {setState(() {
+                          sliderColor=rangeColor(newMood.toInt()).color;
+                          moodFromSlide = newMood.toInt();
+                          animateContainerGoGreen();
+                        })},
+                      ),
+
+
+                      Center(
+                        child: AnimatedContainer(
+                          height: buttonHeight,
+                          width: buttonWidth,
+                          duration: Duration(milliseconds: 400),
+                          curve: Curves.linearToEaseOut,
+                          child: ClipRRect(
+                            borderRadius: buttonRadius,
+                            child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
+                            {setState(() {
+                              if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
+
+                                data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
+                                dataToFile(data);
+                                selectedData=selectData(initialRange);
+                                animateContainerGoGrey();}
+                              else{
+                                dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
+
+                            })},
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
                   ),
 
 
-
-
-
-
-    ///                                                       imageMoodPicker
-
-
-
-
-
-
-    ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
+                  ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
                         Column(
                           children: <Widget>[
                             Flexible(flex: 3,
@@ -336,11 +321,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
 
-
-
-
-
-    ///                                                      CHART 30 :   GRAPH POUR 30 DERNIERS JOURS
+                 ///                                                      CHART 30 :   GRAPH POUR 30 DERNIERS JOURS
                   Column(
                     children: <Widget>[
                       Flexible(flex: 3,
@@ -484,12 +465,12 @@ class _DashBoardState extends State<DashBoard> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ClayContainer(
-                                    color: Colors.white,
+                                    color: Colors.grey[100],
                                     parentColor: Colors.white,
                                     width: 300,
                                     height: 50,
                                     borderRadius: 75,
-                                    depth: 20,
+                                    depth: 40,
                                     spread: 10,
                                     child: new InkWell(
                                         onTap: () async {
@@ -762,6 +743,16 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
+  String messageFromMood(mood){
+    return (mood<-49)?"Prenez contact avec quelqu'un\n\nqui pourra vous écouter.":
+    (mood<-9)?"Positivez !\n\nFocalisez-vous sur ce qui va.":
+    (mood<15)?"Ravi de vous voir en forme !\n\nPassez une bonne journée.":
+    (mood<50)?"Quelle mine incroyable !\n\nJe suis sûr que votre\njournée sera excellente.":
+    (mood<70)?"Quel anthousiasme !\n\nPensez a vous ménager.":
+    (mood<=100)?"Vous êtes au summum du UP!\n\nAttention à ne pas dépasser les limites.":'';
+
+
+    }
 
   DateTime stringToDateTime(String string){
     return DateTime.parse(string);
@@ -781,6 +772,46 @@ class _DashBoardState extends State<DashBoard> {
       }
     }
     return list;
+  }
+
+  void createFile(Map<String,dynamic> content,Directory dir, String fileName){
+    print("Creating file");
+    File file = new File(dir.path + "/" + filename);
+    file.createSync();
+    fileExists=true;
+    file.writeAsStringSync(json.encode(content));
+
+  }
+
+
+  void writeToFile (String key, String value){
+    print("writing to file");
+    Map<String, dynamic> content= {key:value};
+    if(fileExists){
+      print("file exists");
+      Map<String, dynamic> jsonFileContent=json.decode(jsonFile.readAsStringSync());
+      jsonFileContent.addAll(content);
+      jsonFile.writeAsStringSync(json.encode(jsonFileContent));
+    }else{
+      print("File does not exists");
+      createFile(content, dir, filename);
+      this.setState(()=>fileContent=json.decode(jsonFile.readAsStringSync()));
+    }}
+
+  void dataToFile(List<TimeSeriesMoods>data){
+    for (var i = 0; i < data.length; i++) {
+      writeToFile(data[i].time.toString(), data[i].value.toString());
+    }
+  }
+
+  void fileToData(File jsonFile) {
+    fileContent=json.decode(jsonFile.readAsStringSync());
+    var keyList= fileContent.keys.toList();
+    var valueList = fileContent.values.toList();
+    for (var i = 0; i <= fileContent.length-1; i++) {
+      data.add(TimeSeriesMoods(stringToDateTime(keyList[i]),stringToInt(valueList[i])));
+    }
+
   }
 
 }
@@ -836,4 +867,5 @@ class SimpleTimeSeriesChart extends StatelessWidget {
       )
     ];
   }
+
 }

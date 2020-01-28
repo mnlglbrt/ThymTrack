@@ -1,9 +1,42 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'login_page.dart';
+
+
+void main() {
+  runApp(MyApp());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Bipolair',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+      home: LoginPage(),
+    );
+  }
+}
+
+///OLD SPLASHSCREEN PAGE
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'tableau_de_bord.dart';
 import 'dashBoard.dart';
 import 'dart:math';
 import 'package:splashscreen/splashscreen.dart';
+import 'package:bipo/authentication.dart';
+import'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,6 +44,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var connectedUser=null;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -43,6 +77,17 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return
+
+  }
+}
+
+class AfterSplash extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Auth();
+  }
+
+return
       Stack(
         children:<Widget>[
 
@@ -64,15 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
           loaderColor: Colors.white
     ),
       ]);
-
-  }
-}
-
-class AfterSplash extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new DashBoard();
-  }
+*/
 
 
-}

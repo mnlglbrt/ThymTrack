@@ -26,7 +26,9 @@ dependencies:
   path_provider: ^1.5.1
   date_range_picker: ^1.0.3
   clay_containers: ^0.2.2
-  neumorphic: ^0.0.2
+  firebase_auth: ^0.15.4
+  google_sign_in: ^4.1.1
+  popup_menu: ^1.0.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -60,9 +62,9 @@ flutter:
     - family: coco
       fonts:
         - asset: fonts/coco.ttf
-    - family: coco
+    - family: productSans
       fonts:
-        - asset: fonts/coco.ttf
+        - asset: fonts/productSans.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
