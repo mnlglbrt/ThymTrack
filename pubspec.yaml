@@ -54,6 +54,15 @@ flutter:
     - family: amalfi
       fonts:
         - asset: fonts/AmalfiCoast.ttf
+    - family: dot
+      fonts:
+        - asset: fonts/dotMatrix.ttf
+    - family: coco
+      fonts:
+        - asset: fonts/coco.ttf
+    - family: coco
+      fonts:
+        - asset: fonts/coco.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

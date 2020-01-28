@@ -12,6 +12,7 @@ import 'timeSeriesMoods.dart';
 import'package:path_provider/path_provider.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'dart:async';
+import 'package:clay_containers/clay_containers.dart';
 
 
 class DashBoard extends StatefulWidget {
@@ -121,11 +122,11 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
-    for(int i=0;i<pictures.length;i++){print('images/${pictures[i]}.jpg');}
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
     var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
     var selectedData=selectData(initialRange);
     var screenSize=MediaQuery.of(context).size;
+    DateTime todayMidnight=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
 
     return DefaultTabController(length: nbTabs,
         child: new Scaffold(
@@ -162,89 +163,72 @@ class _DashBoardState extends State<DashBoard> {
                 children: <Widget>[
 
             ///                                                      ADD :   AJOUT D'ENTRÉE AU JOURNAL
-            Container(decoration: BoxDecoration(image: DecorationImage(image:AssetImage('images/background.png'),fit:BoxFit.cover )),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
 
-    /*Padding(
-                        padding: const EdgeInsets.only(left:20.0,right:20.0,top:10.0),
-                        child: Text("Selectionnez l'image qui correspond le mieux à votre état actuel :",textScaleFactor: 1.2, textAlign: TextAlign.center,style: black,),
-                      ),
-                      SizedBox(
-                        height:400,
-                        child: PageView.builder(controller:pageController,
-                            itemCount:pictures.length,
-                            itemBuilder:(BuildContext ctxt, int index) {
-                          return SizedBox(
-                        child: Stack(alignment: Alignment.center,
-                        children: <Widget>[
-                        Container(width: MediaQuery.of(context).size.width/1.2,
-                            child: Image.asset('images/frame.png',fit: BoxFit.fill,)),
-                        SizedBox(width:pictureWidth,child: Image.asset('images/${pictures[index]}.jpg',scale:0.5)),
-                          Positioned(bottom:20,child: Text(pictures[index].toString(),textScaleFactor: 1.2, textAlign: TextAlign.center,style: black,)),
-                        ],
-                        ));}),
-                      ),
-*/                    Padding(
-                          padding: const EdgeInsets.only(bottom:40.0),
-                          child: Text("Comment vous sentez-vous aujourd'hui ?",textScaleFactor: 1.2, textAlign: TextAlign.center,style: black,),
-                           ),
-                     Neumorphic(
-                        child:Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                          Text(moodFromSlide.toString(),textScaleFactor: 1.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'amalfi',),),],),
-                            width: 100,
-                            height: 100,
-                            bevel: 10,
-                            status: NeumorphicStatus.concave,
-                            decoration: NeumorphicDecoration(
-                            color: Colors.white,
-                                borderRadius: BorderRadius.circular(80)),
-                            ),
-
-                       Slider(activeColor:sliderColor,
-                         min: -100.0,
-                         max: 100.0,
-                         value: moodFromSlide.toDouble(),
-                         divisions: 40,
-                         label: '$moodFromSlide',
-                         onChanged: (newMood) =>
-                         {setState(() {
-                           sliderColor=rangeColor(newMood.toInt()).color;
-                           moodFromSlide = newMood.toInt();
-                           animateContainerGoGreen();
-                         })},
+              Padding(
+                      padding: const EdgeInsets.only(bottom:40.0),
+                      child: ClayText("Comment vous sentez-vous aujourd'hui ?",parentColor:Colors.grey[100],emboss:true,size:15.2,spread: 50.0,style: TextStyle(fontFamily: 'coco'),),
                        ),
+                ClayContainer(
+                  width: 150,
+                  height: 130,
+                  borderRadius: 75,
+                  depth: 40,
+                  spread: 10,
+                  //curveType: CurveType.convex,
+                  color: Colors.grey[100],
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(moodFromSlide.toString(),textScaleFactor: 2.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'dot',color: sliderColor),),],),
+                  ),
+                ),
+
+                   Slider(activeColor:sliderColor,
+                     min: -100.0,
+                     max: 100.0,
+                     value: moodFromSlide.toDouble(),
+                     divisions: 40,
+                     label: '$moodFromSlide',
+                     onChanged: (newMood) =>
+                     {setState(() {
+                       sliderColor=rangeColor(newMood.toInt()).color;
+                       moodFromSlide = newMood.toInt();
+                       animateContainerGoGreen();
+                     })},
+                   ),
 
 
-                        Center(
-                          child: AnimatedContainer(
-                            height: buttonHeight,
-                            width: buttonWidth,
-                            duration: Duration(milliseconds: 400),
-                            curve: Curves.linearToEaseOut,
-                            child: ClipRRect(
-                              borderRadius: buttonRadius,
-                              child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
-                              {setState(() {
-                                if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
-                                  data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
-                                  dataToFile(data);
-                                  selectedData=selectData(initialRange);
-                                  animateContainerGoGrey();}
-                                else{
-                                  dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
+                    Center(
+                      child: AnimatedContainer(
+                        height: buttonHeight,
+                        width: buttonWidth,
+                        duration: Duration(milliseconds: 400),
+                        curve: Curves.linearToEaseOut,
+                        child: ClipRRect(
+                          borderRadius: buttonRadius,
+                          child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
+                          {setState(() {
+                            if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
 
-                              })},
-                              ),
-                            ),
+                              data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
+                              dataToFile(data);
+                              selectedData=selectData(initialRange);
+                              animateContainerGoGrey();}
+                            else{
+                              dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
+
+                          })},
                           ),
                         ),
-                      ],
                       ),
-                      ),
+                    ),
+                  ],
+                  ),
 
 
 
@@ -265,7 +249,8 @@ class _DashBoardState extends State<DashBoard> {
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children:<Widget>[
-                                    Card(elevation: 10.0,
+                                    Card(elevation: 0.0,
+                                      color: Colors.grey[100],
                                       child: Container(
                                         height: 450.0,
                                         //color: Colors.grey[100],
@@ -273,8 +258,8 @@ class _DashBoardState extends State<DashBoard> {
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: <Widget>[
-                                                Text("aucune entrée", textScaleFactor: 1.3,),
-                                                Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                                Text("Aucune entrée", textScaleFactor: 1.3,),
+                                                Text("Utilisez le slider pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
                                                 Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
                                               ],
                                             )) :
@@ -362,8 +347,8 @@ class _DashBoardState extends State<DashBoard> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children:<Widget>[
-                              Card(elevation: 10.0,
-                                  //color: Colors.teal,
+                              Card(elevation: 0.0,
+                                  color: Colors.grey[100],
                                   child: Container(
                                     height: 450.0,
                                     //color: Colors.grey[100],
@@ -371,8 +356,8 @@ class _DashBoardState extends State<DashBoard> {
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
-                                            Text("aucune entrée", textScaleFactor: 1.3,),
-                                            Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                            Text("Aucune entrée", textScaleFactor: 1.3,),
+                                            Text("Utilisez le slider pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
                                             Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
                                           ],
                                         )) :
@@ -466,7 +451,7 @@ class _DashBoardState extends State<DashBoard> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children:<Widget>[
-                              Card(elevation: 10.0,
+                              Card(elevation: 0.0,
                                   child: Container(
                                     height: 400.0,
                                     color: Colors.grey[100],
@@ -474,8 +459,8 @@ class _DashBoardState extends State<DashBoard> {
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: <Widget>[
-                                            Text("aucune entrée", textScaleFactor: 1.3,),
-                                            Text("Utilisez le slider ci-dessous pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                            Text("Aucune entrée", textScaleFactor: 1.3,),
+                                            Text("Utilisez le slider pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
                                             Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
                                           ],
                                         )) :
@@ -494,49 +479,45 @@ class _DashBoardState extends State<DashBoard> {
 
 
                               ///DATE RANGE SELECTOR
-                              /*Neumorphic(
-    child:Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-    Text(moodFromSlide.toString(),textScaleFactor: 1.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'amalfi',),),],),
-    width: 100,
-    height: 100,
-    bevel: 10,
-    status: NeumorphicStatus.concave,
-    decoration: NeumorphicDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(80)),
-    ),*/
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Neumorphic(
-                                  width: 100,
-                                  height: 50,
-                                  bevel: 10,
-                                  status: NeumorphicStatus.concave,
-                                  decoration: NeumorphicDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(80)),
-                                  child: new InkWell(
-                                      onTap: () async {
-                                        final List<DateTime> picked = await DateRangePicker.showDatePicker(
-                                            context: context,
-                                            initialFirstDate: new DateTime.now().subtract(new Duration(days: 7)),
-                                            initialLastDate: new DateTime.now(),
-                                            firstDate: new DateTime(2015),
-                                            lastDate: new DateTime(2050)
-                                        );
-                                        if (picked != null && picked.length == 2) {
-                                          setState(() {
-                                            initialRange=picked;
-                                            selectedData.clear();
-                                            selectedData=selectData(picked);
-                                          });
-                                        }
-                                      },
+
+                              Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ClayContainer(
+                                    color: Colors.white,
+                                    parentColor: Colors.white,
+                                    width: 300,
+                                    height: 50,
+                                    borderRadius: 75,
+                                    depth: 20,
+                                    spread: 10,
+                                    child: new InkWell(
+                                        onTap: () async {
+                                          final List<DateTime> picked = await DateRangePicker.showDatePicker(
+                                              context: context,
+                                              initialFirstDate: new DateTime.now().subtract(new Duration(days: 7)),
+                                              initialLastDate: new DateTime.now(),
+                                              firstDate: new DateTime(2019),
+                                              lastDate: new DateTime(2050)
+                                          );
+                                          if (picked != null && picked.length == 2) {
+                                            setState(() {
+                                              initialRange=picked;
+                                              selectedData.clear();
+                                              selectedData=selectData(picked);
+                                            });
+                                          }
+                                        },
 
 
-                                      child: new Icon(Icons.calendar_today)
+                                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children:<Widget>[
+                                            new Text('${new DateFormat("dd-MM-yyyy").format(initialRange[0])}'),
+                                            new Icon(Icons.calendar_today),
+                                            new Text('${new DateFormat("dd-MM-yyyy").format(initialRange[1])}'),
+                                          ]
+                                        )
+                                    ),
                                   ),
                                 ),
                               ),
@@ -735,8 +716,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   animateContainerGoGreen() {
-    if(buttonWidth==50){print(buttonColor.toString());}
-    else{
+    if(buttonWidth != 50){
       setState(() {
         buttonChild=Center(child: Icon(Icons.add_circle_outline,color: Colors.white,));
         buttonColor=Colors.teal;
@@ -745,6 +725,7 @@ class _DashBoardState extends State<DashBoard> {
         buttonRadius=BorderRadius.circular(30.0);
       });
     }}
+
 
 
   animateContainerGoGrey() {
@@ -795,11 +776,10 @@ class _DashBoardState extends State<DashBoard> {
     List<TimeSeriesMoods> list=[];
     selectedData = [];
     for(int i = 0 ; i < data.length; i++ ) {
-      if(data[i].time.isAfter(picked[0]) && data[i].time.isBefore(picked[1].add(new Duration(days:1)))){
+      if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,)) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 3)))){
         list.add(data[i]);
       }
     }
-    print(list.toString());
     return list;
   }
 
@@ -833,12 +813,12 @@ class SimpleTimeSeriesChart extends StatelessWidget {
           format: 'dd.MM.yy',
           transitionFormat: 'dd.MM.yy',
         ),hour: charts.TimeFormatterSpec(
-        format: 'H:mm',
-        transitionFormat: 'H:mm',
+        format: 'dd.MM.yy',
+        transitionFormat: 'dd.MM.yy',
       ),
         minute: charts.TimeFormatterSpec(
-          format: 'H:mm',
-          transitionFormat: 'H:mm',
+          format: 'dd.MM.yy',
+          transitionFormat: 'dd.MM.yy',
         ),
       ),
     ),
