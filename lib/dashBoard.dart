@@ -50,6 +50,7 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   void initState() {
+
     super.initState();
     getApplicationDocumentsDirectory().then((Directory directory) {
       dir = directory;
@@ -58,8 +59,6 @@ class _DashBoardState extends State<DashBoard> {
       if (fileExists) this.setState(() => fileContent = json.decode(jsonFile.readAsStringSync()));
       if (fileExists) this.setState(() => fileToData(jsonFile));
     });
-
-
 
 
   }
@@ -76,7 +75,7 @@ class _DashBoardState extends State<DashBoard> {
   var buttonWidth = 0.0;
   dynamic buttonChild=Text('');
   bool buttonVisible=true;
-  List<DateTime>initialRange=[DateTime(2015,1,1),DateTime.now().subtract(new Duration(days: 1))];
+  List<DateTime>initialRange=[DateTime.now().subtract(new Duration(days: 6)),DateTime.now()];
   var pictureDisplayed="brume";
   PageController pageController= PageController();
   int nbTabs=4;
@@ -86,6 +85,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
+    print('build : $initialRange');
     String message="";
     (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
@@ -185,8 +185,8 @@ class _DashBoardState extends State<DashBoard> {
                       ),
 
                       Slider(activeColor:sliderColor,
-                        min: -100.0,
-                        max: 100.0,
+                        min: -100.5,
+                        max: 100.5,
                         value: moodFromSlide.toDouble(),
                         divisions: 40,
                         label: '$moodFromSlide',
@@ -253,7 +253,7 @@ class _DashBoardState extends State<DashBoard> {
                                             <charts.Series<TimeSeriesMoods, DateTime>>[
                                               charts.Series<TimeSeriesMoods, DateTime>(
                                                 id: 'Moods',
-                                                colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
+                                                colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault.lighter,
                                                 domainFn: (TimeSeriesMoods moods, _) => moods.time,
                                                 measureFn: (TimeSeriesMoods moods, _) => moods.value,
                                                 data: sevenDaysData,
@@ -449,8 +449,10 @@ class _DashBoardState extends State<DashBoard> {
                                     SimpleTimeSeriesChart(
                                         <charts.Series<TimeSeriesMoods, DateTime>>[
                                           charts.Series<TimeSeriesMoods, DateTime>(
-                                            id: 'Moods',
-                                            colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
+                                            id: 'custom',
+                                            colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault.darker,
+                                            areaColorFn: (_, __) =>
+                                            charts.MaterialPalette.blue.shadeDefault.lighter,
                                             domainFn: (TimeSeriesMoods moods, _) => moods.time,
                                             measureFn: (TimeSeriesMoods moods, _) => moods.value,
                                             data: selectedData,
@@ -476,8 +478,8 @@ class _DashBoardState extends State<DashBoard> {
                                         onTap: () async {
                                           final List<DateTime> picked = await DateRangePicker.showDatePicker(
                                               context: context,
-                                              initialFirstDate: new DateTime.now().subtract(new Duration(days: 7)),
-                                              initialLastDate: new DateTime.now(),
+                                              initialFirstDate: initialRange[0],
+                                              initialLastDate: initialRange[1],
                                               firstDate: new DateTime(2019),
                                               lastDate: new DateTime(2050)
                                           );
@@ -767,7 +769,7 @@ class _DashBoardState extends State<DashBoard> {
     List<TimeSeriesMoods> list=[];
     selectedData = [];
     for(int i = 0 ; i < data.length; i++ ) {
-      if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,)) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 3)))){
+      if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,)) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 1)))){
         list.add(data[i]);
       }
     }

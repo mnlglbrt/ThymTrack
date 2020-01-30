@@ -21,7 +21,6 @@ Future<String> signInWithGoogle() async {
 
   final AuthResult authResult = await _auth.signInWithCredential(credential);
   final FirebaseUser user = authResult.user;
-  print(user.photoUrl);
   name = user.displayName;
   email = user.email;
   imageUrl = user.photoUrl;
