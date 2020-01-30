@@ -184,12 +184,13 @@ class _DashBoardState extends State<DashBoard> {
                         ),
                       ),
 
-                      Slider(activeColor:sliderColor,
+                      Slider(
+                        inactiveColor: Colors.transparent,
+                        activeColor:sliderColor.shade300,
                         min: -100.5,
                         max: 100.5,
                         value: moodFromSlide.toDouble(),
                         divisions: 40,
-                        label: '$moodFromSlide',
                         onChanged: (newMood) =>
                         {setState(() {
                           sliderColor=rangeColor(newMood.toInt()).color;
@@ -266,52 +267,7 @@ class _DashBoardState extends State<DashBoard> {
                                     ///                                                      LIST 7 :   LIST POUR 7 DERNIERS JOURS
                                     (selectedData.isEmpty)?Text("Pas dentrée"):
                                     Flexible(flex:2,
-                                      child: ListView.builder
-                                        (reverse:true,
-                                          controller: ScrollController(initialScrollOffset: 100000.0),
-                                          itemCount: sevenDaysData.length,
-                                          itemBuilder: (BuildContext ctxt, int index) {
-                                            return Container(
-                                              height: 40.0,
-                                              width : screenSize.width,
-                                              decoration : BoxDecoration(
-                                                border: Border(
-                                                  left: BorderSide( //                   <--- left side
-                                                    color: rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade],
-                                                    width: 25.0,
-                                                  ),
-                                                  top: BorderSide( //                    <--- top side
-                                                    color: Colors.grey[700],
-                                                    width: 3.0,
-                                                  ),
-                                                  right: BorderSide( //                    <--- top side
-                                                    color: Colors.grey[700],
-                                                    width: 3.0,
-                                                  ),
-                                                  bottom: BorderSide( //                    <--- top side
-                                                    color: rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade],
-                                                    width: 3.0,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
-                                                    child: Container(width: 130.0,
-                                                      height: 40.0,
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: <Widget>[
-                                                          new Text(dayFormatter.format(sevenDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-                                                          new Text(hourFormatter.format(sevenDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-                                                        ],
-                                                      ),),),
-                                                  new Text("     ",textAlign: TextAlign.left,),
-                                                  new Text(sevenDaysData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(sevenDaysData[index].value).color[rangeColor(sevenDaysData[index].value).shade], )),
-                                                ],
-                                              ),
-                                            );}
-                                      ),
+                                      child: makeList(sevenDaysData),
                                     ),
 
                                   ]),
@@ -359,52 +315,7 @@ class _DashBoardState extends State<DashBoard> {
                               ///                                                      LIST 30 :   LIST POUR 30 DERNIERS JOURS
                               (selectedData.isEmpty)?Text("Pas dentrée"):
                               Flexible(flex:2,
-                                child: ListView.builder
-                                  (reverse:true,
-                                    controller: ScrollController(initialScrollOffset:100000.0 ),
-                                    itemCount: thirtyDaysData.length,
-                                    itemBuilder: (BuildContext ctxt, int index) {
-                                      return Container(
-                                        height: 40.0,
-                                        width : screenSize.width,
-                                        decoration : BoxDecoration(
-                                          border: Border(
-                                            left: BorderSide( //                   <--- left side
-                                              color: rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade],
-                                              width: 25.0,
-                                            ),
-                                            top: BorderSide( //                    <--- top side
-                                              color: Colors.grey[700],
-                                              width: 3.0,
-                                            ),
-                                            right: BorderSide( //                    <--- top side
-                                              color: Colors.grey[700],
-                                              width: 3.0,
-                                            ),
-                                            bottom: BorderSide( //                    <--- top side
-                                              color: rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade],
-                                              width: 3.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
-                                              child: Container(width: 130.0,
-                                                height: 40.0,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    new Text(dayFormatter.format(thirtyDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-                                                    new Text(hourFormatter.format(thirtyDaysData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-                                                  ],
-                                                ),),),
-                                            new Text("     ",textAlign: TextAlign.left,),
-                                            new Text(thirtyDaysData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(thirtyDaysData[index].value).color[rangeColor(thirtyDaysData[index].value).shade], )),
-                                          ],
-                                        ),
-                                      );}
-                                ),
+                                child: makeList(thirtyDaysData),
                               ),
 
                             ]),
@@ -509,52 +420,7 @@ class _DashBoardState extends State<DashBoard> {
                               ///                                                      LIST PERSO
                               (selectedData.isEmpty)?Text("Pas dentrée"):
                               Flexible(flex:2,
-                                child: ListView.builder
-                                  (reverse:true,
-                                    controller: ScrollController(initialScrollOffset: 100000.0),
-                                    itemCount: selectedData.length,
-                                    itemBuilder: (BuildContext ctxt, int index) {
-                                      return Container(
-                                        height: 40.0,
-                                        width : screenSize.width,
-                                        decoration : BoxDecoration(
-                                          border: Border(
-                                            left: BorderSide( //                   <--- left side
-                                              color: rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade],
-                                              width: 25.0,
-                                            ),
-                                            top: BorderSide( //                    <--- top side
-                                              color: Colors.grey[700],
-                                              width: 3.0,
-                                            ),
-                                            right: BorderSide( //                    <--- top side
-                                              color: Colors.grey[700],
-                                              width: 3.0,
-                                            ),
-                                            bottom: BorderSide( //                    <--- top side
-                                              color: rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade],
-                                              width: 3.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Padding(padding: const EdgeInsets.only(left:30.0, bottom:5.0,top:5.0),
-                                              child: Container(width: 130.0,
-                                                height: 40.0,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    new Text(dayFormatter.format(selectedData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-                                                    new Text(hourFormatter.format(selectedData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-                                                  ],
-                                                ),),),
-                                            new Text("     ",textAlign: TextAlign.left,),
-                                            new Text(selectedData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(selectedData[index].value).color[rangeColor(selectedData[index].value).shade], )),
-                                          ],
-                                        ),
-                                      );}
-                                ),
+                                child: makeList(selectedData)
                               ),
 
                             ]),
@@ -596,6 +462,57 @@ class _DashBoardState extends State<DashBoard> {
   ///
   ///
   ///
+
+
+  makeList(myData){
+    return ListView.builder
+      (reverse:true,
+        controller: ScrollController(initialScrollOffset: 100000.0),
+        itemCount: myData.length,
+        itemBuilder: (BuildContext ctxt, int index) {
+          return Padding(
+            padding: const EdgeInsets.only(top:8.0),
+            child: ClayContainer(
+              borderRadius: 10,
+              height: 40.0,
+              width : 300,
+              depth: 10,
+              spread: 7,
+              color: Colors.grey[100],
+              surfaceColor: Colors.grey[50],
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(padding: const EdgeInsets.only(left:0.0, bottom:5.0,top:5.0),
+                    child: Container(width: 130.0,
+                      height: 40.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Text(dayFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                          new Text(hourFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
+                        ],
+                      ),),),
+                  new Text("     ",textAlign: TextAlign.left,),
+                  //new Text(myData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )),
+                 ClayContainer(
+                     height: 20,
+                     width:50,
+                     borderRadius: 30,
+                     //curveType: CurveType.convex,
+                     child:Center(child: Opacity(opacity:0.5,child: new Text(myData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontFamily: 'dot',color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )))),
+                   color: Colors.grey[100],
+                   surfaceColor: Colors.grey[150],
+                     ),
+
+                ],
+              ),
+            ),
+          );}
+    );
+  }
+
 
   Future<void> dialogEntryExist(String title, String content) async {
     return showDialog<void>(
@@ -728,7 +645,7 @@ class _DashBoardState extends State<DashBoard> {
                 ),
               ])],
       );
-      buttonColor=rangeColor(moodFromSlide.toInt()).color;
+      buttonColor=rangeColor(todayMood.first.value).color;
       buttonWidth = 200;
       buttonHeight = 50;
       buttonRadius=BorderRadius.circular(10.0);
