@@ -85,12 +85,14 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
+
     print('build : $initialRange');
     String message="";
     (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
     var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
-    var selectedData=selectData(initialRange);
+    var selectedData= [];
+    selectedData = selectData(initialRange);
     var screenSize=MediaQuery.of(context).size;
 
     return DefaultTabController(length: nbTabs,
@@ -536,8 +538,10 @@ class _DashBoardState extends State<DashBoard> {
               },
 
             ),
-            FlatButton(
-              child: Text('Modifier'),
+            OutlineButton(
+              child: Text('Modifier',style: TextStyle(color: Colors.teal)),
+              color: Colors.teal,
+              shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
               onPressed: () {
                 setState(() {
                   data.removeWhere((i) => i.time.day == DateTime.now().day);
