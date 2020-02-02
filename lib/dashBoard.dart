@@ -12,7 +12,6 @@ import'package:path_provider/path_provider.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
-import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'sign_in.dart';
 
@@ -78,17 +77,18 @@ class _DashBoardState extends State<DashBoard> {
   List<DateTime>initialRange=[DateTime.now().subtract(new Duration(days: 6)),DateTime.now()];
   var pictureDisplayed="brume";
   PageController pageController= PageController();
-  int nbTabs=4;
+  int nbTabs=3;
+  BuildContext bsContext;
+  BuildContext dialogContext;
+  String message="";
 
 
 
 
 
   Widget build(BuildContext context) {
-
-    print('build : $initialRange');
-    String message="";
     (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
+    print('build : $initialRange');
     var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
     var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
     var selectedData= [];
@@ -143,14 +143,14 @@ class _DashBoardState extends State<DashBoard> {
                 ),
               ],
               backgroundColor:Colors.teal,
-              bottom: TabBar(dragStartBehavior:DragStartBehavior.down,
+             /* bottom: TabBar(dragStartBehavior:DragStartBehavior.down,
                   isScrollable: true,
                   tabs: <Widget>[
                     Container(width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.white),],)),
                     Container(width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.white),Text('7j',style: white,)],))),
                     Container(width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.white,),Text('1m',style: white)],))),
                     Container(width: screenSize.width/5,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.calendar_today,color:Colors.white),Text('Perso',style: white)],))),
-                  ]),
+                  ]),*/
             ),
 
 
@@ -161,73 +161,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
                   ///                                                      ADD :   AJOUT D'ENTRÉE AU JOURNAL
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
 
-                      Padding(
-                        padding: const EdgeInsets.only(bottom:40.0),
-                        child: Text(message,textScaleFactor:1.2,style: TextStyle(fontFamily: 'coco',color: Colors.grey[400]),textAlign: TextAlign.center,),
-                      ),
-                      ClayContainer(
-                        width: 150,
-                        height: 130,
-                        borderRadius: 75,
-                        depth: 40,
-                        spread: 10,
-                        //curveType: CurveType.convex,
-                        color: Colors.grey[100],
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(moodFromSlide.toString(),textScaleFactor: 2.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'dot',color: sliderColor),),],),
-                        ),
-                      ),
-
-                      Slider(
-                        inactiveColor: Colors.transparent,
-                        activeColor:sliderColor.shade300,
-                        min: -100.5,
-                        max: 100.5,
-                        value: moodFromSlide.toDouble(),
-                        divisions: 40,
-                        onChanged: (newMood) =>
-                        {setState(() {
-                          sliderColor=rangeColor(newMood.toInt()).color;
-                          moodFromSlide = newMood.toInt();
-                          animateContainerGoGreen();
-                        })},
-                      ),
-
-
-                      Center(
-                        child: AnimatedContainer(
-                          height: buttonHeight,
-                          width: buttonWidth,
-                          duration: Duration(milliseconds: 400),
-                          curve: Curves.linearToEaseOut,
-                          child: ClipRRect(
-                            borderRadius: buttonRadius,
-                            child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
-                            {setState(() {
-                              if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
-
-                                data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
-                                dataToFile(data);
-                                selectedData=selectData(initialRange);
-                                animateContainerGoGrey();}
-                              else{
-                                dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");}
-
-                            })},
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
 
 
                   ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
@@ -237,10 +171,14 @@ class _DashBoardState extends State<DashBoard> {
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children:<Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top:10.0),
+                                      child: Text(message,textScaleFactor:1.2,style: TextStyle(fontFamily: 'coco',color: Colors.grey[400]),textAlign: TextAlign.center,),
+                                    ),
                                     Card(elevation: 0.0,
                                       color: Colors.grey[100],
                                       child: Container(
-                                        height: 450.0,
+                                        height: 400.0,
                                         //color: Colors.grey[100],
                                         child: (sevenDaysData.isEmpty == true) ? Container(
                                             child: Column(
@@ -289,7 +227,7 @@ class _DashBoardState extends State<DashBoard> {
                               Card(elevation: 0.0,
                                   color: Colors.grey[100],
                                   child: Container(
-                                    height: 450.0,
+                                    height: 400.0,
                                     //color: Colors.grey[100],
                                     child: (thirtyDaysData.isEmpty == true) ? Container(
                                         child: Column(
@@ -377,6 +315,7 @@ class _DashBoardState extends State<DashBoard> {
                               ///DATE RANGE SELECTOR
 
                               Container(
+                                color:Colors.white,clipBehavior: Clip.hardEdge,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ClayContainer(
@@ -444,18 +383,41 @@ class _DashBoardState extends State<DashBoard> {
 
 
 
-    ])
+    ]),
+          bottomNavigationBar: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TabBar(dragStartBehavior:DragStartBehavior.down,
+                    isScrollable: true,
+                    tabs: <Widget>[
+                      //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
+                      Container(height:screenSize.height/20,width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.teal),Text('7j',style: TextStyle(color: Colors.teal),)],))),
+                      Container(height:screenSize.height/20,width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.teal,),Text('1m',style: TextStyle(color: Colors.teal))],))),
 
 
-
-
-
-
+                      Padding(
+                        padding: EdgeInsets.only(left:screenSize.width/8),
+                        child: Container(height:screenSize.height/20,width: screenSize.width/3,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.calendar_today,color:Colors.teal),Text('Perso',style: TextStyle(color: Colors.teal))],))),
+                      ),
+                    ]),
+              ],
+            ),
+            color: Colors.white,
+          ),
+          floatingActionButton: FloatingActionButton(
+            child:Icon(Icons.add),
+            onPressed: (){showMenu();},
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     ),
     );
 
 
     }
+
   ///
   ///
   ///
@@ -466,52 +428,146 @@ class _DashBoardState extends State<DashBoard> {
   ///
 
 
-  makeList(myData){
-    return ListView.builder
-      (reverse:true,
-        controller: ScrollController(initialScrollOffset: 100000.0),
-        itemCount: myData.length,
-        itemBuilder: (BuildContext ctxt, int index) {
-          return Padding(
-            padding: const EdgeInsets.only(top:8.0),
-            child: ClayContainer(
-              borderRadius: 10,
-              height: 40.0,
-              width : 300,
-              depth: 10,
-              spread: 7,
-              color: Colors.grey[100],
-              surfaceColor: Colors.grey[50],
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+  showMenu() async {
+    String message="";
+    (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+      return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Padding(padding: const EdgeInsets.only(left:0.0, bottom:5.0,top:5.0),
-                    child: Container(width: 130.0,
-                      height: 40.0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          new Text(dayFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
-                          new Text(hourFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
-                        ],
-                      ),),),
-                  new Text("     ",textAlign: TextAlign.left,),
-                  //new Text(myData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )),
-                 ClayContainer(
-                     height: 20,
-                     width:50,
-                     borderRadius: 30,
-                     //curveType: CurveType.convex,
-                     child:Center(child: Opacity(opacity:0.5,child: new Text(myData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontFamily: 'dot',color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )))),
-                   color: Colors.grey[100],
-                   surfaceColor: Colors.grey[150],
-                     ),
 
+                 /* Padding(
+                    padding: const EdgeInsets.only(bottom:40.0),
+                    child: Text(message,textScaleFactor:1.2,style: TextStyle(fontFamily: 'coco',color: Colors.grey[400]),textAlign: TextAlign.center,),
+                  ),*/
+                  ClayContainer(
+                    width: 150,
+                    height: 130,
+                    borderRadius: 75,
+                    depth: 40,
+                    spread: 10,
+//curveType: CurveType.convex,
+                    color: Colors.grey[100],
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(moodFromSlide.toString(),textScaleFactor: 2.2,textAlign: TextAlign.center,style: TextStyle(fontFamily: 'dot',color: sliderColor),),],),
+                    ),
+                  ),
+
+                  Slider(
+                    inactiveColor: Colors.transparent,
+                    activeColor:sliderColor.shade300,
+                    min: -100.5,
+                    max: 100.5,
+                    value: moodFromSlide.toDouble(),
+                    divisions: 40,
+                    onChanged: (newMood) =>
+                    {setState(() {
+                      sliderColor=rangeColor(newMood.toInt()).color;
+                      moodFromSlide = newMood.toInt();
+                      animateContainerGoGreen();
+                      message=messageFromMood(todayMood.first.value);
+
+                    })},
+                  ),
+
+
+                  Center(
+                    child: AnimatedContainer(
+                      height: buttonHeight,
+                      width: buttonWidth,
+                      duration: Duration(milliseconds: 400),
+                      curve: Curves.linearToEaseOut,
+                      child: ClipRRect(
+                        borderRadius: buttonRadius,
+                        child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
+                        {setState(() {
+                          if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
+
+                            data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
+                            dataToFile(data);
+                            selectedData=selectData(initialRange);
+                            animateContainerGoGrey();
+                            message=messageFromMood(todayMood.first.value);
+                            Navigator.pop(context);
+                            }
+                          else{setState(() {
+
+                          });
+                            dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");
+                          }
+
+                        })},
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-          );}
+            );
+          });
+    });
+  }
+
+
+
+  makeList(myData){
+    return Padding(
+      padding: const EdgeInsets.only(bottom:20.0),
+      child: ListView.builder
+        (reverse:true,
+          controller: ScrollController(initialScrollOffset: 100000.0),
+          itemCount: myData.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return Padding(
+              padding: const EdgeInsets.only(top:8.0),
+              child: ClayContainer(
+                borderRadius: 10,
+                height: 40.0,
+                width : 300,
+                depth: 10,
+                spread: 7,
+                color: Colors.grey[100],
+                surfaceColor: Colors.grey[50],
+
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(padding: const EdgeInsets.only(left:0.0, bottom:5.0,top:5.0),
+                      child: Container(width: 130.0,
+                        height: 40.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            new Text(dayFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                            new Text(hourFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
+                          ],
+                        ),),),
+                    new Text("     ",textAlign: TextAlign.left,),
+                    //new Text(myData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )),
+                   ClayContainer(
+                       height: 20,
+                       width:80,
+                       borderRadius: 30,
+                       //curveType: CurveType.convex,
+                       child:Center(child: Opacity(opacity:1.0,child: new Text(myData[index].value.toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )))),
+                     color: Colors.grey[100],
+                     surfaceColor: Colors.grey[150],
+                       ),
+
+                  ],
+                ),
+              ),
+            );}
+      ),
     );
   }
 
@@ -554,6 +610,7 @@ class _DashBoardState extends State<DashBoard> {
                   //fileToData(fileContent);
                   animateContainerGoGrey();
                   selectedData=selectData(initialRange);
+                  message=messageFromMood(todayMood.first.value);
                 });
 
                 Navigator.of(context).pop();
@@ -571,7 +628,7 @@ class _DashBoardState extends State<DashBoard> {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(title),
           content: SingleChildScrollView(
@@ -608,6 +665,10 @@ class _DashBoardState extends State<DashBoard> {
                 });
 
                 Navigator.of(context).pop();
+                setState(() {
+                  message=messageFromMood(todayMood.first.value);
+                });
+
               },
 
             ),
@@ -790,5 +851,6 @@ class SimpleTimeSeriesChart extends StatelessWidget {
       )
     ];
   }
+
 
 }

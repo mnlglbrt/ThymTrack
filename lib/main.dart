@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Bipolair',
       theme: ThemeData(
         primarySwatch: Colors.teal,
+        //canvasColor: Colors.transparent,
       ),
       home: LoginPage(),
     );
