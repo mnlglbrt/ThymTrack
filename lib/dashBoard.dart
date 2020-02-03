@@ -79,7 +79,6 @@ class _DashBoardState extends State<DashBoard> {
   PageController pageController= PageController();
   int nbTabs=3;
   BuildContext bsContext;
-  BuildContext dialogContext;
   String message="";
 
 
@@ -430,9 +429,9 @@ class _DashBoardState extends State<DashBoard> {
     (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
     showModalBottomSheet(
         context: context,
-        builder: (bsContext) {
+        builder: (context) {
       return StatefulBuilder(
-          builder: (BuildContext bsContext, StateSetter setModalState) {
+          builder: (BuildContext context, StateSetter setModalState) {
             return Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -473,7 +472,9 @@ class _DashBoardState extends State<DashBoard> {
                       animateContainerGoGreen();
                       message=messageFromMood(moodFromSlide);
 
-                    })},
+                    },),
+
+                    },
                   ),
 
 
@@ -494,7 +495,7 @@ class _DashBoardState extends State<DashBoard> {
                             selectedData=selectData(initialRange);
                             animateContainerGoGrey();
                             message=messageFromMood(todayMood.first.value);
-                            Navigator.pop(bsContext);
+                            Navigator.pop(context);
                             }
                           else{setState(() {
 
@@ -607,10 +608,12 @@ class _DashBoardState extends State<DashBoard> {
                   //fileToData(fileContent);
                   animateContainerGoGrey();
                   selectedData=selectData(initialRange);
-                  message=messageFromMood(todayMood.first.value);
                 });
 
-                Navigator.of(context).pop();
+                setState((){
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                });
               },
 
             ),
