@@ -160,9 +160,6 @@ class _DashBoardState extends State<DashBoard> {
 
 
 
-                  ///                                                      ADD :   AJOUT D'ENTRÉE AU JOURNAL
-
-
 
                   ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
                         Column(
@@ -433,9 +430,9 @@ class _DashBoardState extends State<DashBoard> {
     (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
     showModalBottomSheet(
         context: context,
-        builder: (context) {
+        builder: (bsContext) {
       return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
+          builder: (BuildContext bsContext, StateSetter setModalState) {
             return Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -470,11 +467,11 @@ class _DashBoardState extends State<DashBoard> {
                     value: moodFromSlide.toDouble(),
                     divisions: 40,
                     onChanged: (newMood) =>
-                    {setState(() {
+                    {setModalState(() {
                       sliderColor=rangeColor(newMood.toInt()).color;
                       moodFromSlide = newMood.toInt();
                       animateContainerGoGreen();
-                      message=messageFromMood(todayMood.first.value);
+                      message=messageFromMood(moodFromSlide);
 
                     })},
                   ),
@@ -497,7 +494,7 @@ class _DashBoardState extends State<DashBoard> {
                             selectedData=selectData(initialRange);
                             animateContainerGoGrey();
                             message=messageFromMood(todayMood.first.value);
-                            Navigator.pop(context);
+                            Navigator.pop(bsContext);
                             }
                           else{setState(() {
 
