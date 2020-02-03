@@ -2,9 +2,9 @@ import 'package:bipo/dashBoard.dart';
 import 'package:flutter/material.dart';
 import 'sign_in.dart';
 import 'dashBoard.dart';
+import 'data.dart';
 import 'package:clay_containers/clay_containers.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override

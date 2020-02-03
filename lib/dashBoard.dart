@@ -118,7 +118,7 @@ class _DashBoardState extends State<DashBoard> {
                   children: <Widget>[
                     Tooltip(message:'Deconnexion',
                       child: FlatButton(
-                        onLongPress: (){
+                        onPressed: (){
                           signOutGoogle();
                           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {return LoginPage();}), ModalRoute.withName('/'));
                         },
