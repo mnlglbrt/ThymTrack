@@ -14,6 +14,7 @@ import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
 import 'login_page.dart';
 import 'sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class DashBoard extends StatefulWidget {
@@ -26,46 +27,34 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  var today=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+/*    var snapshot=data_instance.collection('users').document(uid).collection('moods').snapshots();
 
 
-  ///JSON VARIABLES
-  File jsonFile;
-  Directory dir;
-  String filename="MoodData.json";
-  bool fileExists=false;
-  Map<String, dynamic> fileContent;
+   Future<void> getDataFromFB() async {
+    var mysnapshot= await snapshot.toList();
+     for(var i=0; i<mysnapshot.length;i++){
+      data.add(new TimeSeriesMoods(DateTime.parse(snapshot.data.data[i].data.keys.toString().substring(1,11)), int.tryParse(snapshot.data.data[i].data.values.toString().substring(1,snapshot.data.data[i].data.values.toString().length-1).replaceAll(')',''))));
+    }}*/
+  }
   ///
   ///OTHER VARIABLES
   var dayFormatter = new DateFormat('dd/MM/y');
   var hourFormatter= new DateFormat('H:mm');
-  List<TimeSeriesMoods>empty = [];
   int moodFromSlide = 0;
-  var todayMood=data.where((i) => i.time.day == DateTime.now().day);
   TextStyle white=TextStyle(color: Colors.white);
   TextStyle black=TextStyle(color: Colors.black);
   ///
 
 
 
-  @override
-  void initState() {
-
-    super.initState();
-    getApplicationDocumentsDirectory().then((Directory directory) {
-      dir = directory;
-      jsonFile = new File(dir.path + "/" + filename);
-      fileExists = jsonFile.existsSync();
-      if (fileExists) this.setState(() => fileContent = json.decode(jsonFile.readAsStringSync()));
-      if (fileExists) this.setState(() => fileToData(jsonFile));
-    });
-
-
-  }
-
-
-
-
-
+  List<int> moodList=[];
   var buttonRadius=BorderRadius.circular(30.0);
   var sliderColor=Colors.teal;
   var buttonColor = Colors.red;
@@ -75,341 +64,444 @@ class _DashBoardState extends State<DashBoard> {
   dynamic buttonChild=Text('');
   bool buttonVisible=true;
   List<DateTime>initialRange=[DateTime.now().subtract(new Duration(days: 6)),DateTime.now()];
-  var pictureDisplayed="brume";
   PageController pageController= PageController();
   int nbTabs=3;
   BuildContext bsContext;
   String message="";
+  TimeSeriesMoods todayMood;
+  var listdates=[];
+  var listmoods=[];
 
 
 
 
 
   Widget build(BuildContext context) {
-    (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
-    print('build : $initialRange');
-    var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
-    var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
-    var selectedData= [];
-    selectedData = selectData(initialRange);
-    var screenSize=MediaQuery.of(context).size;
+    data.clear();
+    Stream<QuerySnapshot> myMoods(String uid)=> fire_users.document(uid).collection('moods').snapshots();
 
-    return DefaultTabController(length: nbTabs,
-        child: new Scaffold(
-            appBar: AppBar(
-              elevation: 10.0,
-              title: Padding(
-                padding: const EdgeInsets.only(top:20.0),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right:30.0),
-                    child: new Text("Bipol'Air",textAlign: TextAlign.center,textScaleFactor: 2.0,
-                      style: new TextStyle(
-                        fontFamily: 'simplePrint',
-                        fontStyle: FontStyle.italic,
-                        color: Colors.white,),),
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: myMoods(uid),
+        builder: (BuildContext context,
+            AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+
+
+            return CircularProgressIndicator();
+          } else {
+            for (var i = 0; i < snapshot.data.documents.length; i++) {
+              listdates.add(DateTime.parse(snapshot.data.documents[i].data.keys.toString().substring(1,11)));
+              listmoods.add(int.parse(snapshot.data.documents[i].data.values.toString().substring(1, 3)));
+
+              data.add(TimeSeriesMoods(
+                listdates[i],listmoods[i]
+              ));
+            }
+            print (listdates);
+            print (listmoods);
+            print(data);
+            message="Comment vous sentez-vous aujourd'hui?";
+            var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
+            var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
+            var selectedData = selectData(initialRange);
+            var screenSize=MediaQuery.of(context).size;
+            return DefaultTabController(length: nbTabs,
+              child: new Scaffold(
+                appBar: AppBar(
+                  elevation: 10.0,
+                  title: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 30.0),
+                        child: new Text(
+                          "Bipol'Air", textAlign: TextAlign.center,
+                          textScaleFactor: 2.0,
+                          style: new TextStyle(
+                            fontFamily: 'simplePrint',
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white,),),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              leading: Image.asset('images/logo.png'),
-              actions: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Tooltip(message:'Deconnexion',
-                      child: FlatButton(
-                        onPressed: (){
-                          signOutGoogle();
-                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) {return LoginPage();}), ModalRoute.withName('/'));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right:8.0,),
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                imageUrl,
+                  leading: Image.asset('images/logo.png'),
+                  actions: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Tooltip(message: 'Deconnexion',
+                          child: FlatButton(
+                            onPressed: () {
+                              signOutGoogle();
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(builder: (context) {
+                                    return LoginPage();
+                                  }), ModalRoute.withName('/'));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0,),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    imageUrl,
+                                  ),
+                                  radius: 60,
+                                  backgroundColor: Colors.transparent,
+                                ),
                               ),
-                              radius: 60,
-                              backgroundColor: Colors.transparent,
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
+                  backgroundColor: Colors.teal,
                 ),
-              ],
-              backgroundColor:Colors.teal,
-             /* bottom: TabBar(dragStartBehavior:DragStartBehavior.down,
-                  isScrollable: true,
-                  tabs: <Widget>[
-                    Container(width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.white),],)),
-                    Container(width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.white),Text('7j',style: white,)],))),
-                    Container(width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.white,),Text('1m',style: white)],))),
-                    Container(width: screenSize.width/5,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.calendar_today,color:Colors.white),Text('Perso',style: white)],))),
-                  ]),*/
-            ),
 
 
-
-            body: TabBarView(
-                children: <Widget>[
-
+                body: TabBarView(
+                    children: <Widget>[
 
 
+                      ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
+                      Column(
+                        children: <Widget>[
+                          Flexible(flex: 3,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceEvenly,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Text(message, textScaleFactor: 1.2,
+                                      style: TextStyle(fontFamily: 'coco',
+                                          color: Colors.grey[400]),
+                                      textAlign: TextAlign.center,),
+                                  ),
+                                  Card(elevation: 0.0,
+                                    color: Colors.grey[100],
+                                    child: Container(
+                                      height: 400.0,
+                                      //color: Colors.grey[100],
+                                      child: (sevenDaysData.isEmpty == true)
+                                          ? Container(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .center,
+                                            children: <Widget>[
+                                              Text("Aucune entrée",
+                                                textScaleFactor: 1.3,),
+                                              Text(
+                                                "Utilisez le slider pour entrer votre humeur.",
+                                                textScaleFactor: 1.1,
+                                                textAlign: TextAlign.center,),
+                                              Text(
+                                                "Attribuez-lui une note entre -100 et +100",
+                                                textScaleFactor: 1.1,
+                                                textAlign: TextAlign.center,),
+                                            ],
+                                          ))
+                                          :
 
-                  ///                                                      CHART 7 :   GRAPH POUR 7 DERNIERS JOURS
-                        Column(
-                          children: <Widget>[
-                            Flexible(flex: 3,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children:<Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(top:10.0),
-                                      child: Text(message,textScaleFactor:1.2,style: TextStyle(fontFamily: 'coco',color: Colors.grey[400]),textAlign: TextAlign.center,),
+                                      SimpleTimeSeriesChart(
+                                          <charts.Series<
+                                              TimeSeriesMoods,
+                                              DateTime>>[
+                                            charts.Series<
+                                                TimeSeriesMoods,
+                                                DateTime>(
+                                              id: 'Moods',
+                                              colorFn: (_, __) =>
+                                              charts.MaterialPalette.teal
+                                                  .shadeDefault.lighter,
+                                              domainFn: (TimeSeriesMoods moods,
+                                                  _) => moods.time,
+                                              measureFn: (TimeSeriesMoods moods,
+                                                  _) => moods.value,
+                                              data: sevenDaysData,
+                                            )
+                                          ]),
                                     ),
-                                    Card(elevation: 0.0,
+                                  ),
+
+
+                                  ///                                                      LIST 7 :   LIST POUR 7 DERNIERS JOURS
+                                  (sevenDaysData.isEmpty)
+                                      ? Text("Pas dentrée")
+                                      :
+                                  Flexible(flex: 2,
+                                    child: makeList(sevenDaysData),
+                                  ),
+
+                                ]),
+                          ),
+                        ],
+                      ),
+
+
+                      ///                                                      CHART 30 :   GRAPH POUR 30 DERNIERS JOURS
+                      Column(
+                        children: <Widget>[
+                          Flexible(flex: 3,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceEvenly,
+                                children: <Widget>[
+                                  Card(elevation: 0.0,
                                       color: Colors.grey[100],
                                       child: Container(
                                         height: 400.0,
                                         //color: Colors.grey[100],
-                                        child: (sevenDaysData.isEmpty == true) ? Container(
+                                        child: (thirtyDaysData.isEmpty == true)
+                                            ? Container(
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .center,
                                               children: <Widget>[
-                                                Text("Aucune entrée", textScaleFactor: 1.3,),
-                                                Text("Utilisez le slider pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-                                                Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
+                                                Text("Aucune entrée",
+                                                  textScaleFactor: 1.3,),
+                                                Text(
+                                                  "Utilisez le slider pour entrer votre humeur.",
+                                                  textScaleFactor: 1.1,
+                                                  textAlign: TextAlign.center,),
+                                                Text(
+                                                  "Attribuez-lui une note entre -100 et +100",
+                                                  textScaleFactor: 1.1,
+                                                  textAlign: TextAlign.center,),
                                               ],
-                                            )) :
+                                            ))
+                                            :
 
                                         SimpleTimeSeriesChart(
-                                            <charts.Series<TimeSeriesMoods, DateTime>>[
-                                              charts.Series<TimeSeriesMoods, DateTime>(
+                                            <charts.Series<
+                                                TimeSeriesMoods,
+                                                DateTime>>[
+                                              charts.Series<
+                                                  TimeSeriesMoods,
+                                                  DateTime>(
                                                 id: 'Moods',
-                                                colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault.lighter,
-                                                domainFn: (TimeSeriesMoods moods, _) => moods.time,
-                                                measureFn: (TimeSeriesMoods moods, _) => moods.value,
-                                                data: sevenDaysData,
+                                                colorFn: (_, __) =>
+                                                charts.MaterialPalette.teal
+                                                    .shadeDefault,
+                                                domainFn: (
+                                                    TimeSeriesMoods moods,
+                                                    _) => moods.time,
+                                                measureFn: (
+                                                    TimeSeriesMoods moods,
+                                                    _) => moods.value,
+                                                data: thirtyDaysData,
                                               )
                                             ]),
+                                      )),
+
+
+                                  ///                                                      LIST 30 :   LIST POUR 30 DERNIERS JOURS
+                                  (selectedData.isEmpty) ? Text("Pas dentrée") :
+                                  Flexible(flex: 2,
+                                    child: makeList(thirtyDaysData),
+                                  ),
+
+                                ]),
+                          ),
+                        ],
+                      ),
+
+
+                      ///                                                     GRAPH perso POUR SELECTED RANGE
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Flexible(flex: 3,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceEvenly,
+                                children: <Widget>[
+                                  Card(elevation: 0.0,
+                                      child: Container(
+                                        height: 400.0,
+                                        color: Colors.grey[100],
+                                        child: (selectedData.isEmpty == true)
+                                            ? Container(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .center,
+                                              children: <Widget>[
+                                                Text("Aucune entrée",
+                                                  textScaleFactor: 1.3,),
+                                                Text(
+                                                  "Utilisez le slider pour entrer votre humeur.",
+                                                  textScaleFactor: 1.1,
+                                                  textAlign: TextAlign.center,),
+                                                Text(
+                                                  "Attribuez-lui une note entre -100 et +100",
+                                                  textScaleFactor: 1.1,
+                                                  textAlign: TextAlign.center,),
+                                              ],
+                                            ))
+                                            :
+
+                                        SimpleTimeSeriesChart(
+                                            <charts.Series<
+                                                TimeSeriesMoods,
+                                                DateTime>>[
+                                              charts.Series<
+                                                  TimeSeriesMoods,
+                                                  DateTime>(
+                                                id: 'custom',
+                                                colorFn: (_, __) =>
+                                                charts.MaterialPalette.teal
+                                                    .shadeDefault.darker,
+                                                areaColorFn: (_, __) =>
+                                                charts.MaterialPalette.blue
+                                                    .shadeDefault.lighter,
+                                                domainFn: (
+                                                    TimeSeriesMoods moods,
+                                                    _) => moods.time,
+                                                measureFn: (
+                                                    TimeSeriesMoods moods,
+                                                    _) => moods.value,
+                                                data: selectedData,
+                                              )
+                                            ]),
+                                      )),
+
+
+                                  ///DATE RANGE SELECTOR
+
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ClayContainer(
+                                      color: Colors.grey[100],
+                                      parentColor: Colors.white,
+                                      width: 300,
+                                      height: 50,
+                                      borderRadius: 75,
+                                      depth: 40,
+                                      spread: 10,
+                                      child: new InkWell(
+                                          onTap: () async {
+                                            final List<
+                                                DateTime> picked = await DateRangePicker
+                                                .showDatePicker(
+                                                context: context,
+                                                initialFirstDate: initialRange[0],
+                                                initialLastDate: initialRange[1],
+                                                firstDate: new DateTime(2019),
+                                                lastDate: new DateTime(2050)
+                                            );
+                                            if (picked != null &&
+                                                picked.length == 2) {
+                                              setState(() {
+                                                initialRange = picked;
+                                                selectedData.clear();
+                                                selectedData =
+                                                    selectData(picked);
+                                              });
+                                            }
+                                          },
+
+
+                                          child: Row(
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .spaceEvenly,
+                                              children: <Widget>[
+                                                new Text('${new DateFormat(
+                                                    "dd-MM-yyyy").format(
+                                                    initialRange[0])}'),
+                                                new Icon(Icons.calendar_today),
+                                                new Text('${new DateFormat(
+                                                    "dd-MM-yyyy").format(
+                                                    initialRange[1])}'),
+                                              ]
+                                          )
                                       ),
                                     ),
-
-
-                                    ///                                                      LIST 7 :   LIST POUR 7 DERNIERS JOURS
-                                    (selectedData.isEmpty)?Text("Pas dentrée"):
-                                    Flexible(flex:2,
-                                      child: makeList(sevenDaysData),
-                                    ),
-
-                                  ]),
-                            ),
-                          ],
-                        ),
-
-
-
-                 ///                                                      CHART 30 :   GRAPH POUR 30 DERNIERS JOURS
-                  Column(
-                    children: <Widget>[
-                      Flexible(flex: 3,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children:<Widget>[
-                              Card(elevation: 0.0,
-                                  color: Colors.grey[100],
-                                  child: Container(
-                                    height: 400.0,
-                                    //color: Colors.grey[100],
-                                    child: (thirtyDaysData.isEmpty == true) ? Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text("Aucune entrée", textScaleFactor: 1.3,),
-                                            Text("Utilisez le slider pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-                                            Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-                                          ],
-                                        )) :
-
-                                    SimpleTimeSeriesChart(
-                                        <charts.Series<TimeSeriesMoods, DateTime>>[
-                                          charts.Series<TimeSeriesMoods, DateTime>(
-                                            id: 'Moods',
-                                            colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault,
-                                            domainFn: (TimeSeriesMoods moods, _) => moods.time,
-                                            measureFn: (TimeSeriesMoods moods, _) => moods.value,
-                                            data: thirtyDaysData,
-                                          )
-                                        ]),
-                                  )),
-
-
-                              ///                                                      LIST 30 :   LIST POUR 30 DERNIERS JOURS
-                              (selectedData.isEmpty)?Text("Pas dentrée"):
-                              Flexible(flex:2,
-                                child: makeList(thirtyDaysData),
-                              ),
-
-                            ]),
-                      ),
-                    ],
-                  ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  ///                                                     GRAPH perso POUR SELECTED RANGE
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Flexible(flex: 3,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children:<Widget>[
-                              Card(elevation: 0.0,
-                                  child: Container(
-                                    height: 400.0,
-                                    color: Colors.grey[100],
-                                    child: (selectedData.isEmpty == true) ? Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text("Aucune entrée", textScaleFactor: 1.3,),
-                                            Text("Utilisez le slider pour entrer votre humeur.", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-                                            Text("Attribuez-lui une note entre -100 et +100", textScaleFactor: 1.1,textAlign: TextAlign.center,),
-                                          ],
-                                        )) :
-
-                                    SimpleTimeSeriesChart(
-                                        <charts.Series<TimeSeriesMoods, DateTime>>[
-                                          charts.Series<TimeSeriesMoods, DateTime>(
-                                            id: 'custom',
-                                            colorFn: (_, __) => charts.MaterialPalette.teal.shadeDefault.darker,
-                                            areaColorFn: (_, __) =>
-                                            charts.MaterialPalette.blue.shadeDefault.lighter,
-                                            domainFn: (TimeSeriesMoods moods, _) => moods.time,
-                                            measureFn: (TimeSeriesMoods moods, _) => moods.value,
-                                            data: selectedData,
-                                          )
-                                        ]),
-                                  )),
-
-
-                              ///DATE RANGE SELECTOR
-
-                              Container(
-                                color:Colors.white,clipBehavior: Clip.hardEdge,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ClayContainer(
-                                    color: Colors.grey[100],
-                                    parentColor: Colors.white,
-                                    width: 300,
-                                    height: 50,
-                                    borderRadius: 75,
-                                    depth: 40,
-                                    spread: 10,
-                                    child: new InkWell(
-                                        onTap: () async {
-                                          final List<DateTime> picked = await DateRangePicker.showDatePicker(
-                                              context: context,
-                                              initialFirstDate: initialRange[0],
-                                              initialLastDate: initialRange[1],
-                                              firstDate: new DateTime(2019),
-                                              lastDate: new DateTime(2050)
-                                          );
-                                          if (picked != null && picked.length == 2) {
-                                            setState(() {
-                                              initialRange=picked;
-                                              selectedData.clear();
-                                              selectedData=selectData(picked);
-                                            });
-                                          }
-                                        },
-
-
-                                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children:<Widget>[
-                                            new Text('${new DateFormat("dd-MM-yyyy").format(initialRange[0])}'),
-                                            new Icon(Icons.calendar_today),
-                                            new Text('${new DateFormat("dd-MM-yyyy").format(initialRange[1])}'),
-                                          ]
-                                        )
-                                    ),
                                   ),
-                                ),
-                              ),
 
 
-                              ///                                                      LIST PERSO
-                              (selectedData.isEmpty)?Text("Pas dentrée"):
-                              Flexible(flex:2,
-                                child: makeList(selectedData)
-                              ),
+                                  ///                                                      LIST PERSO
+                                  (selectedData.isEmpty) ? Text("Pas dentrée") :
+                                  Flexible(flex: 2,
+                                      child: makeList(selectedData)
+                                  ),
 
-                            ]),
+                                ]),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-
-
-
-
-
 
 
 //Container(child: Text(fileContent.toString())),
 
 
-
-
-
-
-
-    ]),
-          bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TabBar(dragStartBehavior:DragStartBehavior.down,
-                    isScrollable: true,
-                    tabs: <Widget>[
-                      //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
-                      Container(height:screenSize.height/20,width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.teal),Text('7j',style: TextStyle(color: Colors.teal),)],))),
-                      Container(height:screenSize.height/20,width: screenSize.width/8,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.show_chart,color: Colors.teal,),Text('1m',style: TextStyle(color: Colors.teal))],))),
-
-
-                      Padding(
-                        padding: EdgeInsets.only(left:screenSize.width/8),
-                        child: Container(height:screenSize.height/20,width: screenSize.width/3,child: Center(child: Row(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[Icon(Icons.calendar_today,color:Colors.teal),Text('Perso',style: TextStyle(color: Colors.teal))],))),
-                      ),
                     ]),
-              ],
-            ),
-            color: Colors.white,
-          ),
-          floatingActionButton: FloatingActionButton(
-            child:Icon(Icons.add),
-            onPressed: (){showMenu();},
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    ),
-    );
+                bottomNavigationBar: BottomAppBar(
+                  shape: CircularNotchedRectangle(),
+                  child: new Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TabBar(dragStartBehavior: DragStartBehavior.down,
+                          isScrollable: true,
+                          tabs: <Widget>[
+                            //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
+                            Container(height: screenSize.height / 20,
+                                width: screenSize.width / 8,
+                                child: Center(child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceEvenly,
+                                  children: <Widget>[
+                                    Icon(Icons.show_chart, color: Colors.teal),
+                                    Text('7j',
+                                      style: TextStyle(color: Colors.teal),)
+                                  ],))),
+                            Container(height: screenSize.height / 20,
+                                width: screenSize.width / 8,
+                                child: Center(child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceEvenly,
+                                  children: <Widget>[
+                                    Icon(Icons.show_chart, color: Colors.teal,),
+                                    Text('1m',
+                                        style: TextStyle(color: Colors.teal))
+                                  ],))),
+
+
+                            Padding(
+                              padding: EdgeInsets.only(left: screenSize.width /
+                                  8),
+                              child: Container(height: screenSize.height / 20,
+                                  width: screenSize.width / 3,
+                                  child: Center(child: Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    children: <Widget>[
+                                      Icon(Icons.calendar_today,
+                                          color: Colors.teal),
+                                      Text('Perso',
+                                          style: TextStyle(color: Colors.teal))
+                                    ],))),
+                            ),
+                          ]),
+                    ],
+                  ),
+                  color: Colors.white,
+                ),
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.add),
+                  onPressed: () {
+                    showMenu();
+                  },
+                ),
+                floatingActionButtonLocation: FloatingActionButtonLocation
+                    .centerDocked,
+              ),
+            );
+          }
+        });
 
 
     }
@@ -425,13 +517,11 @@ class _DashBoardState extends State<DashBoard> {
 
 
   showMenu() async {
-    String message="";
-    (todayMood.isEmpty)? message="Comment vous sentez-vous aujourd'hui?":message=messageFromMood(todayMood.first.value);
     showModalBottomSheet(
         context: context,
         builder: (context) {
       return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
+          builder: (BuildContext context, StateSetter setState) {
             return Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -466,7 +556,7 @@ class _DashBoardState extends State<DashBoard> {
                     value: moodFromSlide.toDouble(),
                     divisions: 40,
                     onChanged: (newMood) =>
-                    {setModalState(() {
+                    {setState(() {
                       sliderColor=rangeColor(newMood.toInt()).color;
                       moodFromSlide = newMood.toInt();
                       animateContainerGoGreen();
@@ -488,19 +578,26 @@ class _DashBoardState extends State<DashBoard> {
                         borderRadius: buttonRadius,
                         child: RaisedButton(padding: EdgeInsets.all(0),child: buttonChild,color: buttonColor, onPressed: () =>
                         {setState(() {
-                          if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
-
-                            data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
-                            dataToFile(data);
-                            selectedData=selectData(initialRange);
+                          if (todayMood==null) {
+                            todayMood=TimeSeriesMoods(today,moodFromSlide);
+                            Map<String, int>newEntry = {
+                              DateTime(DateTime
+                                  .now()
+                                  .year, DateTime
+                                  .now()
+                                  .month, DateTime
+                                  .now()
+                                  .day,).toString(): moodFromSlide
+                            };
+                            data_instance.collection('users').document(uid).collection(
+                                "moods").document(today.toString()).setData(newEntry);
                             animateContainerGoGrey();
-                            message=messageFromMood(todayMood.first.value);
                             Navigator.pop(context);
-                            }
+                          }
                           else{setState(() {
-
-                          });
                             dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");
+                          });
+
                           }
 
                         })},
@@ -521,7 +618,7 @@ class _DashBoardState extends State<DashBoard> {
     return Padding(
       padding: const EdgeInsets.only(bottom:20.0),
       child: ListView.builder
-        (reverse:true,
+        (reverse:false,
           controller: ScrollController(initialScrollOffset: 100000.0),
           itemCount: myData.length,
           itemBuilder: (BuildContext ctxt, int index) {
@@ -598,22 +695,24 @@ class _DashBoardState extends State<DashBoard> {
               shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
               onPressed: () {
                 setState(() {
-                  data.removeWhere((i) => i.time.day == DateTime.now().day);
-                  data.add(TimeSeriesMoods(DateTime.now(),moodFromSlide));
-                  jsonFile.deleteSync();
-                  fileContent.clear();
-                  createFile(fileContent, dir, filename);
-                  data.forEach((e)=>writeToFile(e.time.toString(), e.value.toString()));
-                  fileContent = json.decode(jsonFile.readAsStringSync());
-                  //fileToData(fileContent);
-                  animateContainerGoGrey();
-                  selectedData=selectData(initialRange);
+
+                    Map<String, int>newEntry = {
+                      DateTime(DateTime
+                          .now()
+                          .year, DateTime
+                          .now()
+                          .month, DateTime
+                          .now()
+                          .day,).toString(): moodFromSlide
+                    };
+                    data_instance.collection('users').document(uid).collection(
+                        "moods").document(today.toString()).setData(newEntry);
+                    animateContainerGoGrey();
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+
                 });
 
-                setState((){
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                });
               },
 
             ),
@@ -624,59 +723,6 @@ class _DashBoardState extends State<DashBoard> {
   }
 
 
-  Future<void> dialogChangeEntry(String title, String content,DateTime date) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(content+" "+dayFormatter.format(date).toString()),
-
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Annuler'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-
-            ),
-            FlatButton(
-              child: Text('Modifier'),
-              onPressed: () {
-                setState(() {
-                  data.removeWhere((i) => i.time.day == DateTime.now().day);
-                  data.add(TimeSeriesMoods(DateTime.now(),moodFromSlide));
-                  jsonFile.deleteSync();
-                  fileContent.clear();
-                  createFile(fileContent, dir, filename);
-                  data.forEach((e)=>writeToFile(e.time.toString(), e.value.toString()));
-                  fileContent = json.decode(jsonFile.readAsStringSync());
-                  //fileToData(fileContent);
-                  selectedData=selectData(initialRange);
-                  animateContainerGoGrey();
-
-                });
-
-                Navigator.of(context).pop();
-                setState(() {
-                  message=messageFromMood(todayMood.first.value);
-                });
-
-              },
-
-            ),
-          ],
-        );
-      },
-    );
-  }
 
 
 
@@ -710,7 +756,7 @@ class _DashBoardState extends State<DashBoard> {
                 ),
               ])],
       );
-      buttonColor=rangeColor(todayMood.first.value).color;
+      buttonColor=rangeColor(moodFromSlide).color;
       buttonWidth = 200;
       buttonHeight = 50;
       buttonRadius=BorderRadius.circular(10.0);
@@ -749,7 +795,7 @@ class _DashBoardState extends State<DashBoard> {
 
   List<TimeSeriesMoods>selectData(List<DateTime> picked){
     List<TimeSeriesMoods> list=[];
-    selectedData = [];
+    selectedData.clear();
     for(int i = 0 ; i < data.length; i++ ) {
       if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,)) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 1)))){
         list.add(data[i]);
@@ -758,7 +804,7 @@ class _DashBoardState extends State<DashBoard> {
     return list;
   }
 
-  void createFile(Map<String,dynamic> content,Directory dir, String fileName){
+/*  void createFile(Map<String,dynamic> content,Directory dir, String fileName){
     print("Creating file");
     File file = new File(dir.path + "/" + filename);
     file.createSync();
@@ -796,7 +842,7 @@ class _DashBoardState extends State<DashBoard> {
       data.add(TimeSeriesMoods(stringToDateTime(keyList[i]),stringToInt(valueList[i])));
     }
 
-  }
+  */
 
 }
 

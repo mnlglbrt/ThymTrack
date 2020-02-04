@@ -15,6 +15,10 @@ final List<TimeSeriesMoods>data = [
 
 ];
 
+Map <DateTime, int> onlineData={
+
+};
+
 List<TimeSeriesMoods>selectedData=[];
 
 var pictures = {

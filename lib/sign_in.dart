@@ -37,15 +37,16 @@ Future<String> signInWithGoogle() async {
   email = user.email;
   imageUrl = user.photoUrl;
   uid=user.uid;
-Map<DateTime, int>moods={
+  var userData=fire_users.document(uid);
 
-};
+
+
   Map <String, dynamic> map={
     "name":name,
     "email":email,
     "imageUrl":imageUrl,
     "uid":uid,
-    "moods":data,
+    "usertype":"patient",
   };
   fire_users.document(uid).setData(map);
 

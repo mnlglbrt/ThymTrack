@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'sign_in.dart';
+import '../../lib/login_page.dart';
+import '../../lib/sign_in.dart';
 
 class FirstScreen extends StatelessWidget {
   @override
