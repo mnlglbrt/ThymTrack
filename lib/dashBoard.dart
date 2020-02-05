@@ -33,15 +33,8 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    data.clear();
 
-/*    var snapshot=data_instance.collection('users').document(uid).collection('moods').snapshots();
-
-
-   Future<void> getDataFromFB() async {
-    var mysnapshot= await snapshot.toList();
-     for(var i=0; i<mysnapshot.length;i++){
-      data.add(new TimeSeriesMoods(DateTime.parse(snapshot.data.data[i].data.keys.toString().substring(1,11)), int.tryParse(snapshot.data.data[i].data.values.toString().substring(1,snapshot.data.data[i].data.values.toString().length-1).replaceAll(')',''))));
-    }}*/
   }
   ///
   ///OTHER VARIABLES
@@ -71,36 +64,40 @@ class _DashBoardState extends State<DashBoard> {
   TimeSeriesMoods todayMood;
   var listdates=[];
   var listmoods=[];
+  var doc;
 
 
 
 
 
   Widget build(BuildContext context) {
-    data.clear();
-    Stream<QuerySnapshot> myMoods(String uid)=> fire_users.document(uid).collection('moods').snapshots();
 
 
     return StreamBuilder<QuerySnapshot>(
-      stream: myMoods(uid),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
+    stream: fire_users.document(uid).collection('moods').snapshots(),
+    builder: (BuildContext context,
+    AsyncSnapshot<QuerySnapshot> snapshot) {
+      getData();
+    if (!snapshot.hasData) {
 
 
-            return CircularProgressIndicator();
-          } else {
-            for (var i = 0; i < snapshot.data.documents.length; i++) {
-              listdates.add(DateTime.parse(snapshot.data.documents[i].data.keys.toString().substring(1,11)));
-              listmoods.add(int.parse(snapshot.data.documents[i].data.values.toString().substring(1, 3)));
+    return CircularProgressIndicator();
+    } else {
 
-              data.add(TimeSeriesMoods(
-                listdates[i],listmoods[i]
-              ));
-            }
-            print (listdates);
-            print (listmoods);
-            print(data);
+    getData();
+/*            var collectionReference= Firestore.instance.collection('users').document(uid).collection('moods');
+            var query = collectionReference;
+            query.getDocuments().then((querySnapshot)=> {
+           querySnapshot.documents.forEach((document)=>{
+             data.add(TimeSeriesMoods(DateTime.parse(document.data.keys.toString().substring(1,11)),int.parse(document.data.values.toString().substring(1,3))))
+           })
+
+
+                // check and do something with the data here.
+            });*/
+
+
+
             message="Comment vous sentez-vous aujourd'hui?";
             var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
             var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
@@ -174,13 +171,6 @@ class _DashBoardState extends State<DashBoard> {
                                 mainAxisAlignment: MainAxisAlignment
                                     .spaceEvenly,
                                 children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0),
-                                    child: Text(message, textScaleFactor: 1.2,
-                                      style: TextStyle(fontFamily: 'coco',
-                                          color: Colors.grey[400]),
-                                      textAlign: TextAlign.center,),
-                                  ),
                                   Card(elevation: 0.0,
                                     color: Colors.grey[100],
                                     child: Container(
@@ -395,10 +385,10 @@ class _DashBoardState extends State<DashBoard> {
                                             if (picked != null &&
                                                 picked.length == 2) {
                                               setState(() {
+                                                getData();
                                                 initialRange = picked;
                                                 selectedData.clear();
-                                                selectedData =
-                                                    selectData(picked);
+                                                selectedData = selectData(picked);
                                               });
                                             }
                                           },
@@ -493,7 +483,7 @@ class _DashBoardState extends State<DashBoard> {
                 floatingActionButton: FloatingActionButton(
                   child: Icon(Icons.add),
                   onPressed: () {
-                    showMenu();
+                    showMenu(snapshot);
                   },
                 ),
                 floatingActionButtonLocation: FloatingActionButtonLocation
@@ -515,8 +505,60 @@ class _DashBoardState extends State<DashBoard> {
   ///
   ///
 
+  Future<Null> checkFocChanges() async {
+    Firestore.instance.runTransaction((Transaction tx) async {
+      CollectionReference reference = Firestore.instance.collection('users').document(uid).collection('moods').reference();
+      reference.snapshots().listen((documentSnapshot) {
+        documentSnapshot.documentChanges.forEach((change) {
+          // Do something with change
 
-  showMenu() async {
+          for(int i=0; i<documentSnapshot.documents[0].data.values.length-1;) {
+            listdates.add(DateTime.parse(
+                documentSnapshot.documents[0].data.keys.toString().substring(
+                    1, 11)));
+            listmoods.add(int.parse(
+                documentSnapshot.documents[0].data.values.toString().substring(
+                    1, documentSnapshot.documents[0].data.values
+                    .toString()
+                    .length - 1)));
+
+            data.add(TimeSeriesMoods(
+                listdates[i], listmoods[i])
+            );
+          }
+        });
+        });
+      });
+    }
+
+  Future <List<Map<dynamic, dynamic>>> getCollection() async{
+    List<DocumentSnapshot> templist;
+    List<Map<dynamic, dynamic>> list = new List();
+    CollectionReference collectionRef = Firestore.instance.collection("users").document(uid).collection('moods');
+    QuerySnapshot collectionSnapshot = await collectionRef.getDocuments();
+
+    templist = collectionSnapshot.documents; // <--- ERROR
+
+    list = templist.map((DocumentSnapshot docSnapshot){
+      return docSnapshot.data;
+    }).toList();
+
+    return list;
+  }
+
+
+  Future<Null> getData()async{
+    var col=getCollection();
+    col.then((coll){
+      data.clear();
+      coll.forEach((moo){
+        data.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
+        print('data : $data');
+      });
+    });
+  }
+
+  showMenu(snapshot) async {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -526,6 +568,13 @@ class _DashBoardState extends State<DashBoard> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(message, textScaleFactor: 1.2,
+                      style: TextStyle(fontFamily: 'coco',
+                          color: Colors.grey[400]),
+                      textAlign: TextAlign.center,),
+                  ),
 
                  /* Padding(
                     padding: const EdgeInsets.only(bottom:40.0),
@@ -561,6 +610,7 @@ class _DashBoardState extends State<DashBoard> {
                       moodFromSlide = newMood.toInt();
                       animateContainerGoGreen();
                       message=messageFromMood(moodFromSlide);
+                      getData();
 
                     },),
 
@@ -591,11 +641,14 @@ class _DashBoardState extends State<DashBoard> {
                             };
                             data_instance.collection('users').document(uid).collection(
                                 "moods").document(today.toString()).setData(newEntry);
+                            setState(() {
+                              getData();
+                            });
                             animateContainerGoGrey();
                             Navigator.pop(context);
                           }
                           else{setState(() {
-                            dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.");
+                            dialogEntryExist("Humeur déjà enregistrée", "Attendez demain ou modifiez l'humeur d'aujourd'hui.",snapshot);
                           });
 
                           }
@@ -667,7 +720,7 @@ class _DashBoardState extends State<DashBoard> {
   }
 
 
-  Future<void> dialogEntryExist(String title, String content) async {
+  Future<void> dialogEntryExist(String title, String content,snapshot) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -708,6 +761,7 @@ class _DashBoardState extends State<DashBoard> {
                     data_instance.collection('users').document(uid).collection(
                         "moods").document(today.toString()).setData(newEntry);
                     animateContainerGoGrey();
+                    getData();
                     Navigator.pop(context);
                     Navigator.pop(context);
 
