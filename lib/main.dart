@@ -1,10 +1,14 @@
 
+import 'package:bipo/dashBoard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'login_page.dart';
+import 'sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 void main() {
+
   runApp(MyApp());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -13,17 +17,38 @@ void main() {
 
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String myUid;
+@override
+  void initState() {
+
+    // TODO: implement initState
+    super.initState();
+  }
+  getUidFromSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    String myUid = prefs.getString('uid');
+    return myUid;
+  }
+
   @override
   Widget build(BuildContext context) {
+
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Bipolair',
+      title: "Bipol'Air",
       theme: ThemeData(
         primarySwatch: Colors.teal,
         //canvasColor: Colors.transparent,
       ),
-      home: LoginPage(),
+      home: (uid==null || uid=="")?LoginPage():DashBoard(),
     );
   }
 }

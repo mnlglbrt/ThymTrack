@@ -2,8 +2,9 @@ import 'package:bipo/dashBoard.dart';
 import 'package:flutter/material.dart';
 import 'sign_in.dart';
 import 'dashBoard.dart';
-import 'data.dart';
 import 'package:clay_containers/clay_containers.dart';
+
+
 
 
 class LoginPage extends StatefulWidget {
@@ -12,6 +13,19 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool signedIn=false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    signInWithGoogle().whenComplete(() {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) {
+                return DashBoard();
+    }));
+  });
+        }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -54,8 +68,8 @@ class _LoginPageState extends State<LoginPage> {
 
         child: ClayContainer(
           color: Colors.grey[100],
-          height: 150,
-          width: 150,
+          height: 100,
+          width: 100,
           borderRadius: 75,
           depth: 10,
           spread: 10,

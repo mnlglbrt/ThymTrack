@@ -15,6 +15,8 @@ import 'package:clay_containers/clay_containers.dart';
 import 'login_page.dart';
 import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'first_connection_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class DashBoard extends StatefulWidget {
@@ -34,8 +36,10 @@ class _DashBoardState extends State<DashBoard> {
     // TODO: implement initState
     super.initState();
     data.clear();
+    getData();
 
   }
+
   ///
   ///OTHER VARIABLES
   var dayFormatter = new DateFormat('dd/MM/y');
@@ -44,7 +48,6 @@ class _DashBoardState extends State<DashBoard> {
   TextStyle white=TextStyle(color: Colors.white);
   TextStyle black=TextStyle(color: Colors.black);
   ///
-
 
 
   List<int> moodList=[];
@@ -77,14 +80,17 @@ class _DashBoardState extends State<DashBoard> {
     stream: fire_users.document(uid).collection('moods').snapshots(),
     builder: (BuildContext context,
     AsyncSnapshot<QuerySnapshot> snapshot) {
-      getData();
-    if (!snapshot.hasData) {
 
-
-    return CircularProgressIndicator();
+    if (data.isEmpty) {
+        data.add(TimeSeriesMoods(today,0));
+      return Center(
+        child: Container(
+        child:CircularProgressIndicator(backgroundColor: Colors.white,)
+      ),
+    );
     } else {
 
-    getData();
+
 /*            var collectionReference= Firestore.instance.collection('users').document(uid).collection('moods');
             var query = collectionReference;
             query.getDocuments().then((querySnapshot)=> {
@@ -103,6 +109,9 @@ class _DashBoardState extends State<DashBoard> {
             var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
             var selectedData = selectData(initialRange);
             var screenSize=MediaQuery.of(context).size;
+
+
+
             return DefaultTabController(length: nbTabs,
               child: new Scaffold(
                 appBar: AppBar(
@@ -220,7 +229,7 @@ class _DashBoardState extends State<DashBoard> {
 
                                   ///                                                      LIST 7 :   LIST POUR 7 DERNIERS JOURS
                                   (sevenDaysData.isEmpty)
-                                      ? Text("Pas dentrée")
+                                      ? Text("Pas d'entrée")
                                       :
                                   Flexible(flex: 2,
                                     child: makeList(sevenDaysData),
@@ -289,7 +298,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
                                   ///                                                      LIST 30 :   LIST POUR 30 DERNIERS JOURS
-                                  (selectedData.isEmpty) ? Text("Pas dentrée") :
+                                  (selectedData.isEmpty) ? Text("Pas d'entrée") :
                                   Flexible(flex: 2,
                                     child: makeList(thirtyDaysData),
                                   ),
@@ -413,7 +422,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
                                   ///                                                      LIST PERSO
-                                  (selectedData.isEmpty) ? Text("Pas dentrée") :
+                                  (selectedData.isEmpty) ? Text("Pas d'entrée") :
                                   Flexible(flex: 2,
                                       child: makeList(selectedData)
                                   ),
@@ -550,11 +559,14 @@ class _DashBoardState extends State<DashBoard> {
   Future<Null> getData()async{
     var col=getCollection();
     col.then((coll){
-      data.clear();
-      coll.forEach((moo){
-        data.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
-        print('data : $data');
+      setState(() {
+        data.clear();
+        coll.forEach((moo){
+          data.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
+          print('data : $data');
+        });
       });
+
     });
   }
 
@@ -610,7 +622,7 @@ class _DashBoardState extends State<DashBoard> {
                       moodFromSlide = newMood.toInt();
                       animateContainerGoGreen();
                       message=messageFromMood(moodFromSlide);
-                      getData();
+
 
                     },),
 
@@ -851,12 +863,44 @@ class _DashBoardState extends State<DashBoard> {
     List<TimeSeriesMoods> list=[];
     selectedData.clear();
     for(int i = 0 ; i < data.length; i++ ) {
-      if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,)) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 1)))){
+      if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,).subtract(Duration(days:1))) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 1)))){
         list.add(data[i]);
       }
     }
     return list;
   }
+
+  Future<void> fisrtConnectionDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Bienvenue sur Bipol'Air"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Notre application vous permet de suivre votre humeur au quotidien.\n '
+                    'Touchez le bouton + pour entrer votre humeur sur une echelle entre -100 et +100.'
+                    'Allez-y, cest à vous !'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Attendre demain'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+
+            ),
+
+          ],
+        );
+      },
+    );
+  }
+
 
 /*  void createFile(Map<String,dynamic> content,Directory dir, String fileName){
     print("Creating file");
