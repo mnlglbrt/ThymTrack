@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           depth: 10,
           spread: 10,
           child: Center(
-            child: ClayText('G',style: TextStyle(fontFamily: 'productSans'),size: 60,),
+            child: Icon(Icons.input,size: 40,color: Colors.grey[300],),
           ),
         ),
       ),

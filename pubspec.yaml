@@ -52,9 +52,9 @@ flutter_icons:
 
 flutter:
   fonts:
-    - family: simplePrint
+    - family: bip
       fonts:
-        - asset: fonts/simplePrint.ttf
+        - asset: fonts/Bipolar.ttf
     - family: amalfi
       fonts:
         - asset: fonts/AmalfiCoast.ttf

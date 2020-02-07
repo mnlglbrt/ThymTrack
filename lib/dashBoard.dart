@@ -17,6 +17,7 @@ import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'first_connection_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'setting_page.dart';
 
 
 class DashBoard extends StatefulWidget {
@@ -29,7 +30,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  var today=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
+
 
 @override
   void initState() {
@@ -42,8 +43,6 @@ class _DashBoardState extends State<DashBoard> {
 
   ///
   ///OTHER VARIABLES
-  var dayFormatter = new DateFormat('dd/MM/y');
-  var hourFormatter= new DateFormat('H:mm');
   int moodFromSlide = 0;
   TextStyle white=TextStyle(color: Colors.white);
   TextStyle black=TextStyle(color: Colors.black);
@@ -105,8 +104,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
             message="Comment vous sentez-vous aujourd'hui?";
-            var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
-            var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:29)),DateTime.now().add(new Duration(days: 1))]);
+
             var selectedData = selectData(initialRange);
             var screenSize=MediaQuery.of(context).size;
 
@@ -116,47 +114,50 @@ class _DashBoardState extends State<DashBoard> {
               child: new Scaffold(
                 appBar: AppBar(
                   elevation: 10.0,
-                  title: Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
-                        child: new Text(
-                          "Bipol'Air", textAlign: TextAlign.center,
-                          textScaleFactor: 2.0,
-                          style: new TextStyle(
-                            fontFamily: 'simplePrint',
-                            fontStyle: FontStyle.italic,
-                            color: Colors.white,),),
-                      ),
-                    ),
-                  ),
+                  centerTitle: true,
+                  title: new Text(
+                    "Bipol'Air", textAlign: TextAlign.center,
+                    textScaleFactor: 0.8,
+                    style: new TextStyle(
+                      fontFamily: 'dot',
+                      color: Colors.white,),),
+
+
                   leading: Image.asset('images/logo.png'),
                   actions: <Widget>[
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Tooltip(message: 'Deconnexion',
+                        Tooltip(message: 'Réglages',
                           child: FlatButton(
                             onPressed: () {
-                              signOutGoogle();
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(builder: (context) {
-                                    return LoginPage();
+                                    return SettingPage();
                                   }), ModalRoute.withName('/'));
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8.0,),
-                              child: Container(
+                              child: ClayContainer(
+                                borderRadius: 75,
+                                depth: 20,
+                                spread: 10,
                                 width: 40,
                                 height: 40,
+                                color: Colors.teal,
                                 child: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    imageUrl,
-                                  ),
-                                  radius: 60,
-                                  backgroundColor: Colors.transparent,
-                                ),
+                                      radius: 35,
+                                      child: CircleAvatar(
+                                        radius: 34,
+                                        backgroundColor: Colors.teal,
+                                        foregroundColor: Colors.white,
+                                        child: Icon(
+                                          Icons.dehaze,
+                                        ),
+                                      ),
+                                    ),
+
+
                               ),
                             ),
                           ),
@@ -858,17 +859,6 @@ class _DashBoardState extends State<DashBoard> {
     return int.parse(string);
   }
 
-
-  List<TimeSeriesMoods>selectData(List<DateTime> picked){
-    List<TimeSeriesMoods> list=[];
-    selectedData.clear();
-    for(int i = 0 ; i < data.length; i++ ) {
-      if(data[i].time.isAfter(DateTime(picked[0].year,picked[0].month,picked[0].day,).subtract(Duration(days:1))) && data[i].time.isBefore(DateTime(picked[1].year,picked[1].month,picked[1].day,).add(Duration(days: 1)))){
-        list.add(data[i]);
-      }
-    }
-    return list;
-  }
 
   Future<void> fisrtConnectionDialog() async {
     return showDialog<void>(
