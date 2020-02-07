@@ -27,7 +27,10 @@ class _SettingPageState extends State<SettingPage> {
             color: Colors.white,),),
 
 
-        leading: Image.asset('images/logo.png'),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('images/logo.png'),
+        ),
         actions: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -298,6 +301,10 @@ class _SettingPageState extends State<SettingPage> {
                 child: InkWell(
                     onTap: (){
                   signOutGoogle();
+                  data.clear();
+                  sevenDaysData.clear();
+                  thirtyDaysData.clear();
+                  selectedData.clear();
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) {
                         return LoginPage();

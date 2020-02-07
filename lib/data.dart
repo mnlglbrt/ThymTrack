@@ -13,7 +13,7 @@ var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime
 var thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:31)),DateTime.now().add(new Duration(days: 1))]);
 DateTime today=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
 
-final List<TimeSeriesMoods>data = [
+ List<TimeSeriesMoods>data = [
 
 ];
 

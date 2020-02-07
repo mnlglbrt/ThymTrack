@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
 
     // TODO: implement initState
     super.initState();
+    getUidFromSF();
   }
   getUidFromSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -123,7 +123,10 @@ class _DashBoardState extends State<DashBoard> {
                       color: Colors.white,),),
 
 
-                  leading: Image.asset('images/logo.png'),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset('images/logo.png'),
+                  ),
                   actions: <Widget>[
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -559,13 +562,21 @@ class _DashBoardState extends State<DashBoard> {
 
   Future<Null> getData()async{
     var col=getCollection();
+    List<TimeSeriesMoods> myData=[];
     col.then((coll){
+      data.clear();
+      coll.forEach((moo){
+
+        myData.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
+        print('data : $data');
+      });
       setState(() {
         data.clear();
-        coll.forEach((moo){
-          data.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
+          data=myData;
+        sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
+        thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:31)),DateTime.now().add(new Duration(days: 1))]);
           print('data : $data');
-        });
+
       });
 
     });
