@@ -365,17 +365,15 @@ class _DashBoardState extends State<DashBoard> {
                                               charts.Series<
                                                   TimeSeriesMoods,
                                                   DateTime>(
-                                                id: 'custom',
+                                                id: 'Moods',
                                                 colorFn: (_, __) =>
                                                 charts.MaterialPalette.teal
-                                                    .shadeDefault.darker,
-                                                domainFn: (
-                                                    TimeSeriesMoods moods,
+                                                    .shadeDefault.lighter,
+                                                domainFn: (TimeSeriesMoods moods,
                                                     _) => moods.time,
-                                                measureFn: (
-                                                    TimeSeriesMoods moods,
+                                                measureFn: (TimeSeriesMoods moods,
                                                     _) => moods.value,
-                                                data: selectedData,
+                                                data: thirtyDaysData,
                                               )
                                             ]),
                                       )),
@@ -976,6 +974,7 @@ class SimpleTimeSeriesChart extends StatelessWidget {
   Widget build(BuildContext context) => charts.TimeSeriesChart(
     seriesList,
     animate: true,
+
     defaultRenderer:
     new charts.LineRendererConfig(includeArea: true, stacked: true),
     primaryMeasureAxis: new charts.NumericAxisSpec(
@@ -1018,6 +1017,7 @@ class SimpleTimeSeriesChart extends StatelessWidget {
         domainFn: (TimeSeriesMoods moods, _) => moods.time,
         measureFn: (TimeSeriesMoods moods, _) => moods.value,
         data: selectedData,
+
       )
     ];
   }
