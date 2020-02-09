@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
         }
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -40,7 +41,9 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Image.asset('images/logo.png',height: 100,),
                   Text('Connexion',style:(TextStyle(color: Colors.grey[100])),textScaleFactor: 2.0,textDirection: TextDirection.ltr,),
-                  SizedBox(height: 300,),
+                  SizedBox(height: 100,),
+                  CircularProgressIndicator(valueColor:new AlwaysStoppedAnimation<Color>(Colors.teal[200]),backgroundColor: Colors.grey[200],),
+                  SizedBox(height: 200,),
                   _signInButton(),
                   SizedBox(height: 100,)
                 ],

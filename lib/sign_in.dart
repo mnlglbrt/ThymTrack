@@ -71,9 +71,9 @@ Future<String> signInWithGoogle() async {
   assert(user.email != null);
   assert(user.displayName != null);
   assert(user.photoUrl != null);
-  if (name.contains(" ")) {
+  /*if (name.contains(" ")) {
     name = name.substring(0, name.indexOf(" "));
-  }
+  }*/
 
   final FirebaseUser currentUser = await _auth.currentUser();
   assert(user.uid == currentUser.uid);

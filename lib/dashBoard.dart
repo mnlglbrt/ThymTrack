@@ -18,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'first_connection_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'setting_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 
 class DashBoard extends StatefulWidget {
@@ -74,7 +75,7 @@ class _DashBoardState extends State<DashBoard> {
 
   Widget build(BuildContext context) {
 
-
+    //Locale myLocale = Locale('zh');
     return StreamBuilder<QuerySnapshot>(
     stream: fire_users.document(uid).collection('moods').snapshots(),
     builder: (BuildContext context,
@@ -82,11 +83,22 @@ class _DashBoardState extends State<DashBoard> {
 
     if (data.isEmpty) {
         data.add(TimeSeriesMoods(today,0));
-      return Center(
-        child: Container(
-        child:CircularProgressIndicator(backgroundColor: Colors.white,)
-      ),
-    );
+      return Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(image: DecorationImage(image:AssetImage('images/background.png'),fit: BoxFit.fill)),
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Image.asset('images/logo.png',height: 100,),
+
+              Text('Connexion en cours...',style:(TextStyle(color: Colors.grey[100])),textScaleFactor: 2.0,),
+              SizedBox(height: 300,),
+              CircularProgressIndicator(backgroundColor: Colors.white,),
+              SizedBox(height: 100,)
+            ],
+          )
+      );
     } else {
 
 
@@ -357,9 +369,6 @@ class _DashBoardState extends State<DashBoard> {
                                                 colorFn: (_, __) =>
                                                 charts.MaterialPalette.teal
                                                     .shadeDefault.darker,
-                                                areaColorFn: (_, __) =>
-                                                charts.MaterialPalette.blue
-                                                    .shadeDefault.lighter,
                                                 domainFn: (
                                                     TimeSeriesMoods moods,
                                                     _) => moods.time,
@@ -393,7 +402,9 @@ class _DashBoardState extends State<DashBoard> {
                                                 initialFirstDate: initialRange[0],
                                                 initialLastDate: initialRange[1],
                                                 firstDate: new DateTime(2019),
-                                                lastDate: new DateTime(2050)
+                                                lastDate: new DateTime(2050),
+                                                //locale: myLocale,
+                                              /// TODO set date picker w/ french date disp
                                             );
                                             if (picked != null &&
                                                 picked.length == 2) {
@@ -965,20 +976,30 @@ class SimpleTimeSeriesChart extends StatelessWidget {
   Widget build(BuildContext context) => charts.TimeSeriesChart(
     seriesList,
     animate: true,
+    defaultRenderer:
+    new charts.LineRendererConfig(includeArea: true, stacked: true),
+    primaryMeasureAxis: new charts.NumericAxisSpec(
+          tickProviderSpec:
+          new charts.BasicNumericTickProviderSpec(desiredTickCount: 21)),
+      behaviors: [
+  new charts.RangeAnnotation([
+  new charts.RangeAnnotationSegment(-100,
+  100, charts.RangeAnnotationAxisType.measure),
+  ])],
     animationDuration:Duration(milliseconds: 500),
     dateTimeFactory: const charts.LocalDateTimeFactory(),
     domainAxis: charts.DateTimeAxisSpec(
       tickFormatterSpec: charts.AutoDateTimeTickFormatterSpec(
         day: charts.TimeFormatterSpec(
-          format: 'dd.MM.yy',
-          transitionFormat: 'dd.MM.yy',
+          format: 'dd.MM',
+          transitionFormat: 'dd.MM',
         ),hour: charts.TimeFormatterSpec(
         format: 'dd.MM.yy',
-        transitionFormat: 'dd.MM.yy',
+        transitionFormat: 'dd.MM',
       ),
         minute: charts.TimeFormatterSpec(
-          format: 'dd.MM.yy',
-          transitionFormat: 'dd.MM.yy',
+          format: 'dd.MM',
+          transitionFormat: 'dd.MM',
         ),
       ),
     ),
@@ -988,7 +1009,11 @@ class SimpleTimeSeriesChart extends StatelessWidget {
   static List<charts.Series<TimeSeriesMoods, DateTime>> _createSampleData() {
     return <charts.Series<TimeSeriesMoods, DateTime>>[
       charts.Series<TimeSeriesMoods, DateTime>(
+        measureUpperBoundFn:  (_, __) =>100,
+        measureLowerBoundFn: (_, __) =>-100,
         id: 'Moods',
+        areaColorFn: (_, __) =>
+        charts.MaterialPalette.teal.shadeDefault.lighter,
         colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
         domainFn: (TimeSeriesMoods moods, _) => moods.time,
         measureFn: (TimeSeriesMoods moods, _) => moods.value,

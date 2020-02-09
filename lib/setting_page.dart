@@ -5,6 +5,7 @@ import 'data.dart';
 import 'dashBoard.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'mood_ranges.dart';
+import 'dashBoard.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -101,6 +102,10 @@ class _SettingPageState extends State<SettingPage> {
                           backgroundColor: Colors.transparent,
                         ),
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left:150.0,bottom:15),
+                      child: Text(name,style: TextStyle(color: Colors.grey[500])),
                     ),
                   ],
                 ),
@@ -322,4 +327,7 @@ class _SettingPageState extends State<SettingPage> {
       ),
     );
   }
+
+
+
 }

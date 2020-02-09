@@ -52,7 +52,7 @@ double averageMood(List<TimeSeriesMoods> data){
 List<int> extremMoods(List<TimeSeriesMoods> data){
   int min=100;
   int max=-100;
-  for(int i=0;i<data.length-1;i++){
+  for(int i=0;i<data.length;i++){
     if(data[i].value>max){max=data[i].value;}
     if(data[i].value<min){min=data[i].value;}
   }
@@ -65,6 +65,9 @@ List<int> extremMoods(List<TimeSeriesMoods> data){
 
 var dayFormatter = new DateFormat('dd/MM/y');
 var hourFormatter= new DateFormat('H:mm');
+
+
+
 var pictures = {
   0:"Detresse",
   1:"Effondrement",
