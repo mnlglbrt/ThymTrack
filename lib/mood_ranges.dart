@@ -12,5 +12,5 @@ class myColor{
             (mood<-9)?myColor(Colors.amber,600):
               (mood<50)?myColor(Colors.teal,400):
                 (mood<70)?myColor(Colors.amber,600):
-                  (mood<=100)?myColor(Colors.red,700):myColor(Colors.grey,900);
+                  (mood<=100)?myColor(Colors.red,200):myColor(Colors.grey,900);
 }

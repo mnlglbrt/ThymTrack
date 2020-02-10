@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'data.dart';
-import 'dart:convert';
+
 import 'mood_ranges.dart';
 import 'timeSeriesMoods.dart';
 import'package:path_provider/path_provider.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
-import 'login_page.dart';
 import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'first_connection_dialog.dart';
@@ -229,9 +228,10 @@ class _DashBoardState extends State<DashBoard> {
                                                 TimeSeriesMoods,
                                                 DateTime>(
                                               id: 'Moods',
-                                              colorFn: (_, __) =>
-                                              charts.MaterialPalette.teal
-                                                  .shadeDefault.lighter,
+                                              colorFn:  (TimeSeriesMoods moods, _) {
+                                                return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
+                                                (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
+                                                (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
                                               domainFn: (TimeSeriesMoods moods,
                                                   _) => moods.time,
                                               measureFn: (TimeSeriesMoods moods,
@@ -298,9 +298,10 @@ class _DashBoardState extends State<DashBoard> {
                                                   TimeSeriesMoods,
                                                   DateTime>(
                                                 id: 'Moods',
-                                                colorFn: (_, __) =>
-                                                charts.MaterialPalette.teal
-                                                    .shadeDefault,
+                                                colorFn:  (TimeSeriesMoods moods, _) {
+                                                  return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
+                                                  (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
+                                                  (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
                                                 domainFn: (
                                                     TimeSeriesMoods moods,
                                                     _) => moods.time,
@@ -366,9 +367,10 @@ class _DashBoardState extends State<DashBoard> {
                                                   TimeSeriesMoods,
                                                   DateTime>(
                                                 id: 'Moods',
-                                                colorFn: (_, __) =>
-                                                charts.MaterialPalette.teal
-                                                    .shadeDefault.lighter,
+                                                colorFn:  (TimeSeriesMoods moods, _) {
+                                                  return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
+                                                  (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
+                                                  (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
                                                 domainFn: (TimeSeriesMoods moods,
                                                     _) => moods.time,
                                                 measureFn: (TimeSeriesMoods moods,
@@ -974,13 +976,12 @@ class SimpleTimeSeriesChart extends StatelessWidget {
   Widget build(BuildContext context) => charts.TimeSeriesChart(
     seriesList,
     animate: true,
-
     defaultRenderer:
     new charts.LineRendererConfig(includeArea: true, stacked: true),
     primaryMeasureAxis: new charts.NumericAxisSpec(
           tickProviderSpec:
           new charts.BasicNumericTickProviderSpec(desiredTickCount: 21)),
-      behaviors: [
+    behaviors: [
   new charts.RangeAnnotation([
   new charts.RangeAnnotationSegment(-100,
   100, charts.RangeAnnotationAxisType.measure),
@@ -1011,12 +1012,14 @@ class SimpleTimeSeriesChart extends StatelessWidget {
         measureUpperBoundFn:  (_, __) =>100,
         measureLowerBoundFn: (_, __) =>-100,
         id: 'Moods',
-        areaColorFn: (_, __) =>
-        charts.MaterialPalette.teal.shadeDefault.lighter,
-        colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
+        //colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
         domainFn: (TimeSeriesMoods moods, _) => moods.time,
         measureFn: (TimeSeriesMoods moods, _) => moods.value,
         data: selectedData,
+        colorFn:  (TimeSeriesMoods moods, _) {
+          return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
+          (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
+          (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
 
       )
     ];
