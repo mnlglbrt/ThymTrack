@@ -53,6 +53,7 @@ Future<String> signInWithGoogle() async {
   email = user.email;
   imageUrl = user.photoUrl;
   uid=user.uid;
+
   //addUserToSF();
 
 
@@ -63,6 +64,7 @@ Future<String> signInWithGoogle() async {
     "imageUrl":imageUrl,
     "uid":uid,
     "userType":"patient",
+    "reminderTime":"2000",
   };
   fire_users.document(uid).setData(map);
 

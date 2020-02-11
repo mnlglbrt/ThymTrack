@@ -4,6 +4,7 @@ firebase_auth=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_au
 firebase_auth_web=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-0.1.2/
 firebase_core=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.3+3/
 firebase_core_web=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-0.1.1+2/
+flutter_local_notifications=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-1.1.6/
 google_sign_in=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in-4.1.1/
 google_sign_in_web=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in_web-0.8.3/
 path_provider=/Users/manu/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.0/

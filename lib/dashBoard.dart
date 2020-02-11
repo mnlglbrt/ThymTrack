@@ -1,11 +1,18 @@
-
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:rxdart/subjects.dart';
 import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'data.dart';
-
+import 'main.dart' as main;
 import 'mood_ranges.dart';
 import 'timeSeriesMoods.dart';
 import'package:path_provider/path_provider.dart';
@@ -16,8 +23,12 @@ import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'first_connection_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'setting_page.dart';
+import 'profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'my_material_color.dart';
+import 'reminder_page.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 
 class DashBoard extends StatefulWidget {
@@ -36,8 +47,11 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    data.clear();
+    dataMoods.clear();
     getData();
+
+
+
 
   }
 
@@ -58,6 +72,7 @@ class _DashBoardState extends State<DashBoard> {
   var buttonWidth = 0.0;
   dynamic buttonChild=Text('');
   bool buttonVisible=true;
+  bool reminderButtonVisible=false;
   List<DateTime>initialRange=[DateTime.now().subtract(new Duration(days: 6)),DateTime.now()];
   PageController pageController= PageController();
   int nbTabs=3;
@@ -74,14 +89,13 @@ class _DashBoardState extends State<DashBoard> {
 
   Widget build(BuildContext context) {
 
-    //Locale myLocale = Locale('zh');
     return StreamBuilder<QuerySnapshot>(
     stream: fire_users.document(uid).collection('moods').snapshots(),
     builder: (BuildContext context,
     AsyncSnapshot<QuerySnapshot> snapshot) {
 
-    if (data.isEmpty) {
-        data.add(TimeSeriesMoods(today,0));
+    if (dataMoods.isEmpty) {
+        dataMoods.add(TimeSeriesMoods(today,0));
       return Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -145,10 +159,11 @@ class _DashBoardState extends State<DashBoard> {
                         Tooltip(message: 'Réglages',
                           child: FlatButton(
                             onPressed: () {
-                              Navigator.of(context).pushAndRemoveUntil(
+                              showOptionsMenu(snapshot);
+                              /*Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(builder: (context) {
                                     return SettingPage();
-                                  }), ModalRoute.withName('/'));
+                                  }), ModalRoute.withName('/'));*/
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8.0,),
@@ -182,6 +197,9 @@ class _DashBoardState extends State<DashBoard> {
                   backgroundColor: Colors.teal,
                 ),
 
+
+
+                drawer: Drawer(),
 
                 body: TabBarView(
                     children: <Widget>[
@@ -229,9 +247,9 @@ class _DashBoardState extends State<DashBoard> {
                                                 DateTime>(
                                               id: 'Moods',
                                               colorFn:  (TimeSeriesMoods moods, _) {
-                                                return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
-                                                (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
-                                                (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
+                                                return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault.darker:
+                                                (rangeColor(moods.value).color==Colors.yellow)? charts.MaterialPalette.yellow.shadeDefault.darker:
+                                                (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault.darker:charts.MaterialPalette.pink.shadeDefault;},
                                               domainFn: (TimeSeriesMoods moods,
                                                   _) => moods.time,
                                               measureFn: (TimeSeriesMoods moods,
@@ -299,9 +317,9 @@ class _DashBoardState extends State<DashBoard> {
                                                   DateTime>(
                                                 id: 'Moods',
                                                 colorFn:  (TimeSeriesMoods moods, _) {
-                                                  return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
-                                                  (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
-                                                  (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
+                                                  return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault.darker:
+                                                  (rangeColor(moods.value).color==Colors.yellow)? charts.MaterialPalette.yellow.shadeDefault.darker:
+                                                  (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault.darker:charts.MaterialPalette.pink.shadeDefault;},
                                                 domainFn: (
                                                     TimeSeriesMoods moods,
                                                     _) => moods.time,
@@ -368,9 +386,9 @@ class _DashBoardState extends State<DashBoard> {
                                                   DateTime>(
                                                 id: 'Moods',
                                                 colorFn:  (TimeSeriesMoods moods, _) {
-                                                  return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
-                                                  (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
-                                                  (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
+                                                  return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault.darker:
+                                                  (rangeColor(moods.value).color==Colors.yellow)? charts.MaterialPalette.yellow.shadeDefault.darker:
+                                                  (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault.darker:charts.MaterialPalette.pink.shadeDefault;},
                                                 domainFn: (TimeSeriesMoods moods,
                                                     _) => moods.time,
                                                 measureFn: (TimeSeriesMoods moods,
@@ -507,7 +525,7 @@ class _DashBoardState extends State<DashBoard> {
                 floatingActionButton: FloatingActionButton(
                   child: Icon(Icons.add),
                   onPressed: () {
-                    showMenu(snapshot);
+                    showMenuAddMood(snapshot);
                   },
                 ),
                 floatingActionButtonLocation: FloatingActionButtonLocation
@@ -529,6 +547,10 @@ class _DashBoardState extends State<DashBoard> {
   ///
   ///
 
+
+
+
+
   Future<Null> checkFocChanges() async {
     Firestore.instance.runTransaction((Transaction tx) async {
       CollectionReference reference = Firestore.instance.collection('users').document(uid).collection('moods').reference();
@@ -546,7 +568,7 @@ class _DashBoardState extends State<DashBoard> {
                     .toString()
                     .length - 1)));
 
-            data.add(TimeSeriesMoods(
+            dataMoods.add(TimeSeriesMoods(
                 listdates[i], listmoods[i])
             );
           }
@@ -575,25 +597,25 @@ class _DashBoardState extends State<DashBoard> {
     var col=getCollection();
     List<TimeSeriesMoods> myData=[];
     col.then((coll){
-      data.clear();
-      coll.forEach((moo){
+        dataMoods.clear();
+        coll.forEach((moo){
 
-        myData.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
-        print('data : $data');
-      });
+          myData.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
+          print('data : $dataMoods');
+        });
       setState(() {
-        data.clear();
-          data=myData;
+        dataMoods.clear();
+          dataMoods=myData;
         sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
         thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:31)),DateTime.now().add(new Duration(days: 1))]);
-          print('data : $data');
+          print('data : $dataMoods');
 
       });
 
     });
   }
 
-  showMenu(snapshot) async {
+  showMenuAddMood(snapshot) async {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -700,6 +722,133 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
+showOptionsMenu(snapshot) async {
+  showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(color:Colors.teal,
+                //decoration: BoxDecoration(color:Colors.white,image:DecorationImage(image: AssetImage('images/optionsMenuBackground.png'),fit: BoxFit.cover,alignment: AlignmentDirectional.center)),
+                child: Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+
+
+                    Positioned(
+                        bottom:MediaQuery.of(context).size.height/2.40,
+                        child:InkWell(onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));},
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left:20, right: 20),
+                            child: ClayContainer(
+                                height: MediaQuery.of(context).size.height/8,
+                                width: MediaQuery.of(context).size.width/3,
+                                color:Colors.teal,
+                                surfaceColor: Colors.teal,
+                                borderRadius: 30,
+                                spread: 5,
+                                depth: 8,
+                                child: Center(child: Text('PROFIL',textScaleFactor: 1.3,style: TextStyle(color:Colors.white,fontFamily: 'dot')))),
+                          ),
+                        ))),
+
+
+
+                    Positioned(top:MediaQuery.of(context).size.height/5.55,child:
+                     InkWell(
+                       child: ClayContainer(
+                              width: MediaQuery.of(context).size.width/1.8,
+                              height: MediaQuery.of(context).size.height/5,
+                              color:Colors.teal,
+                              borderRadius: 30,
+                              spread: 5,
+                              depth: 8,
+                              curveType: CurveType.convex,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('NOTIFICATIONS',textScaleFactor: 1.2,
+                                    style: TextStyle(color:Colors.white,fontFamily: 'dot'),),
+
+                                ],
+                              )),
+                     ),
+                    ),
+
+                    Positioned(
+                        right:MediaQuery.of(context).size.width/1.75,
+                        top:MediaQuery.of(context).size.height/2.40,
+                        child:InkWell(onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));},
+                            child: ClayContainer(
+                                width: MediaQuery.of(context).size.width/2.6,
+                                height: MediaQuery.of(context).size.height/8,
+                                color:Colors.teal,
+                                borderRadius: 30,
+                                spread: 5,
+                                depth: 8,
+                                curveType: CurveType.concave,
+                                child: Center(child: Text('WORDS',textScaleFactor: 1.3,style: TextStyle(color:Colors.white,fontFamily: 'dot')))))),
+
+                    Positioned(
+                        left:MediaQuery.of(context).size.width/1.75,
+                        top:MediaQuery.of(context).size.height/2.40,
+                        child:InkWell(onTap: (){
+                          _showDailyAtTime();
+                        setState(() {
+                          reminderButtonVisible=!reminderButtonVisible;
+                        });},
+                            child: ClayContainer(
+                                width: MediaQuery.of(context).size.width/2.6,
+                                height: MediaQuery.of(context).size.height/8,
+                                color:Colors.teal,
+                                borderRadius: 30,
+                                spread: 5,
+                                depth: 8,
+                                curveType: CurveType.concave,
+                                child: Center(child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text('RAPPELS',textScaleFactor: 1.3,style: TextStyle(color:Colors.white,fontFamily: 'dot')),
+                                    Visibility(visible: reminderButtonVisible,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Icon(Icons.notifications, color:Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ))))),
+
+
+
+
+
+
+                  ],
+                ),
+              );
+            });
+      });
+}
+
+Future<void> _showDailyAtTime() async {
+  // if(activateReminder){
+  var time = Time(20, 00, 0);
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'repeatDailyAtTime channel id',
+      'repeatDailyAtTime channel name',
+      'repeatDailyAtTime description');
+  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  await main.flutterLocalNotificationsPlugin.showDailyAtTime(
+      0,
+      "Il est l'heure d'enregistrer votre humeur !",
+      "Cliquez pour ouvrir Bipol'air",
+      time,
+      platformChannelSpecifics);
+  // }
+}
 
 
   makeList(myData){
@@ -1018,7 +1167,7 @@ class SimpleTimeSeriesChart extends StatelessWidget {
         data: selectedData,
         colorFn:  (TimeSeriesMoods moods, _) {
           return (rangeColor(moods.value.toInt()).color==Colors.red)? charts.MaterialPalette.red.shadeDefault:
-          (rangeColor(moods.value).color==Colors.amber)? charts.MaterialPalette.yellow.shadeDefault:
+          (rangeColor(moods.value).color==Colors.yellow)? charts.MaterialPalette.yellow.shadeDefault:
           (rangeColor(moods.value).color==Colors.teal)? charts.MaterialPalette.teal.shadeDefault:charts.MaterialPalette.pink.shadeDefault;},
 
       )

@@ -39,7 +39,7 @@ class _TableauDeBordState extends State<TableauDeBord> {
   var hourFormatter= new DateFormat('H:mm');
   List<TimeSeriesMoods>empty = [];
   int moodFromSlide = 0;
-  var todayMood=data.where((i) => i.time.day == DateTime.now().day);
+  var todayMood=dataMoods.where((i) => i.time.day == DateTime.now().day);
   TextStyle white=TextStyle(color: Colors.white);
   TextStyle black=TextStyle(color: Colors.black);
   ///
@@ -96,7 +96,7 @@ class _TableauDeBordState extends State<TableauDeBord> {
     var keyList= fileContent.keys.toList();
     var valueList = fileContent.values.toList();
     for (var i = 0; i <= fileContent.length-1; i++) {
-      data.add(TimeSeriesMoods(stringToDateTime(keyList[i]),stringToInt(valueList[i])));
+      dataMoods.add(TimeSeriesMoods(stringToDateTime(keyList[i]),stringToInt(valueList[i])));
     }
 
   }
@@ -169,7 +169,7 @@ class _TableauDeBordState extends State<TableauDeBord> {
                     ),
                   ),
                   ///DATE RANGE SELECTOR
-                  (data.isNotEmpty)?Flexible(flex:1,
+                  (dataMoods.isNotEmpty)?Flexible(flex:1,
                     child: new MaterialButton(
                         color: Colors.deepOrangeAccent,
                         onPressed: () async {
@@ -231,8 +231,8 @@ class _TableauDeBordState extends State<TableauDeBord> {
                               {
                                   setState(() {
                                     if(todayMood.isEmpty){///Ajout de l'humeur entrée à data ; copie de data vers json
-                                    data.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
-                                    dataToFile(data);
+                                    dataMoods.add(TimeSeriesMoods(DateTime.now(), moodFromSlide));
+                                    dataToFile(dataMoods);
                                     selectedData=selectData(initialRange);
                                     animateContainerGoGrey();}
                                     else{
@@ -345,12 +345,12 @@ class _TableauDeBordState extends State<TableauDeBord> {
               child: Text('Modifier'),
               onPressed: () {
                 setState(() {
-                  data.removeWhere((i) => i.time.day == DateTime.now().day);
-                  data.add(TimeSeriesMoods(DateTime.now(),moodFromSlide));
+                  dataMoods.removeWhere((i) => i.time.day == DateTime.now().day);
+                  dataMoods.add(TimeSeriesMoods(DateTime.now(),moodFromSlide));
                   jsonFile.deleteSync();
                   fileContent.clear();
                   createFile(fileContent, dir, filename);
-                  data.forEach((e)=>writeToFile(e.time.toString(), e.value.toString()));
+                  dataMoods.forEach((e)=>writeToFile(e.time.toString(), e.value.toString()));
                   fileContent = json.decode(jsonFile.readAsStringSync());
                   //fileToData(fileContent);
                   animateContainerGoGrey();
@@ -395,12 +395,12 @@ class _TableauDeBordState extends State<TableauDeBord> {
               child: Text('Modifier'),
               onPressed: () {
                 setState(() {
-                  data.removeWhere((i) => i.time.day == DateTime.now().day);
-                  data.add(TimeSeriesMoods(DateTime.now(),moodFromSlide));
+                  dataMoods.removeWhere((i) => i.time.day == DateTime.now().day);
+                  dataMoods.add(TimeSeriesMoods(DateTime.now(),moodFromSlide));
                   jsonFile.deleteSync();
                   fileContent.clear();
                   createFile(fileContent, dir, filename);
-                  data.forEach((e)=>writeToFile(e.time.toString(), e.value.toString()));
+                  dataMoods.forEach((e)=>writeToFile(e.time.toString(), e.value.toString()));
                   fileContent = json.decode(jsonFile.readAsStringSync());
                   //fileToData(fileContent);
                   selectedData=selectData(initialRange);
@@ -480,9 +480,9 @@ int stringToInt(String string){
   List<TimeSeriesMoods>selectData(List<DateTime> picked){
     List<TimeSeriesMoods> list=[];
     selectedData = [];
-    for(int i = 0 ; i < data.length; i++ ) {
-      if(data[i].time.isAfter(picked[0]) && data[i].time.isBefore(picked[1].add(new Duration(days:2)))){
-        list.add(data[i]);
+    for(int i = 0 ; i < dataMoods.length; i++ ) {
+      if(dataMoods[i].time.isAfter(picked[0]) && dataMoods[i].time.isBefore(picked[1].add(new Duration(days:2)))){
+        list.add(dataMoods[i]);
       }
     }
     print(list.toString());

@@ -11,7 +11,7 @@ import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
 import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'setting_page.dart';
+import 'profile_page.dart';
 
 
 
@@ -31,7 +31,7 @@ class _TestState extends State<Test> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    data.clear();
+    dataMoods.clear();
     getData();
 
   }
@@ -75,8 +75,8 @@ class _TestState extends State<Test> {
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot> snapshot) {
 
-          if (data.isEmpty) {
-            data.add(TimeSeriesMoods(today,0));
+          if (dataMoods.isEmpty) {
+            dataMoods.add(TimeSeriesMoods(today,0));
             return Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -142,7 +142,7 @@ class _TestState extends State<Test> {
                             onPressed: () {
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(builder: (context) {
-                                    return SettingPage();
+                                    return ProfilePage();
                                   }), ModalRoute.withName('/'));
                             },
                             child: Padding(
@@ -541,7 +541,7 @@ class _TestState extends State<Test> {
                     .toString()
                     .length - 1)));
 
-            data.add(TimeSeriesMoods(
+            dataMoods.add(TimeSeriesMoods(
                 listdates[i], listmoods[i])
             );
           }
@@ -570,18 +570,18 @@ class _TestState extends State<Test> {
     var col=getCollection();
     List<TimeSeriesMoods> myData=[];
     col.then((coll){
-      data.clear();
+      dataMoods.clear();
       coll.forEach((moo){
 
         myData.add(TimeSeriesMoods(DateTime.parse(moo.keys.toString().substring(1,11)),int.parse(moo.values.toString().substring(1,moo.values.toString().length-1))));
-        print('data : $data');
+        print('data : $dataMoods');
       });
       setState(() {
-        data.clear();
-        data=myData;
+        dataMoods.clear();
+        dataMoods=myData;
         sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
         thirtyDaysData=selectData([DateTime.now().subtract(Duration(days:31)),DateTime.now().add(new Duration(days: 1))]);
-        print('data : $data');
+        print('data : $dataMoods');
 
       });
 
