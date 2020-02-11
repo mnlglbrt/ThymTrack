@@ -1,32 +1,19 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:rxdart/subjects.dart';
-import 'dart:io';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'data.dart';
 import 'main.dart' as main;
 import 'mood_ranges.dart';
 import 'timeSeriesMoods.dart';
-import'package:path_provider/path_provider.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
-import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
 import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'first_connection_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'profile_page.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'my_material_color.dart';
-import 'reminder_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
