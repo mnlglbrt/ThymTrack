@@ -1,2 +1,2 @@
 # bipo
-Bipolair app repo
+Mood Tracker app repo
