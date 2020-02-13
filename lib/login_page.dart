@@ -1,10 +1,8 @@
-import 'package:bipo/dashBoard.dart';
+import 'package:bipo/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'sign_in.dart';
-import 'dashBoard.dart';
+import 'dashboard.dart';
 import 'package:clay_containers/clay_containers.dart';
-
-
 
 
 class LoginPage extends StatefulWidget {
@@ -16,7 +14,6 @@ class _LoginPageState extends State<LoginPage> {
   bool signedIn=false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     signInWithGoogle().whenComplete(() {
       Navigator.of(context).push(
@@ -26,9 +23,10 @@ class _LoginPageState extends State<LoginPage> {
     }));
   });
         }
+
+
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         body: Center(

@@ -1,23 +1,14 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
-import 'reminder_page.dart';
-import 'reminder_helper.dart' as reminder;
-
-
-import 'package:bipo/dashBoard.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:bipo/dashboard.dart';
 import 'login_page.dart';
 import 'sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -88,7 +79,7 @@ class _MyAppState extends State<MyApp> {
 
     // TODO: implement initState
     super.initState();
-    getUidFromSF();
+    getUidFromSP();
 
 
     Future onSelectNotification(String payload) async {
@@ -114,7 +105,7 @@ class _MyAppState extends State<MyApp> {
 
   }
 
-  getUidFromSF() async {
+  getUidFromSP() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return String
     String myUid = prefs.getString('uid');

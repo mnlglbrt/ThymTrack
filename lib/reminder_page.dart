@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'sign_in.dart';
 import 'data.dart';
-import 'dashBoard.dart';
+import 'dashboard.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'main.dart' as main;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
