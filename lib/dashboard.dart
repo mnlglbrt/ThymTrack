@@ -1045,7 +1045,9 @@ class _DashBoardState extends State<DashBoard> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text('TROPHEES', textScaleFactor: 1.2,
+                                Text('TROPHEES\n[PLACEHOLDER]',
+                                  textScaleFactor: 1.2,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Colors.white, fontFamily: 'dot'),),
                                 Visibility(visible: true,
@@ -1088,7 +1090,7 @@ class _DashBoardState extends State<DashBoard> {
                                   depth: 8,
                                   curveType: CurveType.concave,
                                   child: Center(child: Text(
-                                      'WORDS', textScaleFactor: 1.3,
+                                      'WORDS\n[PLACEHOLDER]', textScaleFactor: 1.3,textAlign: TextAlign.center,
                                       style: TextStyle(color: Colors.white,
                                           fontFamily: 'dot')))))),
 
@@ -1105,6 +1107,7 @@ class _DashBoardState extends State<DashBoard> {
                             _showDailyAtTime();
                             setState(() {
                               reminderButtonVisible = !reminderButtonVisible;
+
                             });
                           },
                               child: ClayContainer(
