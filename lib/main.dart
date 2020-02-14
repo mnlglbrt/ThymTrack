@@ -82,6 +82,7 @@ class _MyAppState extends State<MyApp> {
     getUidFromSP();
 
 
+
     Future onSelectNotification(String payload) async {
       if (payload != null) {
         debugPrint('notification payload: ' + payload);
@@ -117,7 +118,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Bipol'Air",
+      title: "ThymTrack",
       theme: ThemeData(
         primarySwatch: Colors.teal,
         //canvasColor: Colors.transparent,

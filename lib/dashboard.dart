@@ -37,11 +37,12 @@ class _DashBoardState extends State<DashBoard> {
     super.initState();
     dataMoods.clear();
     getData();
+
   }
 
 
   PageController pageController = PageController();
-  int nbTabs = 3;
+
 
   int moodFromSlide = 0;
   var sliderColor = Colors.teal;
@@ -60,6 +61,7 @@ class _DashBoardState extends State<DashBoard> {
     DateTime.now()
   ];
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   BuildContext bsContext;
   String message = "";
   TimeSeriesMoods todayMood;
@@ -73,6 +75,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
+    int nbTabs=(dataMoods.length<7)?1:3;
     return StreamBuilder<QuerySnapshot>(
         stream: fire_users.document(uid).collection('moods').snapshots(),
         builder: (BuildContext context,
@@ -81,6 +84,7 @@ class _DashBoardState extends State<DashBoard> {
            // Navigator.push(context, MaterialPageRoute(builder: (context){return FirstLogScreen();}));
             dataMoods.add(TimeSeriesMoods(today, 0));
             return Scaffold(
+              key: _scaffoldKey,
               body: Container(
                   width: MediaQuery
                       .of(context)
@@ -108,7 +112,7 @@ class _DashBoardState extends State<DashBoard> {
                   )
               ),
             );
-          } else {
+          } else if(dataMoods.length>7) {
             var screenSize = MediaQuery
                 .of(context)
                 .size;
@@ -117,12 +121,13 @@ class _DashBoardState extends State<DashBoard> {
 
             return DefaultTabController(length: nbTabs,
               child: new Scaffold(
+                key: _scaffoldKey,
                 appBar: AppBar(
                   elevation: 10.0,
                   centerTitle: true,
                   backgroundColor: Colors.teal,
                   title: new Text(
-                    "Bipol'Air", textAlign: TextAlign.center,
+                    "ThymTrack", textAlign: TextAlign.center,
                     textScaleFactor: 0.8,
                     style: new TextStyle(
                       fontFamily: 'dot',
@@ -225,7 +230,7 @@ class _DashBoardState extends State<DashBoard> {
                                               Text("Aucune entrée",
                                                 textScaleFactor: 1.3,),
                                               Text(
-                                                "Utilisez le slider pour entrer votre humeur.",
+                                                "Utilisez le + pour entrer votre humeur.",
                                                 textScaleFactor: 1.1,
                                                 textAlign: TextAlign.center,),
                                               Text(
@@ -339,7 +344,7 @@ class _DashBoardState extends State<DashBoard> {
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.only(left:20.0),
-                                          child: Text('30 derniers jours', style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(thirtyDaysData).toInt()).color[rangeColor(averageMood(thirtyDaysData).toInt()).shade], ),),
+                                          child: Text('30 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
                                         ),
                                         Row(
                                           children: <Widget>[
@@ -484,24 +489,91 @@ class _DashBoardState extends State<DashBoard> {
                                     .spaceEvenly,
                                 children: <Widget>[
                                   (dataMoods.length>2)?ClayContainer(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.only(left:20.0),
-                                          child: Text('Dates personnalisées', style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(selectedData).toInt()).color[rangeColor(averageMood(selectedData).toInt()).shade], ),),
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
-                                            Center(child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Opacity(opacity:1.0,child: new Text(averageMood(selectedData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(selectedData).toInt()).color[rangeColor(averageMood(selectedData).toInt()).shade], ))),
-                                            )),
-                                          ],
-                                        ),
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(left:20.0),
+                                            child: ///DATE RANGE SELECTOR
 
-                                      ],
+                                            ClayContainer(
+                                              surfaceColor: Colors.teal,
+                                              color: Colors.grey[100],
+                                              parentColor: Colors.white,
+
+                                              height: 30,
+                                              borderRadius: 75,
+                                              depth: 40,
+                                              spread: 10,
+                                              child: new InkWell(
+                                                  onTap: () async {
+                                                    final List<
+                                                        DateTime> picked = await DateRangePicker
+                                                        .showDatePicker(
+                                                      context: context,
+                                                      initialFirstDate: initialRange[0],
+                                                      initialLastDate: initialRange[1],
+                                                      firstDate: new DateTime(2019),
+                                                      lastDate: new DateTime(2050),
+                                                      //locale: Locale('fr','FR'),
+                                                      /// TODO : set date picker w/ french date display
+                                                      /// Locale parameter doesn't work
+                                                    );
+                                                    if (picked != null &&
+                                                        picked.length == 2) {
+                                                      setState(() {
+                                                        getData();
+                                                        initialRange = picked;
+                                                        selectedData.clear();
+                                                        selectedData =
+                                                            selectData(picked);
+                                                      });
+                                                    }
+                                                  },
+
+
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left:8.0,right: 8.0),
+                                                    child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment
+                                                            .spaceEvenly,
+                                                        children: <Widget>[
+                                                          new Text('${new DateFormat(
+                                                              "dd/MM/yyyy").format(
+                                                              initialRange[0])}',
+                                                              textScaleFactor: 0.8,
+                                                              style: white),
+                                                          new Icon(Icons.arrow_left,
+                                                              color: Colors.white),
+                                                          new Icon(Icons.calendar_today,
+                                                              color: Colors.white),
+                                                          new Icon(Icons.arrow_right,
+                                                              color: Colors.white),
+                                                          new Text('${new DateFormat(
+                                                              "dd/MM/yyyy").format(
+                                                              initialRange[1])}',
+                                                              textScaleFactor: 0.8,
+                                                              style: white),
+                                                        ]
+                                                    ),
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
+                                              Center(child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Opacity(opacity:1.0,child: new Text(averageMood(selectedData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(selectedData).toInt()).color[rangeColor(averageMood(selectedData).toInt()).shade], ))),
+                                              )),
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
                                     ),
                                   ):Container(),
 
@@ -518,7 +590,7 @@ class _DashBoardState extends State<DashBoard> {
                                                 Text("Aucune entrée",
                                                   textScaleFactor: 1.3,),
                                                 Text(
-                                                  "Utilisez le slider pour entrer votre humeur.",
+                                                  "Utilisez le + pour entrer votre humeur.",
                                                   textScaleFactor: 1.1,
                                                   textAlign: TextAlign.center,),
                                                 Text(
@@ -609,69 +681,7 @@ class _DashBoardState extends State<DashBoard> {
                                       )),
 
 
-                                  ///DATE RANGE SELECTOR
 
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ClayContainer(
-                                      surfaceColor: Colors.teal,
-                                      color: Colors.grey[100],
-                                      parentColor: Colors.white,
-                                      width: 300,
-                                      height: 50,
-                                      borderRadius: 75,
-                                      depth: 40,
-                                      spread: 10,
-                                      child: new InkWell(
-                                          onTap: () async {
-                                            final List<
-                                                DateTime> picked = await DateRangePicker
-                                                .showDatePicker(
-                                              context: context,
-                                              initialFirstDate: initialRange[0],
-                                              initialLastDate: initialRange[1],
-                                              firstDate: new DateTime(2019),
-                                              lastDate: new DateTime(2050),
-                                              //locale: Locale('fr','FR'),
-                                              /// TODO : set date picker w/ french date display
-                                              /// Locale parameter doesn't work
-                                            );
-                                            if (picked != null &&
-                                                picked.length == 2) {
-                                              setState(() {
-                                                getData();
-                                                initialRange = picked;
-                                                selectedData.clear();
-                                                selectedData =
-                                                    selectData(picked);
-                                              });
-                                            }
-                                          },
-
-
-                                          child: Row(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .spaceEvenly,
-                                              children: <Widget>[
-                                                new Text('${new DateFormat(
-                                                    "dd/MM/yyyy").format(
-                                                    initialRange[0])}',
-                                                    style: white),
-                                                new Icon(Icons.arrow_left,
-                                                    color: Colors.white),
-                                                new Icon(Icons.calendar_today,
-                                                    color: Colors.white),
-                                                new Icon(Icons.arrow_right,
-                                                    color: Colors.white),
-                                                new Text('${new DateFormat(
-                                                    "dd/MM/yyyy").format(
-                                                    initialRange[1])}',
-                                                    style: white),
-                                              ]
-                                          )
-                                      ),
-                                    ),
-                                  ),
 
 
                                   ///                                                      LIST PERSO WITH SELECTED RANGE
@@ -753,6 +763,260 @@ class _DashBoardState extends State<DashBoard> {
                 floatingActionButtonLocation: FloatingActionButtonLocation
                     .centerDocked,
               ),
+            );
+          }
+          else{
+            print('AVERAGE : ${averageMood(sevenDaysData)}');
+            return DefaultTabController(length: nbTabs,
+              child: new Scaffold(
+                key: _scaffoldKey,
+                appBar: AppBar(
+                  elevation: 10.0,
+                  centerTitle: true,
+                  backgroundColor: Colors.teal,
+                  title: new Text(
+                    "ThymTrack", textAlign: TextAlign.center,
+                    textScaleFactor: 0.8,
+                    style: new TextStyle(
+                      fontFamily: 'dot',
+                      color: Colors.white,),),
+
+
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset('images/logo.png'),
+                  ),
+                  actions: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Tooltip(message: 'Réglages',
+                          child: FlatButton(
+                            onPressed: () {
+                              showOptionsMenu(snapshot);
+                              /*Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(builder: (context) {
+                                      return SettingPage();
+                                    }), ModalRoute.withName('/'));*/
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0,),
+                              child: ClayContainer(
+                                borderRadius: 75,
+                                depth: 20,
+                                spread: 10,
+                                width: 40,
+                                height: 40,
+                                color: Colors.teal,
+                                child: CircleAvatar(
+                                  radius: 35,
+                                  child: CircleAvatar(
+                                    radius: 34,
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white,
+                                    child: Icon(
+                                      Icons.menu,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+
+
+                body: TabBarView(
+                    children: <Widget>[
+
+
+                      ///                                                      CHART 7 DAYS
+                      Column(
+                        children: <Widget>[
+                          Flexible(flex: 3,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceEvenly,
+                                children: <Widget>[
+                                  (dataMoods.length>2)?ClayContainer(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(left:20.0),
+                                          child: Text('7 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
+                                            Center(child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Opacity(opacity:1.0,child: new Text(averageMood(sevenDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(sevenDaysData).toInt()).color[rangeColor(averageMood(sevenDaysData).toInt()).shade], ))),
+                                            )),
+                                          ],
+                                        ),
+
+                                      ],
+                                    ),
+                                  ):Container(),
+
+                                  Card(elevation: 0.0,
+                                    color: Colors.grey[100],
+                                    child: Container(
+                                      height: 350.0,
+                                      //color: Colors.grey[100],
+                                      child: (sevenDaysData.isEmpty == true)
+                                          ? Container(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .center,
+                                            children: <Widget>[
+                                              Text("Aucune entrée",
+                                                textScaleFactor: 1.3,),
+                                              Text(
+                                                "Utilisez le + pour entrer votre humeur.",
+                                                textScaleFactor: 1.1,
+                                                textAlign: TextAlign.center,),
+                                              Text(
+                                                "Attribuez-lui une note entre -100 et +100",
+                                                textScaleFactor: 1.1,
+                                                textAlign: TextAlign.center,),
+                                            ],
+                                          ))
+                                          :
+
+                                      SimpleTimeSeriesChart(
+                                          <charts.Series<
+                                              TimeSeriesMoods,
+                                              DateTime>>[
+                                            charts.Series<
+                                                TimeSeriesMoods,
+                                                DateTime>(
+                                              id: 'Moods',
+                                              colorFn: (TimeSeriesMoods moods,
+                                                  _) {
+                                                return (rangeColor(
+                                                    moods.value.toInt())
+                                                    .color == Colors.red)
+                                                    ? charts.MaterialPalette.red
+                                                    .shadeDefault.darker
+                                                    :
+                                                (rangeColor(moods.value)
+                                                    .color == Colors.yellow)
+                                                    ? charts.MaterialPalette
+                                                    .yellow.shadeDefault.darker
+                                                    :
+                                                (rangeColor(moods.value)
+                                                    .color == Colors.teal)
+                                                    ? charts.MaterialPalette
+                                                    .teal.shadeDefault.darker
+                                                    : charts.MaterialPalette
+                                                    .pink.shadeDefault;
+                                              },
+                                              domainFn: (TimeSeriesMoods moods,
+                                                  _) => moods.time,
+                                              measureFn: (TimeSeriesMoods moods,
+                                                  _) => moods.value,
+                                              data: sevenDaysData,
+                                            )
+                                              ..setAttribute(
+                                                  charts.rendererIdKey,
+                                                  'customPoint'),
+                                            charts.Series<
+                                                TimeSeriesMoods,
+                                                DateTime>(
+                                              id: 'Moods',
+                                              colorFn: (TimeSeriesMoods moods,
+                                                  _) {
+                                                return (rangeColor(
+                                                    averageMood(sevenDaysData)
+                                                        .toInt()).color ==
+                                                    Colors.red) ? charts
+                                                    .MaterialPalette.red
+                                                    .shadeDefault.darker :
+                                                (rangeColor(
+                                                    averageMood(sevenDaysData)
+                                                        .toInt()).color ==
+                                                    Colors.yellow) ? charts
+                                                    .MaterialPalette.yellow
+                                                    .shadeDefault.darker :
+                                                (rangeColor(
+                                                    averageMood(sevenDaysData)
+                                                        .toInt()).color ==
+                                                    Colors.teal)
+                                                    ? charts.MaterialPalette
+                                                    .teal.shadeDefault.darker
+                                                    : charts.MaterialPalette
+                                                    .pink.shadeDefault;
+                                              },
+                                              domainFn: (TimeSeriesMoods moods,
+                                                  _) => moods.time,
+                                              measureFn: (TimeSeriesMoods moods,
+                                                  _) => moods.value,
+                                              data: sevenDaysData,
+                                            )
+                                          ]),
+                                    ),
+                                  ),
+
+
+                                  ///                                                      LIST 7 DAYS
+                                  (sevenDaysData.isEmpty)
+                                      ? Text("Pas d'entrée")
+                                      :
+                                  Flexible(flex: 2,
+                                    child: makeList(sevenDaysData),
+                                  ),
+
+                                ]),
+                          ),
+                        ],
+                      ),
+
+
+
+
+                    ]),
+                bottomNavigationBar: BottomAppBar(
+                  shape: CircularNotchedRectangle(),
+                  child: new Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TabBar(dragStartBehavior: DragStartBehavior.down,
+                          isScrollable: true,
+                          tabs: <Widget>[
+                            //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
+                            Container(height: MediaQuery.of(context).size.height / 20,
+                                width: MediaQuery.of(context).size.width-100,
+                                child: Center(child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceEvenly,
+                                  children: <Widget>[
+                                    Icon(Icons.show_chart, color: Colors.teal),
+                                    Text('7j',
+                                      style: TextStyle(color: Colors.teal),)
+                                  ],))),
+
+                          ]),
+                    ],
+                  ),
+                  color: Colors.white,
+                ),
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.add),
+                  onPressed: () {
+                    showMenuAddMood(snapshot);
+                  },
+                ),
+                floatingActionButtonLocation: FloatingActionButtonLocation
+                    .centerDocked,
+
+          ),
             );
           }
         });
@@ -978,6 +1242,7 @@ class _DashBoardState extends State<DashBoard> {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
                 return Container(
+                  height: MediaQuery.of(context).size.height/2.7,
                   decoration: BoxDecoration(color: Colors.teal[400],
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(60),
@@ -989,10 +1254,11 @@ class _DashBoardState extends State<DashBoard> {
 
 
                       Positioned(
-                          bottom: MediaQuery
+
+                          left: MediaQuery
                               .of(context)
                               .size
-                              .height / 2.40,
+                              .width / 20,
                           child: InkWell(onTap: () {
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) => ProfilePage()));
@@ -1009,7 +1275,7 @@ class _DashBoardState extends State<DashBoard> {
                                       width: MediaQuery
                                           .of(context)
                                           .size
-                                          .width / 3,
+                                          .width / 2.6,
                                       color: Colors.teal[400],
                                       surfaceColor: Colors.teal[400],
                                       borderRadius: 30,
@@ -1023,7 +1289,7 @@ class _DashBoardState extends State<DashBoard> {
                               ))),
 
 
-                      Positioned(top: MediaQuery
+                      /*Positioned(top: MediaQuery
                           .of(context)
                           .size
                           .height / 5.55, child:
@@ -1060,9 +1326,9 @@ class _DashBoardState extends State<DashBoard> {
                               ],
                             )),
                       ),
-                      ),
+                      ),*/
 
-                      Positioned(
+                      /*Positioned(
                           right: MediaQuery
                               .of(context)
                               .size
@@ -1092,23 +1358,30 @@ class _DashBoardState extends State<DashBoard> {
                                   child: Center(child: Text(
                                       'WORDS\n[PLACEHOLDER]', textScaleFactor: 1.3,textAlign: TextAlign.center,
                                       style: TextStyle(color: Colors.white,
-                                          fontFamily: 'dot')))))),
+                                          fontFamily: 'dot')))))),*/
 
                       Positioned(
-                          left: MediaQuery
+                          right: MediaQuery
                               .of(context)
                               .size
-                              .width / 1.75,
-                          top: MediaQuery
-                              .of(context)
-                              .size
-                              .height / 2.40,
+                              .width / 10,
                           child: InkWell(onTap: () {
+                            if(reminderButtonVisible){
+                              setState(() {
+                                reminderButtonVisible = false;
+                              });
+                              _dontShowDailyAtTime();
+                              Navigator.pop(context);
+                              _displaySnackBar(context, reminderButtonVisible);
+                              }
+                            else{
+                              setState(() {
+                                reminderButtonVisible = true;
+                              });
                             _showDailyAtTime();
-                            setState(() {
-                              reminderButtonVisible = !reminderButtonVisible;
-
-                            });
+                              Navigator.pop(context);
+                              _displaySnackBar(context, reminderButtonVisible);
+                            }
                           },
                               child: ClayContainer(
                                   width: MediaQuery
@@ -1164,10 +1437,23 @@ class _DashBoardState extends State<DashBoard> {
     await main.flutterLocalNotificationsPlugin.showDailyAtTime(
         0,
         "Il est l'heure d'enregistrer votre humeur !",
-        "Cliquez pour ouvrir Bipol'air",
+        "Cliquez pour ouvrir ThymTrack",
         time,
         platformChannelSpecifics);
     // }
+  }
+
+  Future<void> _dontShowDailyAtTime() async {
+    await main.flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  _displaySnackBar(BuildContext context, bool reminderButtonVisible) {
+    final snackBar =
+    SnackBar(content: (reminderButtonVisible)?Text('Rappels activés : 20:00'):Text('Rappels désactivés'),
+        duration:Duration(seconds: 1),
+        backgroundColor: Colors.teal,
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
 

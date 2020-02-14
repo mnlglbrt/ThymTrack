@@ -34,7 +34,7 @@ List<TimeSeriesMoods>selectData(List<DateTime> picked){
 
 num averageMood(List<TimeSeriesMoods> data){
   double sum=0;
-  if(dataMoods.length>0){
+  if(data.isNotEmpty){
   for(int i=0;i<data.length;i++){
     sum=sum+data[i].value;
   }
