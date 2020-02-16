@@ -76,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Center(
           child: Container(
               color: Colors.grey[100],
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height*0.9,
             width: MediaQuery.of(context).size.width,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -298,7 +298,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ):Container(),
 
 
-                (dataMoods.length>=3)?Column(
+
+
+///                 ASSIDUITE -> COMMENTÉ CAR NON DESIRÉ PAR USER
+                /*(dataMoods.length>=3)?Column(
                   children: <Widget>[
                     Column(
                       children: <Widget>[
@@ -357,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   ],
                 ):Container(),
-
+*/
 
 
 

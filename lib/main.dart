@@ -34,6 +34,8 @@ class ReceivedNotification {
 }
 
 void main() async{
+
+
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
   // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like

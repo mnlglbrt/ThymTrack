@@ -17,6 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'profile_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'ladder_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'first_connection_screen.dart';
 
 
@@ -38,6 +39,11 @@ class _DashBoardState extends State<DashBoard> {
     super.initState();
     dataMoods.clear();
     getData();
+    getReminderPrefs().then((bool){
+      setState(() {
+        reminderButtonVisible=bool;
+      });
+    });
 
   }
 
@@ -55,7 +61,6 @@ class _DashBoardState extends State<DashBoard> {
   var addButtonWidth = 0.0;
   dynamic addButtonChild = Text('');
 
-  bool reminderButtonVisible = false;
 
   List<DateTime>initialRange = [
     DateTime.now().subtract(new Duration(days: 6)),
@@ -68,7 +73,7 @@ class _DashBoardState extends State<DashBoard> {
   TimeSeriesMoods todayMood;
   var listdates = [];
   var listmood = [];
-
+  bool reminderButtonVisible=true;
   TextStyle white = TextStyle(color: Colors.white);
   TextStyle black = TextStyle(color: Colors.black);
 
@@ -76,6 +81,8 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
+
+
     int nbTabs=(dataMoods.length<7)?1:3;
     return StreamBuilder<QuerySnapshot>(
         stream: fire_users.document(uid).collection('moods').snapshots(),
@@ -1399,6 +1406,7 @@ class _DashBoardState extends State<DashBoard> {
                               .width / 10,
                           child: InkWell(onTap: () {
                             if(reminderButtonVisible){
+                              changeReminderPrefs(false);
                               setState(() {
                                 reminderButtonVisible = false;
                               });
@@ -1407,6 +1415,7 @@ class _DashBoardState extends State<DashBoard> {
                               _displaySnackBar(context, reminderButtonVisible);
                               }
                             else{
+                              changeReminderPrefs(true);
                               setState(() {
                                 reminderButtonVisible = true;
                               });
@@ -1660,6 +1669,21 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
+ Future<bool> getReminderPrefs()async{
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   bool decision =prefs.getBool('reminder');
+   if(decision==null){return false;}
+   else{
+     print(decision);
+     return decision;}
+
+ }
+
+changeReminderPrefs(bool reminder) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('reminder', reminder);
+    print(prefs.getBool('reminder'));
+  }
 
 }
 
