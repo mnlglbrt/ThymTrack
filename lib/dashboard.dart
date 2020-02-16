@@ -16,6 +16,7 @@ import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'profile_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'ladder_page.dart';
 //import 'first_connection_screen.dart';
 
 
@@ -1254,11 +1255,43 @@ class _DashBoardState extends State<DashBoard> {
 
 
                       Positioned(
-
                           left: MediaQuery
                               .of(context)
                               .size
                               .width / 20,
+                          bottom: 20,
+                          child: InkWell(onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => LadderPage()));
+                          },
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, right: 20),
+                                  child: ClayContainer(
+                                      height: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height / 8,
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width / 2.6,
+                                      color: Colors.teal[400],
+                                      surfaceColor: Colors.teal[400],
+                                      borderRadius: 30,
+                                      spread: 5,
+                                      depth: 8,
+                                      child: Center(child: Text(
+                                          'Echelle', textScaleFactor: 1.3,
+                                          style: TextStyle(color: Colors.white,
+                                              fontFamily: 'dot')))),
+                                ),
+                              ))),
+
+                      Positioned(
+
+                          top: 20,
                           child: InkWell(onTap: () {
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) => ProfilePage()));
@@ -1287,8 +1320,6 @@ class _DashBoardState extends State<DashBoard> {
                                               fontFamily: 'dot')))),
                                 ),
                               ))),
-
-
                       /*Positioned(top: MediaQuery
                           .of(context)
                           .size
@@ -1361,6 +1392,7 @@ class _DashBoardState extends State<DashBoard> {
                                           fontFamily: 'dot')))))),*/
 
                       Positioned(
+                          bottom: 20,
                           right: MediaQuery
                               .of(context)
                               .size

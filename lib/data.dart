@@ -107,4 +107,27 @@ var dayFormatter = new DateFormat('dd/MM/y');
 var hourFormatter= new DateFormat('H:mm');
 
 
+class Range {
+  int start;
+  int end;
+  Color color;
+  String name;
+  String detail;
 
+  Range(this.start, this.end, this.color, this.name, this.detail);
+
+}
+
+List<Range>moodLadder=[
+  new Range(-100,-75,Colors.red[200],"Dépression sévère","Pense souvent au suicide - Isolement total - Reste assis ou couché toute la journée - Sentiment d'être inutile"),
+  new Range(-75,-50,Colors.red[200],"Dépression sévère","Culpabilise beaucoup - Idées suicidaires - Peu d'activité - Tristesse, pleurs"),
+  new Range(-50,-30,Colors.yellow[200],"Légère dépression","Perte d'appétit - Isolement - Sommeil agité - Démoralisé - Parle lentement et peu"),
+  new Range(-30,-10,Colors.yellow[200],"Légère dépression","Légères angoisses - Troubles paniques - Troubles de la mémoire - Perte d'attention - Mélancolie"),
+  new Range(-10,10,Colors.teal[400],"Zone de confort","Légers troubles de la concentration - Retrait social lors d'évènements - Possibles agitations"),
+  new Range(10,30,Colors.teal[400],"Zone de confort","Bien dans sa peau - Pas de tristesse ni d'euphorie - Humeur modérée"),
+  new Range(30,50,Colors.teal[400],"Zone de confort","Confiance et estime de soi excellentes - Besoin de travailler, bouger - Optimiste - Entreprenant - Trés sociable"),
+  new Range(50,60,Colors.yellow[200],"Hypomanie","Hyperactif - En exaltation pour tout - Émotions et actions exagérées - Parle beaucoup - Ressent le besoin de séduire"),
+  new Range(60,70,Colors.yellow[200],"Hypomanie","Ego surdimensionné - Parle rapidement - Pensées multiples - Projets multiples"),
+  new Range(70,85,Colors.red[200],"Manie","Paranoïa - Imprudences - Manque considérable de sommeil - Incohérences - Légères psychoses"),
+  new Range(85,100,Colors.red[200],"Manie","Hallucinations - Délires - Psychoses graves - Altération du jugement - Addictions excessives et dangereuses"),
+];
