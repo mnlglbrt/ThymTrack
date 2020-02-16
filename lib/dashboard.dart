@@ -18,6 +18,8 @@ import 'profile_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'ladder_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'medals.dart';
+import 'medals_page.dart';
 //import 'first_connection_screen.dart';
 
 
@@ -1295,9 +1297,46 @@ class _DashBoardState extends State<DashBoard> {
                                               fontFamily: 'dot')))),
                                 ),
                               ))),
+                      Positioned(
+                          right: MediaQuery
+                              .of(context)
+                              .size
+                              .width / 20,
+                          top: 20,
+                          child: InkWell(onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => MedalsPage()));
+                          },
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, right: 20),
+                                  child: ClayContainer(
+                                      height: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height / 8,
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width / 2.6,
+                                      color: Colors.teal[400],
+                                      surfaceColor: Colors.teal[400],
+                                      borderRadius: 30,
+                                      spread: 5,
+                                      depth: 8,
+                                      child: Center(child: Text(
+                                          'Medailles', textScaleFactor: 1.3,
+                                          style: TextStyle(color: Colors.white,
+                                              fontFamily: 'dot')))),
+                                ),
+                              ))),
 
                       Positioned(
-
+                          left: MediaQuery
+                              .of(context)
+                              .size
+                              .width / 20,
                           top: 20,
                           child: InkWell(onTap: () {
                             Navigator.push(context, MaterialPageRoute(
@@ -1604,6 +1643,7 @@ class _DashBoardState extends State<DashBoard> {
                       "moods").document(today.toString()).setData(newEntry);
                   animateContainerGoRectangle();
                   getData();
+                  checkMedals();
                   Navigator.pop(context);
                   Navigator.pop(context);
                 });
