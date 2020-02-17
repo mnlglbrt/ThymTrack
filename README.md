@@ -1,2 +1,2 @@
-# bipo
+# ThymTrack
 Mood Tracker app repo
