@@ -1,10 +1,8 @@
-import 'package:bipo/login_page.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'sign_in.dart';
 import 'data.dart';
 import 'package:clay_containers/clay_containers.dart';
-import 'mood_ranges.dart';
 import 'medals.dart';
 
 class MedalsPage extends StatefulWidget {
@@ -80,41 +78,53 @@ class _MedalsPageState extends State<MedalsPage> {
           ],
         ),
 
-        body: Center(
+        body: (dataMedals.isNotEmpty)?Center(
           child: Container(
-            color: Colors.grey[100],
+            color: Colors.lime[50],
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
 
 
-            child: new GridView.builder(
-                itemCount: dataMedals.length,
-                gridDelegate:
-                new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                itemBuilder: (BuildContext context, int i) {
-                  return InkWell(
-                    onTap: (){_showMedal(3);},
-                    child: Container(
-                        decoration: BoxDecoration(image: DecorationImage(image:AssetImage('images/medal.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
-                        width: 40,
-                        height: 40,
-                        child:Stack(
-                          alignment: AlignmentDirectional.center,
-                          children: <Widget>[
-                            Positioned(
-                              child:ClayText("${medalList.where((med)=>med.nbRecords==dataMedals[i].nbRecords).toList()[0].nbRecords}",parentColor: Colors.yellow[200],size: 60,),
-                            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: new GridView.builder(
+                  itemCount: dataMedals.length,
+                  gridDelegate:
+                  new SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1.2,crossAxisCount: 2),
+                  itemBuilder: (BuildContext context, int i) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom:8.0),
+                      child: InkWell(
+                        onTap: (){_showMedal(dataMedals[i].nbRecords,dataMedals[i].date);},
+                        child: Container(
 
-                            Positioned(
-                              bottom:5,
-                              child: Text("${dayFormatter.format(dataMedals[i].date)}"),
-                            ),
+                            decoration: BoxDecoration(shape:BoxShape.circle,image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
 
-                          ],
-                        )
-                    ),
-                  );
-                })
+                            child:Stack(
+                              alignment: AlignmentDirectional.center,
+                              children: <Widget>[
+
+                                Positioned(
+                                  top:15,
+                                  child:Text("${medalList.where((med)=>med.nbRecords==dataMedals[i].nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
+                                ),
+                                Positioned(
+                                  child:Text("${medalList.where((med)=>med.nbRecords==dataMedals[i].nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
+                                ),
+
+
+                                /*Positioned(
+                                  bottom:5,
+                                  child: Text("${dayFormatter.format(dataMedals[i].date)}"),
+                                ),*/
+
+                              ],
+                            )
+                        ),
+                      ),
+                    );
+                  }),
+            )
 
                       //Text("${dataMedals[0].nbRecords}"),
 
@@ -123,16 +133,45 @@ class _MedalsPageState extends State<MedalsPage> {
             ),
 
 
-          ),
+          ):
+      Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(image: DecorationImage(image: AssetImage("images/logo.png"))) ,
+        child: Text("Vous trouverez ici les médailles que \nvous remportrez en enregistrant votre humeur.\nRevenez ici après avoir enregistré votre humeur pour la première fois.", textAlign: TextAlign.center,))
+
         );
 
   }
 
-void _showMedal(nbRecords){
+void _showMedal(nbRecords,date){
   showDialog(context: context,
   builder: (BuildContext context){
     return AlertDialog(
-      content:Container(height:200,width: 200,color: Colors.blue,),
+      content:Column(
+        children: <Widget>[
+          Text("${dayFormatter.format(date)}"),
+          Container(
+            height:300,
+              width: 300,
+              decoration: BoxDecoration(shape:BoxShape.circle,image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
+              child:Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  Positioned(
+                    top:15,
+                    child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
+                  ),
+                  Positioned(
+                    child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
+                  ),
+                  /*Positioned(bottom:5,child: Text("${dayFormatter.format(dataMedals[i].date)}"),),*/
+                ],
+              )
+          ),
+          Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].content}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.black)),
+        ],
+      ),
       actions: <Widget>[
         FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},)
       ],

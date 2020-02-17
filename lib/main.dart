@@ -8,7 +8,7 @@ import 'package:bipo/dashboard.dart';
 import 'login_page.dart';
 import 'sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
@@ -119,6 +119,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('fr', 'FR'), // French
+
+        // ... other locales the app supports
+      ],
       debugShowCheckedModeBanner: false,
       title: "ThymTrack",
       theme: ThemeData(

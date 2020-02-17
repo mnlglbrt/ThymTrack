@@ -128,7 +128,6 @@ class _DashBoardState extends State<DashBoard> {
                 .size;
             var selectedData = selectData(initialRange);
             message = "Comment vous sentez-vous aujourd'hui?";
-
             return DefaultTabController(length: nbTabs,
               child: new Scaffold(
                 key: _scaffoldKey,
@@ -527,9 +526,7 @@ class _DashBoardState extends State<DashBoard> {
                                                       initialLastDate: initialRange[1],
                                                       firstDate: new DateTime(2019),
                                                       lastDate: new DateTime(2050),
-                                                      //locale: Locale('fr','FR'),
-                                                      /// TODO : set date picker w/ french date display
-                                                      /// Locale parameter doesn't work
+                                                      locale: Locale('fr','FR'),
                                                     );
                                                     if (picked != null &&
                                                         picked.length == 2) {
@@ -1220,9 +1217,16 @@ class _DashBoardState extends State<DashBoard> {
                                       .setData(newEntry);
                                   setState(() {
                                     getData();
+                                    checkMedals();
                                   });
+                                  //ToDo : Find a way to notify when new medals arrive
+                                  /*for(int i=0; i<dataMedals.length;i++){
+                                    if(dataMedals[i].date==today){
+                                      _showMedal(dataMedals[i].nbRecords,dataMedals[i].date);
+                                    }
+                                  }*/
                                   animateContainerGoRectangle();
-                                  Navigator.pop(context);
+                                  //Navigator.pop(context);
                                 }
                                 else {
                                   setState(() {
@@ -1646,6 +1650,12 @@ class _DashBoardState extends State<DashBoard> {
                   checkMedals();
                   Navigator.pop(context);
                   Navigator.pop(context);
+                  //ToDo : Find a way to notify when new medals arrive
+                  /*for(int i=0; i<dataMedals.length;i++){
+                    if(dataMedals[i].date==today){
+                      _showMedal(dataMedals[i].nbRecords,dataMedals[i].date);
+                    }
+                  }*/
                 });
               },
 
@@ -1707,6 +1717,43 @@ class _DashBoardState extends State<DashBoard> {
     setState(() {
       moodFromSlide = value;
     });
+  }
+
+  void _showMedal(nbRecords,date){
+    showDialog(context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            content:Column(
+              children: <Widget>[
+                Text("${dayFormatter.format(date)}"),
+                Container(
+                    height:300,
+                    width: 300,
+                    decoration: BoxDecoration(shape:BoxShape.circle,image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
+                    child:Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: <Widget>[
+                        Positioned(
+                          top:15,
+                          child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
+                        ),
+                        Positioned(
+                          child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
+                        ),
+                        /*Positioned(bottom:5,child: Text("${dayFormatter.format(dataMedals[i].date)}"),),*/
+                      ],
+                    )
+                ),
+                Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].content}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.black)),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},)
+            ],
+
+          );
+        });
+
   }
 
  Future<bool> getReminderPrefs()async{
