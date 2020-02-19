@@ -40,7 +40,8 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     super.initState();
     dataMoods.clear();
-    getData();
+    getData().then((x){newMedal=newMedalToday();});
+    getMedals();
     getReminderPrefs().then((bool){
       setState(() {
         reminderButtonVisible=bool;
@@ -62,7 +63,7 @@ class _DashBoardState extends State<DashBoard> {
   var addButtonHeight = 0.0;
   var addButtonWidth = 0.0;
   dynamic addButtonChild = Text('');
-
+  bool newMedal;
 
   List<DateTime>initialRange = [
     DateTime.now().subtract(new Duration(days: 6)),
@@ -127,6 +128,7 @@ class _DashBoardState extends State<DashBoard> {
                 .of(context)
                 .size;
             var selectedData = selectData(initialRange);
+            bool newMedal=newMedalToday();
             message = "Comment vous sentez-vous aujourd'hui?";
             return DefaultTabController(length: nbTabs,
               child: new Scaffold(
@@ -175,8 +177,7 @@ class _DashBoardState extends State<DashBoard> {
                                     radius: 34,
                                     backgroundColor: Colors.teal,
                                     foregroundColor: Colors.white,
-                                    child: Icon(
-                                      Icons.menu,
+                                    child: Icon((newMedal)?Icons.new_releases:Icons.menu,
                                     ),
                                   ),
                                 ),
@@ -739,7 +740,6 @@ class _DashBoardState extends State<DashBoard> {
                                     Text('1m',
                                         style: TextStyle(color: Colors.teal))
                                   ],))),
-
 
                             Padding(
                               padding: EdgeInsets.only(left: screenSize.width /
@@ -1308,6 +1308,9 @@ class _DashBoardState extends State<DashBoard> {
                               .width / 20,
                           top: 20,
                           child: InkWell(onTap: () {
+                            setState(() {
+                              newMedal=false;
+                            });
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) => MedalsPage()));
                           },
@@ -1329,10 +1332,19 @@ class _DashBoardState extends State<DashBoard> {
                                       borderRadius: 30,
                                       spread: 5,
                                       depth: 8,
-                                      child: Center(child: Text(
-                                          'Medailles', textScaleFactor: 1.3,
-                                          style: TextStyle(color: Colors.white,
-                                              fontFamily: 'dot')))),
+                                      child: Center(child:
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text('Medailles', textScaleFactor: 1.3, style: TextStyle(color: Colors.white, fontFamily: 'dot')),
+                                          (newMedal)?
+                                           Padding(
+                                             padding: const EdgeInsets.only(top:8.0),
+                                             child: Icon(Icons.new_releases, color: Colors.white,)):Container(height: 0,),
+                                        ],
+                                      )
+                                      )
+                                  ),
                                 ),
                               ))),
 
@@ -1722,19 +1734,44 @@ class _DashBoardState extends State<DashBoard> {
   void _showMedal(nbRecords,date){
     showDialog(context: context,
         builder: (BuildContext context){
-          return AlertDialog(
+          return AlertDialog(backgroundColor: Colors.grey[200],
             content:Column(
               children: <Widget>[
                 Text("${dayFormatter.format(date)}"),
                 Container(
                     height:300,
                     width: 300,
-                    decoration: BoxDecoration(shape:BoxShape.circle,image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
+                    decoration: BoxDecoration(
+                      shape:BoxShape.circle,
+                      image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[300],
+                          blurRadius: 2.0, // soften the shadow
+                          spreadRadius: 2.0, //extend the shadow
+                          offset: Offset(
+                            2.0, // Move to right 10  horizontally
+                            2.0, // Move to bottom 10 Vertically
+                          ),
+                        ),
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 2.0, // soften the shadow
+                          spreadRadius: 2.0, //extend the shadow
+                          offset: Offset(
+                            -2.0, // Move to right 10  horizontally
+                            -2.0, // Move to bottom 10 Vertically
+                          ),
+                        )
+                      ],
+
+                    ),
+
                     child:Stack(
                       alignment: AlignmentDirectional.center,
                       children: <Widget>[
                         Positioned(
-                          top:15,
+                          top:75,
                           child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
                         ),
                         Positioned(
@@ -1756,6 +1793,28 @@ class _DashBoardState extends State<DashBoard> {
 
   }
 
+  Future<Null> getMedals() async {
+    var col = getCollection();
+    List<obtainedMedal> myData = [];
+    col.then((coll) {
+      dataMedals.clear();
+      coll.forEach((med) {
+        myData.add(obtainedMedal(
+            DateTime.parse(med.keys.toString().substring(1, 11)),
+            int.parse(med.values.toString().substring(1, med.values
+                .toString()
+                .length - 1))));
+        print('data : $dataMedals');
+      });
+      setState(() {
+        dataMedals.clear();
+        dataMedals = myData;
+
+        print('data : $dataMedals');
+      });
+    });
+  }
+
  Future<bool> getReminderPrefs()async{
    SharedPreferences prefs = await SharedPreferences.getInstance();
    bool decision =prefs.getBool('reminder');
@@ -1774,7 +1833,14 @@ changeReminderPrefs(bool reminder) async{
 
 }
 
-
+bool newMedalToday(){
+  print("LENGTH ${dataMoods.length}");
+  for(int i = 0;i<medalList.length;i++){
+    if(dataMoods.length==medalList[i].nbRecords)
+      {return true;}
+    else{return false;}
+  }
+}
 
 
 /*

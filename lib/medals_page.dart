@@ -20,7 +20,7 @@ class _MedalsPageState extends State<MedalsPage> {
   }
   @override
   Widget build(BuildContext context) {
-
+double newMedalIconSize=70;
     return Scaffold(
         appBar: AppBar(
           elevation: 10.0,
@@ -80,7 +80,7 @@ class _MedalsPageState extends State<MedalsPage> {
 
         body: (dataMedals.isNotEmpty)?Center(
           child: Container(
-            color: Colors.lime[50],
+            color: Colors.grey[100],
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
 
@@ -93,16 +93,45 @@ class _MedalsPageState extends State<MedalsPage> {
                   new SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1.2,crossAxisCount: 2),
                   itemBuilder: (BuildContext context, int i) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom:8.0),
+                      padding: const EdgeInsets.only(bottom:10.0,top:10),
                       child: InkWell(
-                        onTap: (){_showMedal(dataMedals[i].nbRecords,dataMedals[i].date);},
+                        onTap: (){
+                          setState(() {
+                          newMedalIconSize=2;
+                        });
+                          _showMedal(dataMedals[i].nbRecords,dataMedals[i].date);},
                         child: Container(
 
-                            decoration: BoxDecoration(shape:BoxShape.circle,image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
+                            decoration: BoxDecoration(
+                                shape:BoxShape.circle,
+                                image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[300],
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      2.0, // Move to right 10  horizontally
+                                      2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      -2.0, // Move to right 10  horizontally
+                                      -2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  )
+                                ],
+
+                            ),
 
                             child:Stack(
                               alignment: AlignmentDirectional.center,
                               children: <Widget>[
+                                (dataMoods.length==dataMedals[i].nbRecords)?Icon(Icons.new_releases,size: newMedalIconSize,color:Colors.white):Container(height:0),
 
                                 Positioned(
                                   top:15,
@@ -147,19 +176,44 @@ class _MedalsPageState extends State<MedalsPage> {
 void _showMedal(nbRecords,date){
   showDialog(context: context,
   builder: (BuildContext context){
-    return AlertDialog(
+    return AlertDialog(backgroundColor: Colors.grey[200],
       content:Column(
         children: <Widget>[
           Text("${dayFormatter.format(date)}"),
           Container(
             height:300,
               width: 300,
-              decoration: BoxDecoration(shape:BoxShape.circle,image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst))),
+              decoration: BoxDecoration(
+                  shape:BoxShape.circle,
+                  image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.grey[300],
+    blurRadius: 2.0, // soften the shadow
+    spreadRadius: 2.0, //extend the shadow
+    offset: Offset(
+    2.0, // Move to right 10  horizontally
+    2.0, // Move to bottom 10 Vertically
+    ),
+    ),
+    BoxShadow(
+    color: Colors.white,
+    blurRadius: 2.0, // soften the shadow
+    spreadRadius: 2.0, //extend the shadow
+    offset: Offset(
+    -2.0, // Move to right 10  horizontally
+    -2.0, // Move to bottom 10 Vertically
+    ),
+    )
+    ],
+
+    ),
+
               child:Stack(
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
                   Positioned(
-                    top:15,
+                    top:75,
                     child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
                   ),
                   Positioned(
