@@ -4,6 +4,7 @@ import 'sign_in.dart';
 import 'data.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'mood_ranges.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -91,12 +92,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       Positioned(height:60,width: 60,
                         left:40,
                         top:40,
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            imageUrl,
+                        child: Container(
+                          decoration: BoxDecoration(shape: BoxShape.circle),
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image: imageUrl,
                           ),
-                          radius: 60,
-                          backgroundColor: Colors.transparent,
                         ),
                       ),
                       Positioned(

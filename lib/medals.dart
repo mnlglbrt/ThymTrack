@@ -23,7 +23,7 @@ class obtainedMedal {
 
 
 List<Medal> medalList=[
-  Medal(1,'Première\nentrée',"Bravo, vous venez de réaliser votre premier enregistrement. Continuez et vous débloquerez bientôt d'autres médailles.",'img.jp'),
+  Medal(1,'Première\nentrée',"Bravo, vous venez de réaliser votre premier enregistrement. Continuez et vous débloquerez bientôt d'autres trophées.",'img.jp'),
   Medal(3,'Moyennes\net\nextremes',"Félicitations ! Grâce à vos 3 enregistrements vous avez maintenant accès aux moyennes et aux valeurs extrêmes dans la page profil.",'img.jp'),
   Medal(7,'Voir plus loin',"Avec ce septième enregistrement vous venez de débloquer deux nouveaux graphs sur l'acceuil. Allez y jeter un oeil !",'img.jp'),
   Medal(15,'15 jours !',"Wow ! Votre graph doit avoir de l'allure avec tous ces enregistrements!",'img.jp'),

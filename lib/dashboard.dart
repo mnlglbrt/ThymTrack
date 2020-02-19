@@ -84,7 +84,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
-
+print(newMedalToday());
 
     int nbTabs=(dataMoods.length<7)?1:3;
     return StreamBuilder<QuerySnapshot>(
@@ -153,14 +153,10 @@ class _DashBoardState extends State<DashBoard> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Tooltip(message: 'Réglages',
+                        Tooltip(message: 'Menu',
                           child: FlatButton(
                             onPressed: () {
                               showOptionsMenu(snapshot);
-                              /*Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(builder: (context) {
-                                    return SettingPage();
-                                  }), ModalRoute.withName('/'));*/
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8.0,),
@@ -177,8 +173,7 @@ class _DashBoardState extends State<DashBoard> {
                                     radius: 34,
                                     backgroundColor: Colors.teal,
                                     foregroundColor: Colors.white,
-                                    child: Icon((newMedal)?Icons.new_releases:Icons.menu,
-                                    ),
+                                    child: Icon(Icons.menu,),
                                   ),
                                 ),
                               ),
@@ -187,6 +182,42 @@ class _DashBoardState extends State<DashBoard> {
                         ),
                       ],
                     ),
+
+                    (newMedalToday())?Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Tooltip(message: 'Nouvelle Médaille !',
+                          child: FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(builder: (context) {
+                                    return MedalsPage();
+                                  }), ModalRoute.withName('/'));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0,),
+                              child: ClayContainer(
+                                borderRadius: 75,
+                                depth: 20,
+                                spread: 10,
+                                width: 40,
+                                height: 40,
+                                color: Colors.teal,
+                                child: CircleAvatar(
+                                  radius: 35,
+                                  child: CircleAvatar(
+                                    radius: 34,
+                                    backgroundColor: Colors.teal,
+                                    foregroundColor: Colors.white,
+                                    child: Icon(Icons.menu,),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ):Container(),
                   ],
                 ),
 
@@ -288,6 +319,7 @@ class _DashBoardState extends State<DashBoard> {
                                               ..setAttribute(
                                                   charts.rendererIdKey,
                                                   'customPoint'),
+
                                             charts.Series<
                                                 TimeSeriesMoods,
                                                 DateTime>(
@@ -1199,16 +1231,9 @@ class _DashBoardState extends State<DashBoard> {
                               onPressed: () =>
                               {setState(() {
                                 if (todayMood == null) {
-                                  todayMood =
-                                      TimeSeriesMoods(today, moodFromSlide);
+                                  todayMood = TimeSeriesMoods(today, moodFromSlide);
                                   Map<String, int>newEntry = {
-                                    DateTime(DateTime
-                                        .now()
-                                        .year, DateTime
-                                        .now()
-                                        .month, DateTime
-                                        .now()
-                                        .day,).toString(): moodFromSlide
+                                    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,).toString(): moodFromSlide
                                   };
                                   data_instance.collection('users').document(
                                       uid).collection(
@@ -1226,6 +1251,10 @@ class _DashBoardState extends State<DashBoard> {
                                     }
                                   }*/
                                   animateContainerGoRectangle();
+                                  for(int i=0;i<medalList.length;i++){
+                                    if(dataMoods.length==medalList[i].nbRecords)
+                                    _showMedal(dataMoods.length, today);
+                                  }
                                   //Navigator.pop(context);
                                 }
                                 else {
@@ -1311,8 +1340,8 @@ class _DashBoardState extends State<DashBoard> {
                             setState(() {
                               newMedal=false;
                             });
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => MedalsPage()));
+                            getMedals().then((x){Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => MedalsPage()));});
                           },
                               child: Center(
                                 child: Padding(
@@ -1336,7 +1365,7 @@ class _DashBoardState extends State<DashBoard> {
                                       Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: <Widget>[
-                                          Text('Medailles', textScaleFactor: 1.3, style: TextStyle(color: Colors.white, fontFamily: 'dot')),
+                                          Text('TROPHEES', textScaleFactor: 1.3, style: TextStyle(color: Colors.white, fontFamily: 'dot')),
                                           (newMedal)?
                                            Padding(
                                              padding: const EdgeInsets.only(top:8.0),
@@ -1735,54 +1764,56 @@ class _DashBoardState extends State<DashBoard> {
     showDialog(context: context,
         builder: (BuildContext context){
           return AlertDialog(backgroundColor: Colors.grey[200],
-            content:Column(
-              children: <Widget>[
-                Text("${dayFormatter.format(date)}"),
-                Container(
-                    height:300,
-                    width: 300,
-                    decoration: BoxDecoration(
-                      shape:BoxShape.circle,
-                      image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey[300],
-                          blurRadius: 2.0, // soften the shadow
-                          spreadRadius: 2.0, //extend the shadow
-                          offset: Offset(
-                            2.0, // Move to right 10  horizontally
-                            2.0, // Move to bottom 10 Vertically
+            content:Container(
+              child: Column(
+                children: <Widget>[
+                  Text("Bravo ! ${nbRecords} enregistrements"),
+                  Container(
+                      height:300,
+                      width: 300,
+                      decoration: BoxDecoration(
+                        shape:BoxShape.circle,
+                        image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey[300],
+                            blurRadius: 2.0, // soften the shadow
+                            spreadRadius: 2.0, //extend the shadow
+                            offset: Offset(
+                              2.0, // horizontally
+                              2.0, // Vertically
+                            ),
                           ),
-                        ),
-                        BoxShadow(
-                          color: Colors.white,
-                          blurRadius: 2.0, // soften the shadow
-                          spreadRadius: 2.0, //extend the shadow
-                          offset: Offset(
-                            -2.0, // Move to right 10  horizontally
-                            -2.0, // Move to bottom 10 Vertically
+                          BoxShadow(
+                            color: Colors.white,
+                            blurRadius: 2.0, // soften the shadow
+                            spreadRadius: 2.0, //extend the shadow
+                            offset: Offset(
+                              -2.0, // Move to right 10  horizontally
+                              -2.0, // Move to bottom 10 Vertically
+                            ),
+                          )
+                        ],
+
+                      ),
+
+                      child:Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: <Widget>[
+                          Positioned(
+                            top:75,
+                            child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
                           ),
-                        )
-                      ],
-
-                    ),
-
-                    child:Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: <Widget>[
-                        Positioned(
-                          top:75,
-                          child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
-                        ),
-                        Positioned(
-                          child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
-                        ),
-                        /*Positioned(bottom:5,child: Text("${dayFormatter.format(dataMedals[i].date)}"),),*/
-                      ],
-                    )
-                ),
-                Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].content}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.black)),
-              ],
+                          Positioned(
+                            child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
+                          ),
+                          /*Positioned(bottom:5,child: Text("${dayFormatter.format(dataMedals[i].date)}"),),*/
+                        ],
+                      )
+                  ),
+                  Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].content}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.black)),
+                ],
+              ),
             ),
             actions: <Widget>[
               FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},)

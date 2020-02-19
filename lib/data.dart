@@ -79,6 +79,7 @@ int stabDays(List<TimeSeriesMoods> dataMoods){
 }
 
 
+var selectedPoint=0;
 
 String messageFromMood(mood){
   return (mood<-49)?"Prenez contact avec quelqu'un\n\nqui pourra vous écouter.":

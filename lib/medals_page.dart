@@ -20,7 +20,7 @@ class _MedalsPageState extends State<MedalsPage> {
   }
   @override
   Widget build(BuildContext context) {
-double newMedalIconSize=70;
+double newMedalIconSize=20;
     return Scaffold(
         appBar: AppBar(
           elevation: 10.0,
@@ -28,7 +28,7 @@ double newMedalIconSize=70;
           backgroundColor: Colors.teal,
 
           title: new Text(
-            "MEDAILLES", textAlign: TextAlign.center,
+            "TROPHEES", textAlign: TextAlign.center,
             textScaleFactor: 0.8,
             style: new TextStyle(
               fontFamily: 'dot',
@@ -131,7 +131,9 @@ double newMedalIconSize=70;
                             child:Stack(
                               alignment: AlignmentDirectional.center,
                               children: <Widget>[
-                                (dataMoods.length==dataMedals[i].nbRecords)?Icon(Icons.new_releases,size: newMedalIconSize,color:Colors.white):Container(height:0),
+
+                                (dataMoods.length==dataMedals[i].nbRecords)?Positioned(bottom:6,
+                                    child: Container(decoration:BoxDecoration(shape: BoxShape.circle,color:Colors.teal),child: Icon(Icons.new_releases,size: newMedalIconSize,color:Colors.white))):Container(height:0),
 
                                 Positioned(
                                   top:15,
