@@ -132,3 +132,7 @@ List<Range>moodLadder=[
   new Range(70,85,Colors.red[200],"Manie","Paranoïa - Imprudences - Manque considérable de sommeil - Incohérences - Légères psychoses"),
   new Range(85,100,Colors.red[200],"Manie","Hallucinations - Délires - Psychoses graves - Altération du jugement - Addictions excessives et dangereuses"),
 ];
+
+void updateToday(){
+  today=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,);
+}

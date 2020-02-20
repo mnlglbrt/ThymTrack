@@ -93,6 +93,7 @@ print(newMedalToday());
             AsyncSnapshot<QuerySnapshot> snapshot) {
           if (dataMoods.isEmpty) {
            // Navigator.push(context, MaterialPageRoute(builder: (context){return FirstLogScreen();}));
+            updateToday;
             dataMoods.add(TimeSeriesMoods(today, 0));
             return Scaffold(
               key: _scaffoldKey,
@@ -1230,6 +1231,7 @@ print(newMedalToday());
                               color: addButtonColor,
                               onPressed: () =>
                               {setState(() {
+                                updateToday();
                                 if (todayMood == null) {
                                   todayMood = TimeSeriesMoods(today, moodFromSlide);
                                   Map<String, int>newEntry = {
@@ -1684,6 +1686,7 @@ print(newMedalToday());
                         .now()
                         .day,).toString(): moodFromSlide
                   };
+                  updateToday();
                   data_instance.collection('users').document(uid).collection(
                       "moods").document(today.toString()).setData(newEntry);
                   animateContainerGoRectangle();

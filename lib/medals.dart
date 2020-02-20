@@ -33,6 +33,7 @@ List<Medal> medalList=[
 ];
 
 void checkMedals(){
+  updateToday();
   final data_instance = Firestore.instance;
   Map<String, dynamic> map;
   for (int i=0;i<medalList.length;i++) {
