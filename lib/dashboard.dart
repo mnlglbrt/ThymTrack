@@ -42,6 +42,7 @@ class _DashBoardState extends State<DashBoard> {
     dataMoods.clear();
     getData().then((x){newMedal=newMedalToday();});
     getMedals();
+    //nbTabs=(dataMoods.length<7)?1:3;
     getReminderPrefs().then((bool){
       setState(() {
         reminderButtonVisible=bool;
@@ -61,6 +62,7 @@ class _DashBoardState extends State<DashBoard> {
   var addButtonWidth = 0.0;
   dynamic addButtonChild = Text('');
   bool newMedal;
+  int nbTabs;
 
   List<DateTime>initialRange = [
     DateTime.now().subtract(new Duration(days: 6)),
@@ -83,7 +85,6 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
 print(newMedalToday());
 
-    int nbTabs=(dataMoods.length<7)?1:3;
     return new WillPopScope(
       onWillPop: () async => false,
       child: StreamBuilder<QuerySnapshot>(
@@ -124,9 +125,10 @@ print(newMedalToday());
                 ),
               );
             } else if(dataMoods.length>7) {
-              var screenSize = MediaQuery
-                  .of(context)
-                  .size;
+
+                nbTabs=3;
+
+              var screenSize = MediaQuery.of(context).size;
               var selectedData = selectData(initialRange);
               bool newMedal=newMedalToday();
               message = "Comment vous sentez-vous aujourd'hui?";
@@ -805,6 +807,7 @@ print(newMedalToday());
               );
             }
             else{
+              nbTabs=1;
               print('AVERAGE : ${averageMood(sevenDaysData)}');
               return DefaultTabController(length: nbTabs,
                 child: new Scaffold(
