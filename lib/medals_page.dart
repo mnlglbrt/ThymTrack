@@ -92,6 +92,7 @@ double newMedalIconSize=20;
                   gridDelegate:
                   new SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1.2,crossAxisCount: 2),
                   itemBuilder: (BuildContext context, int i) {
+                    Medal current = medalList.where((med)=>med.nbRecords==dataMedals[i].nbRecords).first;
                     return Padding(
                       padding: const EdgeInsets.only(bottom:10.0,top:10),
                       child: InkWell(
@@ -137,10 +138,10 @@ double newMedalIconSize=20;
 
                                 Positioned(
                                   top:15,
-                                  child:Text("${medalList.where((med)=>med.nbRecords==dataMedals[i].nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
+                                  child:Text("${current.nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
                                 ),
                                 Positioned(
-                                  child:Text("${medalList.where((med)=>med.nbRecords==dataMedals[i].nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
+                                  child:Text("${current.title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
                                 ),
 
 
