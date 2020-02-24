@@ -37,17 +37,15 @@ class _LoginPageState extends State<LoginPage> {
           child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(image: DecorationImage(image:AssetImage('images/background.png'),fit: BoxFit.fill)),
+              decoration: BoxDecoration(image: DecorationImage(image:AssetImage('images/background.jpg'),fit: BoxFit.fill)),
               child:Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
+                  SizedBox(height: 300,),
                   Image.asset('images/logo.png',height: 100,),
                   Text('Connexion',style:(TextStyle(color: Colors.grey[100])),textScaleFactor: 2.0,textDirection: TextDirection.ltr,),
                   SizedBox(height: 100,),
                   CircularProgressIndicator(valueColor:new AlwaysStoppedAnimation<Color>(Colors.teal[200]),backgroundColor: Colors.grey[200],),
-                  SizedBox(height: 200,),
-                  _signInButton(),
-                  SizedBox(height: 100,)
                 ],
               )
           ),

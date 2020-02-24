@@ -86,7 +86,7 @@ String messageFromMood(mood){
   (mood<-9)?"Positivez !\n\nFocalisez-vous sur ce qui va.":
   (mood<15)?"Ravi de vous voir en forme !\n\nPassez une bonne journée.":
   (mood<50)?"Quelle mine incroyable !\n\nJe suis sûr que votre\njournée sera excellente.":
-  (mood<70)?"Quel anthousiasme !\n\nPensez a vous ménager.":
+  (mood<70)?"Quel enthousiasme !\n\nPensez a vous ménager.":
   (mood<=100)?"Vous êtes au summum du UP!\n\nAttention à ne pas dépasser les limites.":'';
 }
 

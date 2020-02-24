@@ -20,6 +20,7 @@ import 'ladder_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'medals.dart';
 import 'medals_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 //import 'first_connection_screen.dart';
 
 
@@ -553,8 +554,7 @@ print(newMedalToday());
                                                 spread: 10,
                                                 child: new InkWell(
                                                     onTap: () async {
-                                                      final List<
-                                                          DateTime> picked = await DateRangePicker
+                                                      final List<DateTime> picked = await DateRangePicker
                                                           .showDatePicker(
                                                         context: context,
                                                         initialFirstDate: initialRange[0],
@@ -797,8 +797,9 @@ print(newMedalToday());
                   ),
                   floatingActionButton: FloatingActionButton(
                     child: Icon(Icons.add),
+
                     onPressed: () {
-                      showMenuAddMood(snapshot);
+                      showMenuAddMoodOtherDate(snapshot);
                     },
                   ),
                   floatingActionButtonLocation: FloatingActionButtonLocation
@@ -1153,8 +1154,8 @@ print(newMedalToday());
   }
 
 
-
-  showMenuAddMood(snapshot) async {
+  showMenuAddMoodOtherDate(snapshot) async {
+    DateTime oldDate=today;
     showModalBottomSheet(backgroundColor: Colors.transparent,
         context: context,
         builder: (context) {
@@ -1168,6 +1169,260 @@ print(newMedalToday());
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      Row(mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right:25.0),
+                              child: InkWell(
+                                onTap:()async{
+                                  final DateTime pickedDate = await showDatePicker(
+                                  context: context,
+                                  firstDate: new DateTime(2019),
+                                  lastDate: today,
+                                  initialDate: today,
+                                  locale: Locale('fr','FR'),
+                                );
+                                if (pickedDate != null){
+                                  setState(() {
+                                    oldDate=pickedDate;
+                                  });
+
+                                }},
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(60)),
+                                    color: Colors.grey[100],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey[300],
+                                        blurRadius: 2.0, // soften the shadow
+                                        spreadRadius: 2.0, //extend the shadow
+                                        offset: Offset(
+                                          2.0, // Move to right 10  horizontally
+                                          2.0, // Move to bottom 10 Vertically
+                                        ),
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.white,
+                                        blurRadius: 2.0, // soften the shadow
+                                        spreadRadius: 2.0, //extend the shadow
+                                        offset: Offset(
+                                          -2.0, // Move to right 10  horizontally
+                                          -2.0, // Move to bottom 10 Vertically
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text(dayFormatter.format(oldDate),style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),),
+                                        Icon(Icons.calendar_today, color: Colors.teal,),
+                                      ],
+                                    )
+                                  ),
+                                ),
+                              )
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.only(right:25.0),
+                              child: InkWell(
+                                onTap:(){ladderDialog();},
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(60)),
+                                    color: Colors.grey[100],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey[300],
+                                        blurRadius: 2.0, // soften the shadow
+                                        spreadRadius: 2.0, //extend the shadow
+                                        offset: Offset(
+                                          2.0, // Move to right 10  horizontally
+                                          2.0, // Move to bottom 10 Vertically
+                                        ),
+                                      ),
+                                      BoxShadow(
+                                        color: Colors.white,
+                                        blurRadius: 2.0, // soften the shadow
+                                        spreadRadius: 2.0, //extend the shadow
+                                        offset: Offset(
+                                          -2.0, // Move to right 10  horizontally
+                                          -2.0, // Move to bottom 10 Vertically
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text("ECHELLE",style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
+                                  ),
+                                ),
+                              )
+                          )],),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Text(message, textScaleFactor: 1.2,
+                          style: TextStyle(fontFamily: 'coco',
+                              color: Colors.grey[400]),
+                          textAlign: TextAlign.center,),
+                      ),
+
+                      /* Padding(
+                    padding: const EdgeInsets.only(bottom:40.0),
+                    child: Text(message,textScaleFactor:1.2,style: TextStyle(fontFamily: 'coco',color: Colors.grey[400]),textAlign: TextAlign.center,),
+                  ),*/
+                      ClayContainer(
+                        width: 150,
+                        height: 130,
+                        borderRadius: 75,
+                        depth: 40,
+                        spread: 10,
+//curveType: CurveType.convex,
+                        color: Colors.grey[100],
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                moodFromSlide.toString(), textScaleFactor: 2.2,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: 'dot', color: sliderColor),),
+                            ],),
+                        ),
+                      ),
+
+                      Slider(
+                        inactiveColor: Colors.transparent,
+                        activeColor: sliderColor.shade300,
+                        min: -100.5,
+                        max: 100.5,
+                        value: moodFromSlide.toDouble(),
+                        divisions: 40,
+                        onChanged: (newMood) =>
+                        {setState(() {
+                          sliderColor = rangeColor(newMood.toInt()).color;
+                          moodFromSlide = newMood.toInt();
+                          animateContainerGoCircle();
+                          message = messageFromMood(moodFromSlide);
+                        },),
+
+                        },
+                      ),
+
+
+                      Center(
+                        child: AnimatedContainer(
+                          height: addButtonHeight,
+                          width: addButtonWidth,
+                          duration: Duration(milliseconds: 400),
+                          curve: Curves.linearToEaseOut,
+                          child: ClipRRect(
+                            borderRadius: addButtonRadius,
+                            child: RaisedButton(padding: EdgeInsets.all(0),
+                              child: addButtonChild,
+                              color: addButtonColor,
+                              onPressed: () =>
+                              {setState(() {
+                                updateToday();
+                                if (oldDate.isBefore(DateTime.now())&& dataMoods.where((oldEntry)=>oldEntry.time==oldDate).isEmpty) {
+                                  Map<String, int>newEntry = {
+                                    DateTime(oldDate.year, oldDate.month, oldDate.day,).toString(): moodFromSlide
+                                  };
+                                  data_instance.collection('users').document(
+                                      uid).collection(
+                                      "moods")
+                                      .document(oldDate.toString())
+                                      .setData(newEntry);
+                                  setState(() {
+                                    getData();
+                                    checkMedals();
+                                  });
+                                  //ToDo : Find a way to notify when new medals arrive
+                                  /*for(int i=0; i<dataMedals.length;i++){
+                                    if(dataMedals[i].date==today){
+                                      _showMedal(dataMedals[i].nbRecords,dataMedals[i].date);
+                                    }
+                                  }*/
+                                  animateContainerGoRectangle();
+                                  for(int i=0;i<medalList.length;i++){
+                                    if(dataMoods.length==medalList[i].nbRecords)
+                                      _showMedal(dataMoods.length, today);
+                                  }
+                                  //Navigator.pop(context);
+                                }
+                                else {
+                                    dialogEntryExists("Humeur déjà enregistrée pour cette date.", "Modifier ?", snapshot,oldDate);
+                                }
+                              })},
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        });
+  }
+
+
+  showMenuAddMood(snapshot) async {
+    showModalBottomSheet(backgroundColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                updateToday();
+                return Container(
+                  decoration: BoxDecoration(color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(60),
+                          topRight: Radius.circular(60))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Row(mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(right:25.0),
+                          child: InkWell(
+                            onTap:(){ladderDialog();},
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(60)),
+                                color: Colors.grey[100],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[300],
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      2.0, // Move to right 10  horizontally
+                                      2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      -2.0, // Move to right 10  horizontally
+                                      -2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  )
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text("ECHELLE",style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
+                              ),
+                            ),
+                          )
+                        )],),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(message, textScaleFactor: 1.2,
@@ -1266,7 +1521,7 @@ print(newMedalToday());
                                   setState(() {
                                     dialogEntryExists("Humeur déjà enregistrée",
                                         "Attendez demain ou modifiez l'humeur d'aujourd'hui.",
-                                        snapshot);
+                                        snapshot,today);
                                   });
                                 }
                               })},
@@ -1616,16 +1871,15 @@ print(newMedalToday());
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            new Text(dayFormatter.format(myData[index].time)
-                                .toString(), textScaleFactor: 1.1,
+                            new Text(dayFormatter.format(myData[index].time).toString(),
+                                textScaleFactor: 1.1,
+                          textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.black,
                                     fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.left),
-                            //new Text(hourFormatter.format(myData[index].time).toString(),textScaleFactor: 1.1,style: TextStyle(color: Colors.black,  fontWeight: FontWeight.normal),textAlign: TextAlign.left),
+                                ),
                           ],
                         ),),),
                     new Text("     ", textAlign: TextAlign.left,),
-                    //new Text(myData[index].value.toString(),textScaleFactor: 1.4,style: TextStyle(fontWeight: FontWeight.bold,color:rangeColor(myData[index].value).color[rangeColor(myData[index].value).shade], )),
                     ClayContainer(
                       height: 20,
                       width: 80,
@@ -1650,8 +1904,70 @@ print(newMedalToday());
     );
   }
 
+  Future<void> ladderDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Echelle thymique",textAlign: TextAlign.center,style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
+          content: SingleChildScrollView(
+            child:Center(
+              child: Container(
+                color: Colors.grey[100],
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.builder(reverse: true,
+                    controller: ScrollController(),
+                    itemCount: moodLadder.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            color:moodLadder[i].color,
+                            //border: Border(top: (i==10 || i==8 || i==6 || i==3 || i==1)?BorderSide(width: 2.0,color: moodLadder[i].color):BorderSide(width: 0.0)),
+                            borderRadius:(i==10 || i==8 || i==6 || i==3 || i==1)? BorderRadius.only(topRight: Radius.circular(40.0),topLeft: Radius.circular(0.0),):(i==9 || i==7 || i==4 || i==2 || i==0)?BorderRadius.only(bottomLeft: Radius.circular(40.0),bottomRight: Radius.circular(0.0),):BorderRadius.only()),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:10.0,right:10.0,top:20.0,bottom:20.0),
+                          child: Column(
+                            children: <Widget>[
 
-  Future<void> dialogEntryExists(String title, String content, snapshot) async {
+
+                              (i==1 || i==10 || i==3 || i==5 || i==8)?Text(moodLadder[i].name,textScaleFactor: 2.0,style: TextStyle(fontFamily: 'dot',color:Colors.black),textAlign: TextAlign.center,):Container(),
+                              (moodLadder[i].start < 0&& i!=5) ?Text(moodLadder[i].end.toString(), style:TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0) : Container(),
+                              (moodLadder[i].start < 0) ?Icon(Icons.arrow_upward,color: Colors.black.withOpacity(0.2), size:30) : Container(),
+                              (moodLadder[i].start < 0) ?Text(moodLadder[i].detail,textAlign:TextAlign.center,textScaleFactor: 1.3,style: TextStyle(fontFamily: 'productSans',color:Colors.grey[700])):Container(),
+                              (moodLadder[i].end==100)?Text('100',style: TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0,):Container(),
+                              (moodLadder[i].start==-100)?Text('-100',style: TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0):Container(),
+                              (moodLadder[i].start > 0) ?Text(moodLadder[i].detail,textAlign:TextAlign.center,textScaleFactor: 1.3,style: TextStyle(fontFamily: 'productSans',color:Colors.grey[700])):Container(),
+                              (moodLadder[i].start > 0 && i!=5) ?Icon(Icons.arrow_downward,color: Colors.black.withOpacity(0.2),size:30) : Container(),
+                              (moodLadder[i].start > 0 && i!=5) ?Text(moodLadder[i].start.toString(), style:TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0) : Container(),
+
+
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+
+              ),
+            )
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Fermer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+
+            ),
+
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> dialogEntryExists(String title, String content, snapshot,date) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -1661,13 +1977,14 @@ print(newMedalToday());
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+
                 Text(content),
               ],
             ),
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Attendre demain'),
+              child: Text('Annuler'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -1681,17 +1998,11 @@ print(newMedalToday());
               onPressed: () {
                 setState(() {
                   Map<String, int>newEntry = {
-                    DateTime(DateTime
-                        .now()
-                        .year, DateTime
-                        .now()
-                        .month, DateTime
-                        .now()
-                        .day,).toString(): moodFromSlide
+                    DateTime(date.year, date.month, date.day).toString(): moodFromSlide
                   };
                   updateToday();
                   data_instance.collection('users').document(uid).collection(
-                      "moods").document(today.toString()).setData(newEntry);
+                      "moods").document(date.toString()).setData(newEntry);
                   animateContainerGoRectangle();
                   getData();
                   checkMedals();
@@ -1822,12 +2133,25 @@ print(newMedalToday());
               ),
             ),
             actions: <Widget>[
-              FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},)
+              FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},),
+              (medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].link=="")?Container(): RaisedButton(color: Colors.teal,
+                onPressed: ()=>_launchURL(medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].link),
+                child: Text(medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title),
+              ),///TODO Implement url launcher
             ],
 
           );
         });
 
+  }
+
+
+  _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Connexion impossible à $url';
+    }
   }
 
   Future<Null> getMedals() async {

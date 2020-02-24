@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'medals.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class MedalsPage extends StatefulWidget {
   @override
@@ -133,7 +135,7 @@ double newMedalIconSize=20;
                               alignment: AlignmentDirectional.center,
                               children: <Widget>[
 
-                                (dataMoods.length==dataMedals[i].nbRecords)?Positioned(bottom:6,
+                                (dataMedals[i].date==today)?Positioned(bottom:6,
                                     child: Container(decoration:BoxDecoration(shape: BoxShape.circle,color:Colors.teal),child: Icon(Icons.new_releases,size: newMedalIconSize,color:Colors.white))):Container(height:0),
 
                                 Positioned(
@@ -178,6 +180,7 @@ double newMedalIconSize=20;
 
 void _showMedal(nbRecords,date){
   showDialog(context: context,
+  barrierDismissible: false,
   builder: (BuildContext context){
     return AlertDialog(backgroundColor: Colors.grey[200],
       content:Column(
@@ -230,13 +233,21 @@ void _showMedal(nbRecords,date){
         ],
       ),
       actions: <Widget>[
-        FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},)
+        FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},),
+        (medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].link=="")?Container():
+    Padding(
+      padding: const EdgeInsets.only(left:8.0),
+      child: RaisedButton(color:Colors.teal,
+            onPressed: ()=>_launchURL(medalList.where((med)=>med.nbRecords==nbRecords).first.link),
+            child: Text(medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].linkText),
+          ),
+    ),
       ],
 
     );
-  });
+  });}
   
-}
+
 
   Future<Null> getMedals() async {
     var col = getCollection();
@@ -259,6 +270,14 @@ void _showMedal(nbRecords,date){
       });
     });
   }
+
+_launchURL(url) async {
+  if (await canLaunch(url)) {
+    await launch(url,forceSafariVC: false);
+  } else {
+    throw 'Connexion impossible à $url';
+  }
+}
 
 
 }
