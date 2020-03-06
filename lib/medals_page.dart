@@ -182,68 +182,70 @@ void _showMedal(nbRecords,date){
   showDialog(context: context,
   barrierDismissible: false,
   builder: (BuildContext context){
-    return AlertDialog(backgroundColor: Colors.grey[200],
-      content:Column(
-        children: <Widget>[
-          Text("${dayFormatter.format(date)}"),
-          Container(
-            height:300,
-              width: 300,
-              decoration: BoxDecoration(
-                  shape:BoxShape.circle,
-                  image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
-    boxShadow: [
-    BoxShadow(
-    color: Colors.grey[300],
-    blurRadius: 2.0, // soften the shadow
-    spreadRadius: 2.0, //extend the shadow
-    offset: Offset(
-    2.0, // Move to right 10  horizontally
-    2.0, // Move to bottom 10 Vertically
-    ),
-    ),
-    BoxShadow(
-    color: Colors.white,
-    blurRadius: 2.0, // soften the shadow
-    spreadRadius: 2.0, //extend the shadow
-    offset: Offset(
-    -2.0, // Move to right 10  horizontally
-    -2.0, // Move to bottom 10 Vertically
-    ),
-    )
-    ],
-
-    ),
-
-              child:Stack(
-                alignment: AlignmentDirectional.center,
-                children: <Widget>[
-                  Positioned(
-                    top:75,
-                    child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
-                  ),
-                  Positioned(
-                    child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
-                  ),
-                  /*Positioned(bottom:5,child: Text("${dayFormatter.format(dataMedals[i].date)}"),),*/
-                ],
-              )
-          ),
-          Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].content}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.black)),
-        ],
+    return SingleChildScrollView(
+      child: AlertDialog(backgroundColor: Colors.grey[200],
+        content:Column(
+          children: <Widget>[
+            Text("${dayFormatter.format(date)}"),
+            Container(
+              height:300,
+                width: 300,
+                decoration: BoxDecoration(
+                    shape:BoxShape.circle,
+                    image: DecorationImage(image:AssetImage('images/medal2.png'),colorFilter: ColorFilter.mode(Colors.teal, BlendMode.dst)),
+      boxShadow: [
+      BoxShadow(
+      color: Colors.grey[300],
+      blurRadius: 2.0, // soften the shadow
+      spreadRadius: 2.0, //extend the shadow
+      offset: Offset(
+      2.0, // Move to right 10  horizontally
+      2.0, // Move to bottom 10 Vertically
       ),
-      actions: <Widget>[
-        FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},),
-        (medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].link=="")?Container():
-    Padding(
-      padding: const EdgeInsets.only(left:8.0),
-      child: RaisedButton(color:Colors.teal,
-            onPressed: ()=>_launchURL(medalList.where((med)=>med.nbRecords==nbRecords).first.link),
-            child: Text(medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].linkText),
-          ),
-    ),
+      ),
+      BoxShadow(
+      color: Colors.white,
+      blurRadius: 2.0, // soften the shadow
+      spreadRadius: 2.0, //extend the shadow
+      offset: Offset(
+      -2.0, // Move to right 10  horizontally
+      -2.0, // Move to bottom 10 Vertically
+      ),
+      )
       ],
 
+      ),
+
+                child:Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    Positioned(
+                      top:75,
+                      child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].nbRecords}",textScaleFactor: 1.5,textAlign: TextAlign.center,style: TextStyle(color:Colors.white),),
+                    ),
+                    Positioned(
+                      child:Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].title}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.white)),
+                    ),
+                    /*Positioned(bottom:5,child: Text("${dayFormatter.format(dataMedals[i].date)}"),),*/
+                  ],
+                )
+            ),
+            Text("${medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].content}",textScaleFactor: 1,textAlign: TextAlign.center,style: TextStyle(color:Colors.black)),
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(child:Text('Fermer'),onPressed: (){Navigator.pop(context);},),
+          (medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].link=="")?Container():
+      Padding(
+        padding: const EdgeInsets.only(left:8.0),
+        child: RaisedButton(color:Colors.teal,
+              onPressed: ()=>_launchURL(medalList.where((med)=>med.nbRecords==nbRecords).first.link),
+              child: Text(medalList.where((med)=>med.nbRecords==nbRecords).toList()[0].linkText),
+            ),
+      ),
+        ],
+
+      ),
     );
   });}
   

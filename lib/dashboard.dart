@@ -21,6 +21,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'medals.dart';
 import 'medals_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'words_page.dart';
+import 'words.dart';
 //import 'first_connection_screen.dart';
 
 
@@ -43,6 +45,7 @@ class _DashBoardState extends State<DashBoard> {
     dataMoods.clear();
     getData().then((x){newMedal=newMedalToday();});
     getMedals();
+    getWords();
     //nbTabs=(dataMoods.length<7)?1:3;
     getReminderPrefs().then((bool){
       setState(() {
@@ -84,7 +87,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   Widget build(BuildContext context) {
-print(newMedalToday());
+//print(newMedalToday());
 
     return new WillPopScope(
       onWillPop: () async => false,
@@ -809,7 +812,7 @@ print(newMedalToday());
             }
             else{
               nbTabs=1;
-              print('AVERAGE : ${averageMood(sevenDaysData)}');
+              //('AVERAGE : ${averageMood(sevenDaysData)}');
               return DefaultTabController(length: nbTabs,
                 child: new Scaffold(
                   key: _scaffoldKey,
@@ -1053,7 +1056,7 @@ print(newMedalToday());
                   floatingActionButton: FloatingActionButton(
                     child: Icon(Icons.add),
                     onPressed: () {
-                      showMenuAddMood(snapshot);
+                      showMenuAddMoodOtherDate(snapshot);
                     },
                   ),
                   floatingActionButtonLocation: FloatingActionButtonLocation
@@ -1075,6 +1078,16 @@ print(newMedalToday());
   ///
   ///
 
+
+  Future<Null> getWords() async {
+    var col = getFeelingsCollection();
+    //Map <DateTime,List<Word>> myMap = {};
+
+    col.then((coll) {
+      datedFeelings=coll;
+      //print('datafeelings $datedFeelings');
+    });
+  }
 
   Future<Null> checkFocChanges() async {
     Firestore.instance.runTransaction((Transaction tx) async {
@@ -1135,7 +1148,7 @@ print(newMedalToday());
             int.parse(moo.values.toString().substring(1, moo.values
                 .toString()
                 .length - 1))));
-        print('data : $dataMoods');
+        //print('data : $dataMoods');
       });
       setState(() {
         dataMoods.clear();
@@ -1148,7 +1161,7 @@ print(newMedalToday());
           DateTime.now().subtract(Duration(days: 31)),
           DateTime.now().add(new Duration(days: 1))
         ]);
-        print('data : $dataMoods');
+        //print('data : $dataMoods');
       });
     });
   }
@@ -1169,98 +1182,129 @@ print(newMedalToday());
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Row(mainAxisAlignment: MainAxisAlignment.end,
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(right:25.0),
-                              child: InkWell(
-                                onTap:()async{
-                                  final DateTime pickedDate = await showDatePicker(
-                                  context: context,
-                                  firstDate: new DateTime(2019),
-                                  lastDate: today,
-                                  initialDate: today,
-                                  locale: Locale('fr','FR'),
-                                );
-                                if (pickedDate != null){
-                                  setState(() {
-                                    oldDate=pickedDate;
-                                  });
 
-                                }},
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(60)),
-                                    color: Colors.grey[100],
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey[300],
-                                        blurRadius: 2.0, // soften the shadow
-                                        spreadRadius: 2.0, //extend the shadow
-                                        offset: Offset(
-                                          2.0, // Move to right 10  horizontally
-                                          2.0, // Move to bottom 10 Vertically
-                                        ),
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.white,
-                                        blurRadius: 2.0, // soften the shadow
-                                        spreadRadius: 2.0, //extend the shadow
-                                        offset: Offset(
-                                          -2.0, // Move to right 10  horizontally
-                                          -2.0, // Move to bottom 10 Vertically
-                                        ),
-                                      )
-                                    ],
+                          InkWell(
+                            onTap:(){ladderDialog();},
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(60)),
+                                color:Colors.white,
+                                /*boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[300],
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      2.0, // Move to right 10  horizontally
+                                      2.0, // Move to bottom 10 Vertically
+                                    ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text(dayFormatter.format(oldDate),style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),),
-                                        Icon(Icons.calendar_today, color: Colors.teal,),
-                                      ],
-                                    )
-                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      -2.0, // Move to right 10  horizontally
+                                      -2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  )
+                                ],*/
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text("ECHELLE",style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
                                 ),
-                              )
+                              ),
+                            ),
                           ),
-                          Padding(
-                              padding: const EdgeInsets.only(right:25.0),
-                              child: InkWell(
-                                onTap:(){ladderDialog();},
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(60)),
-                                    color: Colors.grey[100],
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey[300],
-                                        blurRadius: 2.0, // soften the shadow
-                                        spreadRadius: 2.0, //extend the shadow
-                                        offset: Offset(
-                                          2.0, // Move to right 10  horizontally
-                                          2.0, // Move to bottom 10 Vertically
-                                        ),
+
+                            InkWell(
+                              onTap:()async{
+                                final DateTime pickedDate = await showDatePicker(
+                                context: context,
+                                firstDate: new DateTime(2019),
+                                lastDate: today,
+                                initialDate: today,
+                                locale: Locale('fr','FR'),
+                              );
+                              if (pickedDate != null){
+                                setState(() {
+                                  oldDate=pickedDate;
+                                });
+
+                              }},
+                              child: Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(60)),
+                                  color: Colors.grey[100],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      blurRadius: 2.0, // soften the shadow
+                                      spreadRadius: 2.0, //extend the shadow
+                                      offset: Offset(
+                                        2.0, // Move to right 10  horizontally
+                                        2.0, // Move to bottom 10 Vertically
                                       ),
-                                      BoxShadow(
-                                        color: Colors.white,
-                                        blurRadius: 2.0, // soften the shadow
-                                        spreadRadius: 2.0, //extend the shadow
-                                        offset: Offset(
-                                          -2.0, // Move to right 10  horizontally
-                                          -2.0, // Move to bottom 10 Vertically
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text("ECHELLE",style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
-                                  ),
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.white,
+                                      blurRadius: 2.0, // soften the shadow
+                                      spreadRadius: 2.0, //extend the shadow
+                                      offset: Offset(
+                                        -2.0, // Move to right 10  horizontally
+                                        -2.0, // Move to bottom 10 Vertically
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
-                          )],),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(dayFormatter.format(oldDate),style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),),
+                                      Icon(Icons.calendar_today, color: Colors.teal,),
+                                    ],
+                                  )
+                                ),
+                              ),
+                            ),
+                          InkWell(onTap: (){Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => WordsPage(oldDate)));},
+                              child: Container(
+                                height: MediaQuery.of(context).size.width/4,
+                                width:MediaQuery.of(context).size.width/4,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(60)),
+                                  color: Colors.grey[100],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      blurRadius: 2.0, // soften the shadow
+                                      spreadRadius: 2.0, //extend the shadow
+                                      offset: Offset(
+                                        2.0, // Move to right 10  horizontally
+                                        2.0, // Move to bottom 10 Vertically
+                                      ),
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.white,
+                                      blurRadius: 2.0, // soften the shadow
+                                      spreadRadius: 2.0, //extend the shadow
+                                      offset: Offset(
+                                        -2.0, // Move to right 10  horizontally
+                                        -2.0, // Move to bottom 10 Vertically
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                child: Center(child: Text("Emotions",textScaleFactor:1.1,style:TextStyle(fontFamily: 'dot',color:Colors.teal),)),)),
+                          ],),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(message, textScaleFactor: 1.2,
@@ -1394,7 +1438,7 @@ print(newMedalToday());
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(Radius.circular(60)),
-                                color: Colors.grey[100],
+                                color: Colors.white,
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey[300],
@@ -1850,51 +1894,61 @@ print(newMedalToday());
           controller: ScrollController(initialScrollOffset: 100000.0),
           itemCount: myData.length,
           itemBuilder: (BuildContext ctxt, int index) {
+            //print('datedFeelings.keys ${datedFeelings.keys}');
+           // print('myData[0].time ${myData[4].time}');
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: ClayContainer(
                 borderRadius: 10,
-                height: 40.0,
+                //height: 160.0,
                 width: 300,
                 depth: 10,
                 spread: 7,
                 color: Colors.grey[100],
                 surfaceColor: Colors.grey[50],
 
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
                   children: <Widget>[
-                    Padding(padding: const EdgeInsets.only(
-                        left: 0.0, bottom: 5.0, top: 5.0),
-                      child: Container(width: 130.0,
-                        height: 40.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            new Text(dayFormatter.format(myData[index].time).toString(),
-                                textScaleFactor: 1.1,
-                          textAlign: TextAlign.left,
-                                style: TextStyle(color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                                ),
-                          ],
-                        ),),),
-                    new Text("     ", textAlign: TextAlign.left,),
-                    ClayContainer(
-                      height: 20,
-                      width: 80,
-                      borderRadius: 30,
-                      //curveType: CurveType.convex,
-                      child: Center(child: Opacity(
-                          opacity: 1.0, child: new Text(myData[index].value
-                          .toString(), textScaleFactor: 1.6, style: TextStyle(
-                        fontFamily: 'dot',
-                        color: rangeColor(myData[index].value).color[rangeColor(
-                            myData[index].value).shade],)))),
-                      color: Colors.grey[100],
-                      surfaceColor: Colors.grey[150],
-                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(padding: const EdgeInsets.only(
+                            left: 0.0, bottom: 5.0, top: 5.0),
+                          child: Container(width: 130.0,
+                            height: 40.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                new Text(dayFormatter.format(myData[index].time).toString(),
+                                    textScaleFactor: 1.1,
+                              textAlign: TextAlign.left,
+                                    style: TextStyle(color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                    ),
+                              ],
+                            ),),),
+                        new Text("     ", textAlign: TextAlign.left,),
+                        ClayContainer(
+                          height: 20,
+                          width: 80,
+                          borderRadius: 30,
+                          //curveType: CurveType.convex,
+                          child: Center(child: Opacity(
+                              opacity: 1.0, child: new Text(myData[index].value
+                              .toString(), textScaleFactor: 1.6, style: TextStyle(
+                            fontFamily: 'dot',
+                            color: rangeColor(myData[index].value).color[rangeColor(
+                                myData[index].value).shade],)))),
+                          color: Colors.grey[100],
+                          surfaceColor: Colors.grey[150],
+                        ),
 
+                      ],
+                    ),
+                    //(datedFeelings.containsKey(myData[index].time))?{
+                    (datedFeelings[myData[index].time]==null)?Container():Wrap(children: wordsToChipList(datedFeelings[myData[index].time]),),
+                  //}:Container(),
+                    
                   ],
                 ),
               ),
@@ -1902,6 +1956,34 @@ print(newMedalToday());
           }
       ),
     );
+  }
+
+
+  wordsToChipList (List<Word> list){
+    List<Widget> widgetList=[];
+
+    for(int i=0;i<list.length;i++){
+      widgetList.add(Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: new Chip(backgroundColor: groupColor(list[i].group),
+          
+          label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 0.8,),),
+        //backgroundColor: groupColor(list[i].group)
+      ));
+    }
+    return widgetList;
+  }
+  Color groupColor(String group){
+    return
+      (group=="Joie")?Colors.pink[300]:
+      (group=="Estime de soi")?Colors.pink[200]:
+      (group=="Actif")?Colors.deepOrange[400]:
+      (group=="Pleinitude")?Colors.teal[300]:
+      (group=="Mauvaise estime de soi")?Colors.indigo[200]:
+      (group=="Solitude")?Colors.grey:
+      (group=="Stress")?Colors.red[300]:
+      (group=="Dépression")?Colors.blue[300]:Colors.black;
+
   }
 
   Future<void> ladderDialog() async {
@@ -2165,13 +2247,13 @@ print(newMedalToday());
             int.parse(med.values.toString().substring(1, med.values
                 .toString()
                 .length - 1))));
-        print('data : $dataMedals');
+        //print('data : $dataMedals');
       });
       setState(() {
         dataMedals.clear();
         dataMedals = myData;
 
-        print('data : $dataMedals');
+        //print('data : $dataMedals');
       });
     });
   }
@@ -2181,7 +2263,7 @@ print(newMedalToday());
    bool decision =prefs.getBool('reminder');
    if(decision==null){return false;}
    else{
-     print(decision);
+     //print(decision);
      return decision;}
 
  }
@@ -2189,13 +2271,12 @@ print(newMedalToday());
 changeReminderPrefs(bool reminder) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('reminder', reminder);
-    print(prefs.getBool('reminder'));
+    //print(prefs.getBool('reminder'));
   }
 
 }
 
 bool newMedalToday(){
-  print("LENGTH ${dataMoods.length}");
   for(int i = 0;i<medalList.length;i++){
     if(dataMoods.length==medalList[i].nbRecords)
       {return true;}

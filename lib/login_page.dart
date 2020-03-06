@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   SizedBox(height: 300,),
                   Image.asset('images/logo.png',height: 100,),
-                  Text('Connexion',style:(TextStyle(color: Colors.grey[100])),textScaleFactor: 2.0,textDirection: TextDirection.ltr,),
+                  Text('Connexion',style:(TextStyle(color: Colors.grey[100],fontFamily: "dot")),textScaleFactor: 2.0,textDirection: TextDirection.ltr,),
                   SizedBox(height: 100,),
                   CircularProgressIndicator(valueColor:new AlwaysStoppedAnimation<Color>(Colors.teal[200]),backgroundColor: Colors.grey[200],),
                 ],

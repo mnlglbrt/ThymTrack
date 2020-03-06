@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'time_series_moods.dart';
 import 'time_series_words.dart';
+import 'words.dart';
 
+Map<DateTime,List<Word>> selectedWordsToday={today:[]};
 
 var sevenDaysData=selectData([DateTime.now().subtract(Duration(days:6)),DateTime.now().add(new Duration(days: 1))]);
 
