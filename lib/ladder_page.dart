@@ -1,10 +1,8 @@
-import 'package:bipo/login_page.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'sign_in.dart';
 import 'data.dart';
 import 'package:clay_containers/clay_containers.dart';
-import 'mood_ranges.dart';
 
 class LadderPage extends StatefulWidget {
   @override
@@ -15,7 +13,6 @@ class _LadderPageState extends State<LadderPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<dynamic, dynamic>stats=getStats(dataMoods);
     return Scaffold(
       appBar: AppBar(
         elevation: 10.0,

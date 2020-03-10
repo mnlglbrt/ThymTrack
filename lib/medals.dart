@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'data.dart';
 import 'sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'medals_page.dart';
 
 class Medal {
   int nbRecords;

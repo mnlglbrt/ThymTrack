@@ -18,6 +18,6 @@ class _AnimeButtonState extends State<AnimeButton> {
       },
       tooltip: 'Toggle Opacity',
       child: Icon(Icons.flip),
-    );;
+    );
   }
 }

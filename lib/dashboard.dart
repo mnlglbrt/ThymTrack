@@ -43,16 +43,15 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     super.initState();
     dataMoods.clear();
-    getData().then((x){newMedal=newMedalToday();});
+    getData();
+    newMedal=newMedalToday(getLength(dataMoods));
     getMedals();
     getWords();
-    //nbTabs=(dataMoods.length<7)?1:3;
     getReminderPrefs().then((bool){
       setState(() {
         reminderButtonVisible=bool;
       });
     });
-
   }
 
 
@@ -65,7 +64,7 @@ class _DashBoardState extends State<DashBoard> {
   var addButtonHeight = 0.0;
   var addButtonWidth = 0.0;
   dynamic addButtonChild = Text('');
-  bool newMedal;
+  //bool newMedal;
   int nbTabs;
 
   List<DateTime>initialRange = [
@@ -82,7 +81,7 @@ class _DashBoardState extends State<DashBoard> {
   bool reminderButtonVisible=true;
   TextStyle white = TextStyle(color: Colors.white);
   TextStyle black = TextStyle(color: Colors.black);
-
+  bool newMedal=newMedalToday(getLength(dataMoods));
   //var doc;
 
 
@@ -98,7 +97,6 @@ class _DashBoardState extends State<DashBoard> {
                 AsyncSnapshot<QuerySnapshot> snapshot) {
               if (dataMoods.isEmpty) {
                // Navigator.push(context, MaterialPageRoute(builder: (context){return FirstLogScreen();}));
-                updateToday;
                 dataMoods.add(TimeSeriesMoods(today, 0));
                 return Scaffold(
                   key: _scaffoldKey,
@@ -130,12 +128,9 @@ class _DashBoardState extends State<DashBoard> {
                   ),
                 );
               } else if(dataMoods.length>7) {
-
                   nbTabs=3;
-
                 var screenSize = MediaQuery.of(context).size;
                 var selectedData = selectData(initialRange);
-                bool newMedal=newMedalToday();
                 message = "Comment vous sentez-vous aujourd'hui?";
                 return DefaultTabController(length: nbTabs,
                   child: new Scaffold(
@@ -190,7 +185,7 @@ class _DashBoardState extends State<DashBoard> {
                           ],
                         ),
 
-                        (newMedalToday())?Column(
+                        (newMedalToday(getLength(dataMoods)))?Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Tooltip(message: 'Nouveau trophée !',
@@ -1647,8 +1642,7 @@ class _DashBoardState extends State<DashBoard> {
                                         children: <Widget>[
                                           Text('TROPHEES', textScaleFactor: 1.3, style: TextStyle(color: Colors.white, fontFamily: 'dot')),
                                           (newMedal)?
-                                           Padding(
-                                             padding: const EdgeInsets.only(top:8.0),
+                                           Padding(padding: const EdgeInsets.only(top:8.0),
                                              child: Icon(Icons.new_releases, color: Colors.white,)):Container(height: 0,),
                                         ],
                                       )
@@ -2253,9 +2247,13 @@ changeReminderPrefs(bool reminder) async{
 
 }
 
-bool newMedalToday(){
+getLength(List list){
+  return list.length;
+}
+
+bool newMedalToday(int length){
   for(int i = 0;i<medalList.length;i++){
-    if(dataMoods.length==medalList[i].nbRecords)
+    if(length==medalList[i].nbRecords)
       {return true;}
     else{return false;}
   }

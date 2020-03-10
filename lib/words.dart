@@ -1,6 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'data.dart';
 import 'sign_in.dart';
 class Word{
   String word;

@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'words.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'sign_in.dart';
-import 'package:random_color/random_color.dart';
 import 'data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WordsPage extends StatefulWidget {
-  DateTime myDate;
+  final DateTime myDate;
 
   WordsPage(this.myDate);
 
