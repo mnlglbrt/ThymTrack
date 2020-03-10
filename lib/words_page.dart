@@ -155,7 +155,7 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
                                       for(int i=0; i<selectedWords.length;i++){
                                         newEntry[selectedWords[i].word]=selectedWords[i].group;
                                       }
-                                      data_instance.collection('users').document(
+                                      dataInstance.collection('users').document(
                                           uid).collection(
                                           "feels")
                                           .document(myDate.toString()).setData(newEntry);

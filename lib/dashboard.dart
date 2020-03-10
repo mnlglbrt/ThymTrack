@@ -92,7 +92,7 @@ class _DashBoardState extends State<DashBoard> {
       child: new WillPopScope(
         onWillPop: () async => false,
         child: StreamBuilder<QuerySnapshot>(
-            stream: fire_users.document(uid).collection('moods').snapshots(),
+            stream: fireUsers.document(uid).collection('moods').snapshots(),
             builder: (BuildContext context,
                 AsyncSnapshot<QuerySnapshot> snapshot) {
               if (dataMoods.isEmpty) {
@@ -1345,7 +1345,7 @@ class _DashBoardState extends State<DashBoard> {
                                   Map<String, int>newEntry = {
                                     DateTime(oldDate.year, oldDate.month, oldDate.day,).toString(): moodFromSlide
                                   };
-                                  data_instance.collection('users').document(
+                                  dataInstance.collection('users').document(
                                       uid).collection(
                                       "moods")
                                       .document(oldDate.toString())
@@ -1510,7 +1510,7 @@ class _DashBoardState extends State<DashBoard> {
                                   Map<String, int>newEntry = {
                                     DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,).toString(): moodFromSlide
                                   };
-                                  data_instance.collection('users').document(
+                                  dataInstance.collection('users').document(
                                       uid).collection(
                                       "moods")
                                       .document(today.toString())
@@ -2053,7 +2053,7 @@ class _DashBoardState extends State<DashBoard> {
                     DateTime(date.year, date.month, date.day).toString(): moodFromSlide
                   };
                   updateToday();
-                  data_instance.collection('users').document(uid).collection(
+                  dataInstance.collection('users').document(uid).collection(
                       "moods").document(date.toString()).setData(newEntry);
                   animateContainerGoRectangle();
                   getData();
@@ -2209,11 +2209,11 @@ class _DashBoardState extends State<DashBoard> {
 
   Future<Null> getMedals() async {
     var col = getCollection();
-    List<obtainedMedal> myData = [];
+    List<ObtainedMedal> myData = [];
     col.then((coll) {
       dataMedals.clear();
       coll.forEach((med) {
-        myData.add(obtainedMedal(
+        myData.add(ObtainedMedal(
             DateTime.parse(med.keys.toString().substring(1, 11)),
             int.parse(med.values.toString().substring(1, med.values
                 .toString()
@@ -2252,11 +2252,13 @@ getLength(List list){
 }
 
 bool newMedalToday(int length){
+  bool b;
   for(int i = 0;i<medalList.length;i++){
     if(length==medalList[i].nbRecords)
-      {return true;}
-    else{return false;}
+      {b= true;}
+    else{b= false;}
   }
+  return b;
 }
 
 

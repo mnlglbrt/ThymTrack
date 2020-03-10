@@ -13,11 +13,11 @@ class Medal {
   Medal(this.nbRecords, this.title, this.content, this.imgUrl,this.link, this.linkText);
 }
 
-class obtainedMedal {
+class ObtainedMedal {
   DateTime date;
   int nbRecords;
 
-  obtainedMedal(this.date, this.nbRecords);
+  ObtainedMedal(this.date, this.nbRecords);
 }
 
 
@@ -44,18 +44,18 @@ List<Medal> medalList=[
 
 void checkMedals(){
   updateToday();
-  final data_instance = Firestore.instance;
+  final dataInstance = Firestore.instance;
   Map<String, dynamic> map;
   for (int i=0;i<medalList.length;i++) {
     if (dataMoods.length==medalList[i].nbRecords && dataMedals.where((med)=>med.nbRecords==dataMoods.length).toList().isEmpty){
       map={today.toString():dataMoods.length};
-      data_instance.collection('users').document(uid).collection(
+      dataInstance.collection('users').document(uid).collection(
           "medals").document(today.toString()).setData(map);
     }
   }
 }
 
-List<obtainedMedal> dataMedals =[];
+List<ObtainedMedal> dataMedals =[];
 
 
 Future <List<Map<dynamic, dynamic>>> getCollection() async {

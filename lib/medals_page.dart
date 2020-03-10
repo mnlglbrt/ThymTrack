@@ -255,11 +255,11 @@ void _showMedal(nbRecords,date){
 
   Future<Null> getMedals() async {
     var col = getCollection();
-    List<obtainedMedal> myData = [];
+    List<ObtainedMedal> myData = [];
     col.then((coll) {
       dataMedals.clear();
       coll.forEach((med) {
-        myData.add(obtainedMedal(
+        myData.add(ObtainedMedal(
             DateTime.parse(med.keys.toString().substring(1, 11)),
             int.parse(med.values.toString().substring(1, med.values
                 .toString()

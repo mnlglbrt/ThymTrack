@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class myColor{
+class MyColor{
   Color color;
   int shade;
 
-  myColor(this.color,this.shade);
+  MyColor(this.color,this.shade);
 }
 
  rangeColor(int mood){
-  return(mood<-49)?myColor(Colors.red,200):
-            (mood<-9)?myColor(Colors.yellow,600):
-              (mood<50)?myColor(Colors.teal,400):
-                (mood<70)?myColor(Colors.yellow,600):
-                  (mood<=100)?myColor(Colors.red,200):myColor(Colors.grey,900);
+  return(mood<-49)?MyColor(Colors.red,200):
+            (mood<-9)?MyColor(Colors.yellow,600):
+              (mood<50)?MyColor(Colors.teal,400):
+                (mood<70)?MyColor(Colors.yellow,600):
+                  (mood<=100)?MyColor(Colors.red,200):MyColor(Colors.grey,900);
 }

@@ -15,7 +15,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<dynamic, dynamic>stats=getStats(dataMoods);
+    //Map<dynamic, dynamic>stats=getStats(dataMoods);
     return Scaffold(
       appBar: AppBar(
         elevation: 10.0,

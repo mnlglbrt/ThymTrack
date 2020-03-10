@@ -63,14 +63,13 @@ List<int> extremMoods(List<TimeSeriesMoods> data){
 
 
 Map<dynamic, dynamic> getStats(List<TimeSeriesMoods> dataMoods) {
-  if (dataMoods.length>0){
-  Map stats={
+  Map<dynamic, dynamic> stats={
    'nbRecords':dataMoods.length,
    'nbDays':DateTime.now().difference(dataMoods[0].time).inDays,
    'missedRecords':DateTime.now().subtract(Duration(days:1)).difference(dataMoods[0].time).inDays-dataMoods.length+2,
    'accuracy':(((dataMoods.length-2)/((DateTime.now().subtract(Duration(days:1))).difference(dataMoods[0].time).inDays.toInt()))*100),
  };
-  return stats;}
+  return stats;
 }
 
 

@@ -7,10 +7,10 @@ class FireHelper{
 
   //Auth
 
-  FirebaseAuth auth_instance = FirebaseAuth.instance;
+  FirebaseAuth authInstance = FirebaseAuth.instance;
 
   //Database
-  final data_instance = Firestore.instance;
+  final dataInstance = Firestore.instance;
 
   //Storage
 }

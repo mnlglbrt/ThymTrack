@@ -8,8 +8,8 @@ String imageUrl;
 String uid;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
-final data_instance = Firestore.instance;
-final fire_users = data_instance.collection('users');
+final dataInstance = Firestore.instance;
+final fireUsers = dataInstance.collection('users');
 
 addUserToSF() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,7 +27,7 @@ deleteUserFromSF() async {
 }
 
 addUser(String uid, Map<String,dynamic> map){
-  fire_users.document(uid).setData(map);
+  fireUsers.document(uid).setData(map);
 }
 
 
@@ -65,7 +65,7 @@ Future<String> signInWithGoogle() async {
     "userType":"patient",
     "reminderTime":"2000",
   };
-  fire_users.document(uid).setData(map);
+  fireUsers.document(uid).setData(map);
 
   assert(!user.isAnonymous);
   assert(await user.getIdToken() != null);
