@@ -89,544 +89,187 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
 //print(newMedalToday());
 
-    return new WillPopScope(
-      onWillPop: () async => false,
-      child: StreamBuilder<QuerySnapshot>(
-          stream: fire_users.document(uid).collection('moods').snapshots(),
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (dataMoods.isEmpty) {
-             // Navigator.push(context, MaterialPageRoute(builder: (context){return FirstLogScreen();}));
-              updateToday;
-              dataMoods.add(TimeSeriesMoods(today, 0));
-              return Scaffold(
-                key: _scaffoldKey,
-                body: Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height,
-                    decoration: BoxDecoration(image: DecorationImage(
-                        image: AssetImage('images/background.png'),
-                        fit: BoxFit.fill)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Image.asset('images/logo.png', height: 100,),
-
-                        Text('Connexion en cours...',
-                          style: (TextStyle(color: Colors.grey[100])),
-                          textScaleFactor: 2.0,),
-                        SizedBox(height: 300,),
-                        CircularProgressIndicator(backgroundColor: Colors.white,),
-                        SizedBox(height: 100,)
-                      ],
-                    )
-                ),
-              );
-            } else if(dataMoods.length>7) {
-
-                nbTabs=3;
-
-              var screenSize = MediaQuery.of(context).size;
-              var selectedData = selectData(initialRange);
-              bool newMedal=newMedalToday();
-              message = "Comment vous sentez-vous aujourd'hui?";
-              return DefaultTabController(length: nbTabs,
-                child: new Scaffold(
+    return SafeArea(
+      child: new WillPopScope(
+        onWillPop: () async => false,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: fire_users.document(uid).collection('moods').snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (dataMoods.isEmpty) {
+               // Navigator.push(context, MaterialPageRoute(builder: (context){return FirstLogScreen();}));
+                updateToday;
+                dataMoods.add(TimeSeriesMoods(today, 0));
+                return Scaffold(
                   key: _scaffoldKey,
-                  appBar: AppBar(
-                    elevation: 10.0,
-                    centerTitle: true,
-                    backgroundColor: Colors.teal,
-                    title: new Text(
-                      "ThymTrack", textAlign: TextAlign.center,
-                      textScaleFactor: 0.8,
-                      style: new TextStyle(
-                        fontFamily: 'dot',
-                        color: Colors.white,),),
-
-
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset('images/logo.png'),
-                    ),
-                    actions: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  body: Container(
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height,
+                      decoration: BoxDecoration(image: DecorationImage(
+                          image: AssetImage('images/background.png'),
+                          fit: BoxFit.fill)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Tooltip(message: 'Menu',
-                            child: FlatButton(
-                              onPressed: () {
-                                showOptionsMenu(snapshot);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0,),
-                                child: ClayContainer(
-                                  borderRadius: 75,
-                                  depth: 20,
-                                  spread: 10,
-                                  width: 40,
-                                  height: 40,
-                                  color: Colors.teal,
-                                  child: CircleAvatar(
-                                    radius: 35,
-                                    child: CircleAvatar(
-                                      radius: 34,
-                                      backgroundColor: Colors.teal,
-                                      foregroundColor: Colors.white,
-                                      child: Icon(Icons.menu,),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                          Image.asset('images/logo.png', height: 100,),
 
-                      (newMedalToday())?Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Tooltip(message: 'Nouvelle Médaille !',
-                            child: FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(builder: (context) {
-                                      return MedalsPage();
-                                    }), ModalRoute.withName('/'));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0,),
-                                child: ClayContainer(
-                                  borderRadius: 75,
-                                  depth: 20,
-                                  spread: 10,
-                                  width: 40,
-                                  height: 40,
-                                  color: Colors.teal,
-                                  child: CircleAvatar(
-                                    radius: 35,
-                                    child: CircleAvatar(
-                                      radius: 34,
-                                      backgroundColor: Colors.teal,
-                                      foregroundColor: Colors.white,
-                                      child: Icon(Icons.menu,),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          Text('Connexion en cours...',
+                            style: (TextStyle(color: Colors.grey[100])),
+                            textScaleFactor: 2.0,),
+                          SizedBox(height: 300,),
+                          CircularProgressIndicator(backgroundColor: Colors.white,),
+                          SizedBox(height: 100,)
                         ],
-                      ):Container(),
-                    ],
+                      )
                   ),
+                );
+              } else if(dataMoods.length>7) {
+
+                  nbTabs=3;
+
+                var screenSize = MediaQuery.of(context).size;
+                var selectedData = selectData(initialRange);
+                bool newMedal=newMedalToday();
+                message = "Comment vous sentez-vous aujourd'hui?";
+                return DefaultTabController(length: nbTabs,
+                  child: new Scaffold(
+                    key: _scaffoldKey,
+                    appBar: AppBar(
+                      elevation: 10.0,
+                      centerTitle: true,
+                      backgroundColor: Colors.teal,
+                      title: new Text(
+                        "ThymTrack", textAlign: TextAlign.center,
+                        textScaleFactor: 0.8,
+                        style: new TextStyle(
+                          fontFamily: 'dot',
+                          color: Colors.white,),),
 
 
-
-                  body: TabBarView(
-                      children: <Widget>[
-
-
-                        ///                                                      CHART 7 DAYS
+                      leading: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('images/logo.png'),
+                      ),
+                      actions: <Widget>[
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Flexible(flex: 3,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
-                                  children: <Widget>[
-                                    (dataMoods.length>2)?ClayContainer(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:20.0),
-                                            child: Text('7 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
-                                              Center(child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Opacity(opacity:1.0,child: new Text(averageMood(sevenDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(sevenDaysData).toInt()).color[rangeColor(averageMood(sevenDaysData).toInt()).shade], ))),
-                                              )),
-                                            ],
-                                          ),
-
-                                        ],
-                                      ),
-                                    ):Container(),
-
-                                    Card(elevation: 0.0,
-                                      color: Colors.grey[100],
-                                      child: Container(
-                                        height: 350.0,
-                                        //color: Colors.grey[100],
-                                        child: (sevenDaysData.isEmpty == true)
-                                            ? Container(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text("Aucune entrée",
-                                                  textScaleFactor: 1.3,),
-                                                Text(
-                                                  "Utilisez le + pour entrer votre humeur.",
-                                                  textScaleFactor: 1.1,
-                                                  textAlign: TextAlign.center,),
-                                                Text(
-                                                  "Attribuez-lui une note entre -100 et +100",
-                                                  textScaleFactor: 1.1,
-                                                  textAlign: TextAlign.center,),
-                                              ],
-                                            ))
-                                            :
-
-                                        SimpleTimeSeriesChart(
-                                            <charts.Series<
-                                                TimeSeriesMoods,
-                                                DateTime>>[
-                                              charts.Series<
-                                                  TimeSeriesMoods,
-                                                  DateTime>(
-                                                id: 'Moods',
-                                                colorFn: (TimeSeriesMoods moods,
-                                                    _) {
-                                                  return (rangeColor(
-                                                      moods.value.toInt())
-                                                      .color == Colors.red)
-                                                      ? charts.MaterialPalette.red
-                                                      .shadeDefault.darker
-                                                      :
-                                                  (rangeColor(moods.value)
-                                                      .color == Colors.yellow)
-                                                      ? charts.MaterialPalette
-                                                      .yellow.shadeDefault.darker
-                                                      :
-                                                  (rangeColor(moods.value)
-                                                      .color == Colors.teal)
-                                                      ? charts.MaterialPalette
-                                                      .teal.shadeDefault.darker
-                                                      : charts.MaterialPalette
-                                                      .pink.shadeDefault;
-                                                },
-                                                domainFn: (TimeSeriesMoods moods,
-                                                    _) => moods.time,
-                                                measureFn: (TimeSeriesMoods moods,
-                                                    _) => moods.value,
-                                                data: sevenDaysData,
-                                              )
-                                                ..setAttribute(
-                                                    charts.rendererIdKey,
-                                                    'customPoint'),
-
-                                              charts.Series<
-                                                  TimeSeriesMoods,
-                                                  DateTime>(
-                                                id: 'Moods',
-                                                colorFn: (TimeSeriesMoods moods,
-                                                    _) {
-                                                  return (rangeColor(
-                                                      averageMood(sevenDaysData)
-                                                          .toInt()).color ==
-                                                      Colors.red) ? charts
-                                                      .MaterialPalette.red
-                                                      .shadeDefault.darker :
-                                                  (rangeColor(
-                                                      averageMood(sevenDaysData)
-                                                          .toInt()).color ==
-                                                      Colors.yellow) ? charts
-                                                      .MaterialPalette.yellow
-                                                      .shadeDefault.darker :
-                                                  (rangeColor(
-                                                      averageMood(sevenDaysData)
-                                                          .toInt()).color ==
-                                                      Colors.teal)
-                                                      ? charts.MaterialPalette
-                                                      .teal.shadeDefault.darker
-                                                      : charts.MaterialPalette
-                                                      .pink.shadeDefault;
-                                                },
-                                                domainFn: (TimeSeriesMoods moods,
-                                                    _) => moods.time,
-                                                measureFn: (TimeSeriesMoods moods,
-                                                    _) => moods.value,
-                                                data: sevenDaysData,
-                                              )
-                                            ]),
+                            Tooltip(message: 'Menu',
+                              child: FlatButton(
+                                onPressed: () {
+                                  showOptionsMenu(snapshot);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0,),
+                                  child: ClayContainer(
+                                    borderRadius: 75,
+                                    depth: 10,
+                                    spread: 7,
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.teal,
+                                    child: CircleAvatar(
+                                      radius: 35,
+                                      child: CircleAvatar(
+                                        radius: 34,
+                                        backgroundColor: Colors.teal,
+                                        foregroundColor: Colors.white,
+                                        child: Icon(Icons.menu,),
                                       ),
                                     ),
-
-
-                                    ///                                                      LIST 7 DAYS
-                                    (sevenDaysData.isEmpty)
-                                        ? Text("Pas d'entrée")
-                                        :
-                                    Flexible(flex: 2,
-                                      child: makeList(sevenDaysData),
-                                    ),
-
-                                  ]),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
 
-
-                        ///                                                      CHART 30 DAYS
-                        Column(
+                        (newMedalToday())?Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Flexible(flex: 3,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
-                                  children: <Widget>[
-                                    (dataMoods.length>2)?ClayContainer(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:20.0),
-                                            child: Text('30 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
-                                              Center(child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Opacity(opacity:1.0,child: new Text(averageMood(thirtyDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(thirtyDaysData).toInt()).color[rangeColor(averageMood(thirtyDaysData).toInt()).shade], ))),
-                                              )),
-                                            ],
-                                          ),
-
-                                        ],
+                            Tooltip(message: 'Nouveau trophée !',
+                              child: FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(builder: (context) {
+                                        return MedalsPage();
+                                      }), ModalRoute.withName('/'));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0,),
+                                  child: ClayContainer(
+                                    borderRadius: 75,
+                                    depth: 10,
+                                    spread: 7,
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.teal,
+                                    child: CircleAvatar(
+                                      radius: 35,
+                                      child: CircleAvatar(
+                                        radius: 34,
+                                        backgroundColor: Colors.teal,
+                                        foregroundColor: Colors.white,
+                                        child: Icon(Icons.menu,),
                                       ),
-                                    ):Container(),
-
-                                    Card(elevation: 0.0,
-                                        color: Colors.grey[100],
-                                        child: Container(
-                                          height: 350.0,
-                                          //color: Colors.grey[100],
-                                          child: (thirtyDaysData.isEmpty == true)
-                                              ? Container(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment
-                                                    .center,
-                                                children: <Widget>[
-                                                  Text("Aucune entrée",
-                                                    textScaleFactor: 1.3,),
-                                                  Text(
-                                                    "Utilisez le slider pour entrer votre humeur.",
-                                                    textScaleFactor: 1.1,
-                                                    textAlign: TextAlign.center,),
-                                                  Text(
-                                                    "Attribuez-lui une note entre -100 et +100",
-                                                    textScaleFactor: 1.1,
-                                                    textAlign: TextAlign.center,),
-                                                ],
-                                              ))
-                                              :
-
-                                          SimpleTimeSeriesChart(
-                                              <charts.Series<
-                                                  TimeSeriesMoods,
-                                                  DateTime>>[
-                                                charts.Series<
-                                                    TimeSeriesMoods,
-                                                    DateTime>(
-                                                  id: 'Moods',
-                                                  colorFn: (TimeSeriesMoods moods,
-                                                      _) {
-                                                    return (rangeColor(
-                                                        moods.value.toInt())
-                                                        .color == Colors.red)
-                                                        ? charts.MaterialPalette
-                                                        .red.shadeDefault.darker
-                                                        :
-                                                    (rangeColor(moods.value)
-                                                        .color == Colors.yellow)
-                                                        ? charts.MaterialPalette
-                                                        .yellow.shadeDefault
-                                                        .darker
-                                                        :
-                                                    (rangeColor(moods.value)
-                                                        .color == Colors.teal)
-                                                        ? charts.MaterialPalette
-                                                        .teal.shadeDefault.darker
-                                                        : charts.MaterialPalette
-                                                        .pink.shadeDefault;
-                                                  },
-                                                  domainFn: (
-                                                      TimeSeriesMoods moods,
-                                                      _) => moods.time,
-                                                  measureFn: (
-                                                      TimeSeriesMoods moods,
-                                                      _) => moods.value,
-                                                  data: thirtyDaysData,
-                                                )
-                                                  ..setAttribute(
-                                                      charts.rendererIdKey,
-                                                      'customPoint'),
-                                                charts.Series<
-                                                    TimeSeriesMoods,
-                                                    DateTime>(
-                                                  id: 'Moods',
-                                                  colorFn: (TimeSeriesMoods moods,
-                                                      _) {
-                                                    return (rangeColor(
-                                                        averageMood(
-                                                            thirtyDaysData)
-                                                            .toInt()).color ==
-                                                        Colors.red) ? charts
-                                                        .MaterialPalette.red
-                                                        .shadeDefault.darker :
-                                                    (rangeColor(averageMood(
-                                                        thirtyDaysData).toInt())
-                                                        .color == Colors.yellow)
-                                                        ? charts.MaterialPalette
-                                                        .yellow.shadeDefault
-                                                        .darker
-                                                        :
-                                                    (rangeColor(averageMood(
-                                                        thirtyDaysData).toInt())
-                                                        .color == Colors.teal)
-                                                        ? charts.MaterialPalette
-                                                        .teal.shadeDefault.darker
-                                                        : charts.MaterialPalette
-                                                        .pink.shadeDefault;
-                                                  },
-                                                  domainFn: (
-                                                      TimeSeriesMoods moods,
-                                                      _) => moods.time,
-                                                  measureFn: (
-                                                      TimeSeriesMoods moods,
-                                                      _) => moods.value,
-                                                  data: thirtyDaysData,
-                                                )
-                                              ]),
-                                        )),
-
-
-                                    ///                                                      LIST 30 DAYS
-                                    (selectedData.isEmpty)
-                                        ? Text("Pas d'entrée")
-                                        :
-                                    Flexible(flex: 2,
-                                      child: makeList(thirtyDaysData),
                                     ),
-
-                                  ]),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                        ),
+                        ):Container(),
+                      ],
+                    ),
 
 
-                        ///                                                                 GRAPH FOR SELECTED RANGE
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Flexible(flex: 3,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
-                                  children: <Widget>[
-                                    (dataMoods.length>2)?ClayContainer(
-                                      child: Container(
-                                        color: Colors.transparent,
+
+                    body: TabBarView(
+                        children: <Widget>[
+
+
+                          ///                                                      CHART 7 DAYS
+                          Column(
+                            children: <Widget>[
+                              Flexible(flex: 3,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    children: <Widget>[
+                                      (dataMoods.length>2)?ClayContainer(
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
                                             Padding(
                                               padding: const EdgeInsets.only(left:20.0),
-                                              child: ///DATE RANGE SELECTOR
-
-                                              ClayContainer(
-                                                surfaceColor: Colors.teal,
-                                                color: Colors.grey[100],
-                                                parentColor: Colors.white,
-
-                                                height: 30,
-                                                borderRadius: 75,
-                                                depth: 40,
-                                                spread: 10,
-                                                child: new InkWell(
-                                                    onTap: () async {
-                                                      final List<DateTime> picked = await DateRangePicker
-                                                          .showDatePicker(
-                                                        context: context,
-                                                        initialFirstDate: initialRange[0],
-                                                        initialLastDate: initialRange[1],
-                                                        firstDate: new DateTime(2019),
-                                                        lastDate: new DateTime(2050),
-                                                        locale: Locale('fr','FR'),
-                                                      );
-                                                      if (picked != null &&
-                                                          picked.length == 2) {
-                                                        setState(() {
-                                                          getData();
-                                                          initialRange = picked;
-                                                          selectedData.clear();
-                                                          selectedData =
-                                                              selectData(picked);
-                                                        });
-                                                      }
-                                                    },
-
-
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(left:8.0,right: 8.0),
-                                                      child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment
-                                                              .spaceEvenly,
-                                                          children: <Widget>[
-                                                            new Text('${new DateFormat(
-                                                                "dd/MM/yyyy").format(
-                                                                initialRange[0])}',
-                                                                textScaleFactor: 0.8,
-                                                                style: white),
-                                                            new Icon(Icons.arrow_left,
-                                                                color: Colors.white),
-                                                            new Icon(Icons.calendar_today,
-                                                                color: Colors.white),
-                                                            new Icon(Icons.arrow_right,
-                                                                color: Colors.white),
-                                                            new Text('${new DateFormat(
-                                                                "dd/MM/yyyy").format(
-                                                                initialRange[1])}',
-                                                                textScaleFactor: 0.8,
-                                                                style: white),
-                                                          ]
-                                                      ),
-                                                    )
-                                                ),
-                                              ),
+                                              child: Text('7 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
                                             ),
                                             Row(
                                               children: <Widget>[
                                                 Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
                                                 Center(child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
-                                                  child: Opacity(opacity:1.0,child: new Text(averageMood(selectedData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(selectedData).toInt()).color[rangeColor(averageMood(selectedData).toInt()).shade], ))),
+                                                  child: Opacity(opacity:1.0,child: new Text(averageMood(sevenDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(sevenDaysData).toInt()).color[rangeColor(averageMood(sevenDaysData).toInt()).shade], ))),
                                                 )),
                                               ],
                                             ),
 
                                           ],
                                         ),
-                                      ),
-                                    ):Container(),
+                                      ):Container(),
 
-                                    Card(elevation: 0.0,
+                                      Card(elevation: 0.0,
+                                        color: Colors.grey[100],
                                         child: Container(
                                           height: 350.0,
-                                          color: Colors.grey[100],
-                                          child: (selectedData.isEmpty == true)
+                                          //color: Colors.grey[100],
+                                          child: (sevenDaysData.isEmpty == true)
                                               ? Container(
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment
@@ -659,14 +302,13 @@ class _DashBoardState extends State<DashBoard> {
                                                     return (rangeColor(
                                                         moods.value.toInt())
                                                         .color == Colors.red)
-                                                        ? charts.MaterialPalette
-                                                        .red.shadeDefault.darker
+                                                        ? charts.MaterialPalette.red
+                                                        .shadeDefault.darker
                                                         :
                                                     (rangeColor(moods.value)
                                                         .color == Colors.yellow)
                                                         ? charts.MaterialPalette
-                                                        .yellow.shadeDefault
-                                                        .darker
+                                                        .yellow.shadeDefault.darker
                                                         :
                                                     (rangeColor(moods.value)
                                                         .color == Colors.teal)
@@ -675,13 +317,11 @@ class _DashBoardState extends State<DashBoard> {
                                                         : charts.MaterialPalette
                                                         .pink.shadeDefault;
                                                   },
-                                                  domainFn: (
-                                                      TimeSeriesMoods moods,
+                                                  domainFn: (TimeSeriesMoods moods,
                                                       _) => moods.time,
-                                                  measureFn: (
-                                                      TimeSeriesMoods moods,
+                                                  measureFn: (TimeSeriesMoods moods,
                                                       _) => moods.value,
-                                                  data: selectedData,
+                                                  data: sevenDaysData,
                                                 )
                                                   ..setAttribute(
                                                       charts.rendererIdKey,
@@ -694,19 +334,19 @@ class _DashBoardState extends State<DashBoard> {
                                                   colorFn: (TimeSeriesMoods moods,
                                                       _) {
                                                     return (rangeColor(
-                                                        averageMood(selectedData)
+                                                        averageMood(sevenDaysData)
                                                             .toInt()).color ==
                                                         Colors.red) ? charts
                                                         .MaterialPalette.red
                                                         .shadeDefault.darker :
                                                     (rangeColor(
-                                                        averageMood(selectedData)
+                                                        averageMood(sevenDaysData)
                                                             .toInt()).color ==
                                                         Colors.yellow) ? charts
                                                         .MaterialPalette.yellow
                                                         .shadeDefault.darker :
                                                     (rangeColor(
-                                                        averageMood(selectedData)
+                                                        averageMood(sevenDaysData)
                                                             .toInt()).color ==
                                                         Colors.teal)
                                                         ? charts.MaterialPalette
@@ -714,358 +354,722 @@ class _DashBoardState extends State<DashBoard> {
                                                         : charts.MaterialPalette
                                                         .pink.shadeDefault;
                                                   },
-                                                  domainFn: (
-                                                      TimeSeriesMoods moods,
+                                                  domainFn: (TimeSeriesMoods moods,
                                                       _) => moods.time,
-                                                  measureFn: (
-                                                      TimeSeriesMoods moods,
+                                                  measureFn: (TimeSeriesMoods moods,
                                                       _) => moods.value,
-                                                  data: selectedData,
+                                                  data: sevenDaysData,
                                                 )
                                               ]),
-                                        )),
+                                        ),
+                                      ),
+
+
+                                      ///                                                      LIST 7 DAYS
+                                      (sevenDaysData.isEmpty)
+                                          ? Text("Pas d'entrée")
+                                          :
+                                      Flexible(flex: 2,
+                                        child: makeList(sevenDaysData),
+                                      ),
+
+                                    ]),
+                              ),
+                            ],
+                          ),
+
+
+                          ///                                                      CHART 30 DAYS
+                          Column(
+                            children: <Widget>[
+                              Flexible(flex: 3,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    children: <Widget>[
+                                      (dataMoods.length>2)?ClayContainer(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(left:20.0),
+                                              child: Text('30 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
+                                                Center(child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Opacity(opacity:1.0,child: new Text(averageMood(thirtyDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(thirtyDaysData).toInt()).color[rangeColor(averageMood(thirtyDaysData).toInt()).shade], ))),
+                                                )),
+                                              ],
+                                            ),
+
+                                          ],
+                                        ),
+                                      ):Container(),
+
+                                      Card(elevation: 0.0,
+                                          color: Colors.grey[100],
+                                          child: Container(
+                                            height: 350.0,
+                                            //color: Colors.grey[100],
+                                            child: (thirtyDaysData.isEmpty == true)
+                                                ? Container(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text("Aucune entrée",
+                                                      textScaleFactor: 1.3,),
+                                                    Text(
+                                                      "Utilisez le slider pour entrer votre humeur.",
+                                                      textScaleFactor: 1.1,
+                                                      textAlign: TextAlign.center,),
+                                                    Text(
+                                                      "Attribuez-lui une note entre -100 et +100",
+                                                      textScaleFactor: 1.1,
+                                                      textAlign: TextAlign.center,),
+                                                  ],
+                                                ))
+                                                :
+
+                                            SimpleTimeSeriesChart(
+                                                <charts.Series<
+                                                    TimeSeriesMoods,
+                                                    DateTime>>[
+                                                  charts.Series<
+                                                      TimeSeriesMoods,
+                                                      DateTime>(
+                                                    id: 'Moods',
+                                                    colorFn: (TimeSeriesMoods moods,
+                                                        _) {
+                                                      return (rangeColor(
+                                                          moods.value.toInt())
+                                                          .color == Colors.red)
+                                                          ? charts.MaterialPalette
+                                                          .red.shadeDefault.darker
+                                                          :
+                                                      (rangeColor(moods.value)
+                                                          .color == Colors.yellow)
+                                                          ? charts.MaterialPalette
+                                                          .yellow.shadeDefault
+                                                          .darker
+                                                          :
+                                                      (rangeColor(moods.value)
+                                                          .color == Colors.teal)
+                                                          ? charts.MaterialPalette
+                                                          .teal.shadeDefault.darker
+                                                          : charts.MaterialPalette
+                                                          .pink.shadeDefault;
+                                                    },
+                                                    domainFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.time,
+                                                    measureFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.value,
+                                                    data: thirtyDaysData,
+                                                  )
+                                                    ..setAttribute(
+                                                        charts.rendererIdKey,
+                                                        'customPoint'),
+                                                  charts.Series<
+                                                      TimeSeriesMoods,
+                                                      DateTime>(
+                                                    id: 'Moods',
+                                                    colorFn: (TimeSeriesMoods moods,
+                                                        _) {
+                                                      return (rangeColor(
+                                                          averageMood(
+                                                              thirtyDaysData)
+                                                              .toInt()).color ==
+                                                          Colors.red) ? charts
+                                                          .MaterialPalette.red
+                                                          .shadeDefault.darker :
+                                                      (rangeColor(averageMood(
+                                                          thirtyDaysData).toInt())
+                                                          .color == Colors.yellow)
+                                                          ? charts.MaterialPalette
+                                                          .yellow.shadeDefault
+                                                          .darker
+                                                          :
+                                                      (rangeColor(averageMood(
+                                                          thirtyDaysData).toInt())
+                                                          .color == Colors.teal)
+                                                          ? charts.MaterialPalette
+                                                          .teal.shadeDefault.darker
+                                                          : charts.MaterialPalette
+                                                          .pink.shadeDefault;
+                                                    },
+                                                    domainFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.time,
+                                                    measureFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.value,
+                                                    data: thirtyDaysData,
+                                                  )
+                                                ]),
+                                          )),
+
+
+                                      ///                                                      LIST 30 DAYS
+                                      (selectedData.isEmpty)
+                                          ? Text("Pas d'entrée")
+                                          :
+                                      Flexible(flex: 2,
+                                        child: makeList(thirtyDaysData),
+                                      ),
+
+                                    ]),
+                              ),
+                            ],
+                          ),
+
+
+                          ///                                                                 GRAPH FOR SELECTED RANGE
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Flexible(flex: 3,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    children: <Widget>[
+                                      (dataMoods.length>2)?ClayContainer(
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: const EdgeInsets.only(left:20.0),
+                                                child: ///DATE RANGE SELECTOR
+
+                                                ClayContainer(
+                                                  surfaceColor: Colors.teal,
+                                                  color: Colors.grey[100],
+                                                  parentColor: Colors.white,
+
+                                                  height: 30,
+                                                  borderRadius: 75,
+                                                  depth: 40,
+                                                  spread: 10,
+                                                  child: new InkWell(
+                                                      onTap: () async {
+                                                        final List<DateTime> picked = await DateRangePicker
+                                                            .showDatePicker(
+                                                          context: context,
+                                                          initialFirstDate: initialRange[0],
+                                                          initialLastDate: initialRange[1],
+                                                          firstDate: new DateTime(2019),
+                                                          lastDate: new DateTime(2050),
+                                                          locale: Locale('fr','FR'),
+                                                        );
+                                                        if (picked != null &&
+                                                            picked.length == 2) {
+                                                          setState(() {
+                                                            getData();
+                                                            initialRange = picked;
+                                                            selectedData.clear();
+                                                            selectedData =
+                                                                selectData(picked);
+                                                          });
+                                                        }
+                                                      },
+
+
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left:8.0,right: 8.0),
+                                                        child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment
+                                                                .spaceEvenly,
+                                                            children: <Widget>[
+                                                              new Text('${new DateFormat(
+                                                                  "dd/MM/yyyy").format(
+                                                                  initialRange[0])}',
+                                                                  textScaleFactor: 0.8,
+                                                                  style: white),
+                                                              new Icon(Icons.arrow_left,
+                                                                  color: Colors.white),
+                                                              new Icon(Icons.calendar_today,
+                                                                  color: Colors.white),
+                                                              new Icon(Icons.arrow_right,
+                                                                  color: Colors.white),
+                                                              new Text('${new DateFormat(
+                                                                  "dd/MM/yyyy").format(
+                                                                  initialRange[1])}',
+                                                                  textScaleFactor: 0.8,
+                                                                  style: white),
+                                                            ]
+                                                        ),
+                                                      )
+                                                  ),
+                                                ),
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
+                                                  Center(child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Opacity(opacity:1.0,child: new Text(averageMood(selectedData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(selectedData).toInt()).color[rangeColor(averageMood(selectedData).toInt()).shade], ))),
+                                                  )),
+                                                ],
+                                              ),
+
+                                            ],
+                                          ),
+                                        ),
+                                      ):Container(),
+
+                                      Card(elevation: 0.0,
+                                          child: Container(
+                                            height: 350.0,
+                                            color: Colors.grey[100],
+                                            child: (selectedData.isEmpty == true)
+                                                ? Container(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text("Aucune entrée",
+                                                      textScaleFactor: 1.3,),
+                                                    Text(
+                                                      "Utilisez le + pour entrer votre humeur.",
+                                                      textScaleFactor: 1.1,
+                                                      textAlign: TextAlign.center,),
+                                                    Text(
+                                                      "Attribuez-lui une note entre -100 et +100",
+                                                      textScaleFactor: 1.1,
+                                                      textAlign: TextAlign.center,),
+                                                  ],
+                                                ))
+                                                :
+
+                                            SimpleTimeSeriesChart(
+                                                <charts.Series<
+                                                    TimeSeriesMoods,
+                                                    DateTime>>[
+                                                  charts.Series<
+                                                      TimeSeriesMoods,
+                                                      DateTime>(
+                                                    id: 'Moods',
+                                                    colorFn: (TimeSeriesMoods moods,
+                                                        _) {
+                                                      return (rangeColor(
+                                                          moods.value.toInt())
+                                                          .color == Colors.red)
+                                                          ? charts.MaterialPalette
+                                                          .red.shadeDefault.darker
+                                                          :
+                                                      (rangeColor(moods.value)
+                                                          .color == Colors.yellow)
+                                                          ? charts.MaterialPalette
+                                                          .yellow.shadeDefault
+                                                          .darker
+                                                          :
+                                                      (rangeColor(moods.value)
+                                                          .color == Colors.teal)
+                                                          ? charts.MaterialPalette
+                                                          .teal.shadeDefault.darker
+                                                          : charts.MaterialPalette
+                                                          .pink.shadeDefault;
+                                                    },
+                                                    domainFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.time,
+                                                    measureFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.value,
+                                                    data: selectedData,
+                                                  )
+                                                    ..setAttribute(
+                                                        charts.rendererIdKey,
+                                                        'customPoint'),
+
+                                                  charts.Series<
+                                                      TimeSeriesMoods,
+                                                      DateTime>(
+                                                    id: 'Moods',
+                                                    colorFn: (TimeSeriesMoods moods,
+                                                        _) {
+                                                      return (rangeColor(
+                                                          averageMood(selectedData)
+                                                              .toInt()).color ==
+                                                          Colors.red) ? charts
+                                                          .MaterialPalette.red
+                                                          .shadeDefault.darker :
+                                                      (rangeColor(
+                                                          averageMood(selectedData)
+                                                              .toInt()).color ==
+                                                          Colors.yellow) ? charts
+                                                          .MaterialPalette.yellow
+                                                          .shadeDefault.darker :
+                                                      (rangeColor(
+                                                          averageMood(selectedData)
+                                                              .toInt()).color ==
+                                                          Colors.teal)
+                                                          ? charts.MaterialPalette
+                                                          .teal.shadeDefault.darker
+                                                          : charts.MaterialPalette
+                                                          .pink.shadeDefault;
+                                                    },
+                                                    domainFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.time,
+                                                    measureFn: (
+                                                        TimeSeriesMoods moods,
+                                                        _) => moods.value,
+                                                    data: selectedData,
+                                                  )
+                                                ]),
+                                          )),
 
 
 
 
 
-                                    ///                                                      LIST PERSO WITH SELECTED RANGE
-                                    (selectedData.isEmpty)
-                                        ? Text("Pas d'entrée")
-                                        :
-                                    Flexible(flex: 2,
-                                        child: makeList(selectedData)
-                                    ),
+                                      ///                                                      LIST PERSO WITH SELECTED RANGE
+                                      (selectedData.isEmpty)
+                                          ? Text("Pas d'entrée")
+                                          :
+                                      Flexible(flex: 2,
+                                          child: makeList(selectedData)
+                                      ),
 
-                                  ]),
-                            ),
-                          ],
-                        ),
+                                    ]),
+                              ),
+                            ],
+                          ),
 
 
 //Container(child: Text(fileContent.toString())),
 
 
-                      ]),
-                  bottomNavigationBar: BottomAppBar(
-                    shape: CircularNotchedRectangle(),
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        TabBar(dragStartBehavior: DragStartBehavior.down,
-                            isScrollable: true,
-                            tabs: <Widget>[
-                              //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
-                              Container(height: screenSize.height / 20,
-                                  width: screenSize.width / 8,
-                                  child: Center(child: Row(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .spaceEvenly,
-                                    children: <Widget>[
-                                      Icon(Icons.show_chart, color: Colors.teal),
-                                      Text('7j',
-                                        style: TextStyle(color: Colors.teal),)
-                                    ],))),
-                              Container(height: screenSize.height / 20,
-                                  width: screenSize.width / 8,
-                                  child: Center(child: Row(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .spaceEvenly,
-                                    children: <Widget>[
-                                      Icon(Icons.show_chart, color: Colors.teal,),
-                                      Text('1m',
-                                          style: TextStyle(color: Colors.teal))
-                                    ],))),
-
-                              Padding(
-                                padding: EdgeInsets.only(left: screenSize.width /
-                                    8),
-                                child: Container(height: screenSize.height / 20,
-                                    width: screenSize.width / 3,
+                        ]),
+                    bottomNavigationBar: BottomAppBar(
+                      shape: CircularNotchedRectangle(),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TabBar(dragStartBehavior: DragStartBehavior.down,
+                              isScrollable: true,
+                              tabs: <Widget>[
+                                //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
+                                Container(height: screenSize.height / 20,
+                                    width: screenSize.width / 8,
                                     child: Center(child: Row(
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceEvenly,
                                       children: <Widget>[
-                                        Icon(Icons.calendar_today,
-                                            color: Colors.teal),
-                                        Text('Perso',
+                                        Icon(Icons.show_chart, color: Colors.teal),
+                                        Text('7j',
+                                          style: TextStyle(color: Colors.teal),)
+                                      ],))),
+                                Container(height: screenSize.height / 20,
+                                    width: screenSize.width / 8,
+                                    child: Center(child: Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceEvenly,
+                                      children: <Widget>[
+                                        Icon(Icons.show_chart, color: Colors.teal,),
+                                        Text('1m',
                                             style: TextStyle(color: Colors.teal))
                                       ],))),
-                              ),
-                            ]),
-                      ],
+
+                                Padding(
+                                  padding: EdgeInsets.only(left: screenSize.width /
+                                      8),
+                                  child: Container(height: screenSize.height / 20,
+                                      width: screenSize.width / 3,
+                                      child: Center(child: Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceEvenly,
+                                        children: <Widget>[
+                                          Icon(Icons.calendar_today,
+                                              color: Colors.teal),
+                                          Text('Perso',
+                                              style: TextStyle(color: Colors.teal))
+                                        ],))),
+                                ),
+                              ]),
+                        ],
+                      ),
+                      color: Colors.white,
                     ),
-                    color: Colors.white,
-                  ),
-                  floatingActionButton: FloatingActionButton(
-                    child: Icon(Icons.add),
+                    floatingActionButton: FloatingActionButton(
+                      child: Icon(Icons.add),
 
-                    onPressed: () {
-                      showMenuAddMoodOtherDate(snapshot);
-                    },
-                  ),
-                  floatingActionButtonLocation: FloatingActionButtonLocation
-                      .centerDocked,
-                ),
-              );
-            }
-            else{
-              nbTabs=1;
-              //('AVERAGE : ${averageMood(sevenDaysData)}');
-              return DefaultTabController(length: nbTabs,
-                child: new Scaffold(
-                  key: _scaffoldKey,
-                  appBar: AppBar(
-                    elevation: 10.0,
-                    centerTitle: true,
-                    backgroundColor: Colors.teal,
-                    title: new Text(
-                      "ThymTrack", textAlign: TextAlign.center,
-                      textScaleFactor: 0.8,
-                      style: new TextStyle(
-                        fontFamily: 'dot',
-                        color: Colors.white,),),
-
-
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset('images/logo.png'),
+                      onPressed: () {
+                        showMenuAddMoodOtherDate(snapshot);
+                      },
                     ),
-                    actions: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Tooltip(message: 'Réglages',
-                            child: FlatButton(
-                              onPressed: () {
-                                showOptionsMenu(snapshot);
-                                /*Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(builder: (context) {
-                                        return SettingPage();
-                                      }), ModalRoute.withName('/'));*/
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0,),
-                                child: ClayContainer(
-                                  borderRadius: 75,
-                                  depth: 20,
-                                  spread: 10,
-                                  width: 40,
-                                  height: 40,
-                                  color: Colors.teal,
-                                  child: CircleAvatar(
-                                    radius: 35,
-                                    child: CircleAvatar(
-                                      radius: 34,
-                                      backgroundColor: Colors.teal,
-                                      foregroundColor: Colors.white,
-                                      child: Icon(
-                                        Icons.menu,
+                    floatingActionButtonLocation: FloatingActionButtonLocation
+                        .centerDocked,
+                  ),
+                );
+              }
+              else{
+                nbTabs=1;
+                //('AVERAGE : ${averageMood(sevenDaysData)}');
+                return SafeArea(
+                  child: DefaultTabController(length: nbTabs,
+                    child: new Scaffold(
+                      key: _scaffoldKey,
+                      appBar: AppBar(
+                        elevation: 10.0,
+                        centerTitle: true,
+                        backgroundColor: Colors.teal,
+                        title: new Text(
+                          "ThymTrack", textAlign: TextAlign.center,
+                          textScaleFactor: 0.8,
+                          style: new TextStyle(
+                            fontFamily: 'dot',
+                            color: Colors.white,),),
+
+
+                        leading: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset('images/logo.png'),
+                        ),
+                        actions: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Tooltip(message: 'Menu',
+                                child: FlatButton(
+                                  onPressed: () {
+                                    showOptionsMenu(snapshot);
+                                    /*Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(builder: (context) {
+                                            return SettingPage();
+                                          }), ModalRoute.withName('/'));*/
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0,),
+                                    child: ClayContainer(
+                                      borderRadius: 75,
+                                      depth: 10,
+                                      spread: 7,
+                                      width: 40,
+                                      height: 40,
+                                      color: Colors.teal,
+                                      child: CircleAvatar(
+                                        radius: 35,
+                                        child: CircleAvatar(
+                                          radius: 34,
+                                          backgroundColor: Colors.teal,
+                                          foregroundColor: Colors.white,
+                                          child: Icon(
+                                            Icons.menu,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
 
 
 
-                  body: TabBarView(
-                      children: <Widget>[
-
-
-                        ///                                                      CHART 7 DAYS
-                        Column(
+                      body: TabBarView(
                           children: <Widget>[
-                            Flexible(flex: 3,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
-                                  children: <Widget>[
-                                    (dataMoods.length>2)?ClayContainer(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:20.0),
-                                            child: Text('7 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
-                                          ),
-                                          Row(
+
+
+                            ///                                                      CHART 7 DAYS
+                            Column(
+                              children: <Widget>[
+                                Flexible(flex: 3,
+                                  child: Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceEvenly,
+                                      children: <Widget>[
+                                        (dataMoods.length>2)?ClayContainer(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
-                                              Center(child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Opacity(opacity:1.0,child: new Text(averageMood(sevenDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(sevenDaysData).toInt()).color[rangeColor(averageMood(sevenDaysData).toInt()).shade], ))),
-                                              )),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left:20.0),
+                                                child: Text('7 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
+                                                  Center(child: Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Opacity(opacity:1.0,child: new Text(averageMood(sevenDaysData).toInt().toString(),textScaleFactor: 1.6,style: TextStyle(fontFamily: 'dot',color:rangeColor(averageMood(sevenDaysData).toInt()).color[rangeColor(averageMood(sevenDaysData).toInt()).shade], ))),
+                                                  )),
+                                                ],
+                                              ),
+
                                             ],
                                           ),
+                                        ):Container(),
 
-                                        ],
-                                      ),
-                                    ):Container(),
+                                        Card(elevation: 0.0,
+                                          color: Colors.grey[100],
+                                          child: Container(
+                                            height: 350.0,
+                                            //color: Colors.grey[100],
+                                            child: (sevenDaysData.isEmpty == true)
+                                                ? Container(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text("Aucune entrée",
+                                                      textScaleFactor: 1.3,),
+                                                    Text(
+                                                      "Utilisez le + pour entrer votre humeur.",
+                                                      textScaleFactor: 1.1,
+                                                      textAlign: TextAlign.center,),
+                                                    Text(
+                                                      "Attribuez-lui une note entre -100 et +100",
+                                                      textScaleFactor: 1.1,
+                                                      textAlign: TextAlign.center,),
+                                                  ],
+                                                ))
+                                                :
 
-                                    Card(elevation: 0.0,
-                                      color: Colors.grey[100],
-                                      child: Container(
-                                        height: 350.0,
-                                        //color: Colors.grey[100],
-                                        child: (sevenDaysData.isEmpty == true)
-                                            ? Container(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text("Aucune entrée",
-                                                  textScaleFactor: 1.3,),
-                                                Text(
-                                                  "Utilisez le + pour entrer votre humeur.",
-                                                  textScaleFactor: 1.1,
-                                                  textAlign: TextAlign.center,),
-                                                Text(
-                                                  "Attribuez-lui une note entre -100 et +100",
-                                                  textScaleFactor: 1.1,
-                                                  textAlign: TextAlign.center,),
-                                              ],
-                                            ))
+                                            SimpleTimeSeriesChart(
+                                                <charts.Series<
+                                                    TimeSeriesMoods,
+                                                    DateTime>>[
+                                                  charts.Series<
+                                                      TimeSeriesMoods,
+                                                      DateTime>(
+                                                    id: 'Moods',
+                                                    colorFn: (TimeSeriesMoods moods,
+                                                        _) {
+                                                      return (rangeColor(
+                                                          moods.value.toInt())
+                                                          .color == Colors.red)
+                                                          ? charts.MaterialPalette.red
+                                                          .shadeDefault.darker
+                                                          :
+                                                      (rangeColor(moods.value)
+                                                          .color == Colors.yellow)
+                                                          ? charts.MaterialPalette
+                                                          .yellow.shadeDefault.darker
+                                                          :
+                                                      (rangeColor(moods.value)
+                                                          .color == Colors.teal)
+                                                          ? charts.MaterialPalette
+                                                          .teal.shadeDefault.darker
+                                                          : charts.MaterialPalette
+                                                          .pink.shadeDefault;
+                                                    },
+                                                    domainFn: (TimeSeriesMoods moods,
+                                                        _) => moods.time,
+                                                    measureFn: (TimeSeriesMoods moods,
+                                                        _) => moods.value,
+                                                    data: sevenDaysData,
+                                                  )
+                                                    ..setAttribute(
+                                                        charts.rendererIdKey,
+                                                        'customPoint'),
+                                                  charts.Series<
+                                                      TimeSeriesMoods,
+                                                      DateTime>(
+                                                    id: 'Moods',
+                                                    colorFn: (TimeSeriesMoods moods,
+                                                        _) {
+                                                      return (rangeColor(
+                                                          averageMood(sevenDaysData)
+                                                              .toInt()).color ==
+                                                          Colors.red) ? charts
+                                                          .MaterialPalette.red
+                                                          .shadeDefault.darker :
+                                                      (rangeColor(
+                                                          averageMood(sevenDaysData)
+                                                              .toInt()).color ==
+                                                          Colors.yellow) ? charts
+                                                          .MaterialPalette.yellow
+                                                          .shadeDefault.darker :
+                                                      (rangeColor(
+                                                          averageMood(sevenDaysData)
+                                                              .toInt()).color ==
+                                                          Colors.teal)
+                                                          ? charts.MaterialPalette
+                                                          .teal.shadeDefault.darker
+                                                          : charts.MaterialPalette
+                                                          .pink.shadeDefault;
+                                                    },
+                                                    domainFn: (TimeSeriesMoods moods,
+                                                        _) => moods.time,
+                                                    measureFn: (TimeSeriesMoods moods,
+                                                        _) => moods.value,
+                                                    data: sevenDaysData,
+                                                  )
+                                                ]),
+                                          ),
+                                        ),
+
+
+                                        ///                                                      LIST 7 DAYS
+                                        (sevenDaysData.isEmpty)
+                                            ? Text("Pas d'entrée")
                                             :
+                                        Flexible(flex: 2,
+                                          child: makeList(sevenDaysData),
+                                        ),
 
-                                        SimpleTimeSeriesChart(
-                                            <charts.Series<
-                                                TimeSeriesMoods,
-                                                DateTime>>[
-                                              charts.Series<
-                                                  TimeSeriesMoods,
-                                                  DateTime>(
-                                                id: 'Moods',
-                                                colorFn: (TimeSeriesMoods moods,
-                                                    _) {
-                                                  return (rangeColor(
-                                                      moods.value.toInt())
-                                                      .color == Colors.red)
-                                                      ? charts.MaterialPalette.red
-                                                      .shadeDefault.darker
-                                                      :
-                                                  (rangeColor(moods.value)
-                                                      .color == Colors.yellow)
-                                                      ? charts.MaterialPalette
-                                                      .yellow.shadeDefault.darker
-                                                      :
-                                                  (rangeColor(moods.value)
-                                                      .color == Colors.teal)
-                                                      ? charts.MaterialPalette
-                                                      .teal.shadeDefault.darker
-                                                      : charts.MaterialPalette
-                                                      .pink.shadeDefault;
-                                                },
-                                                domainFn: (TimeSeriesMoods moods,
-                                                    _) => moods.time,
-                                                measureFn: (TimeSeriesMoods moods,
-                                                    _) => moods.value,
-                                                data: sevenDaysData,
-                                              )
-                                                ..setAttribute(
-                                                    charts.rendererIdKey,
-                                                    'customPoint'),
-                                              charts.Series<
-                                                  TimeSeriesMoods,
-                                                  DateTime>(
-                                                id: 'Moods',
-                                                colorFn: (TimeSeriesMoods moods,
-                                                    _) {
-                                                  return (rangeColor(
-                                                      averageMood(sevenDaysData)
-                                                          .toInt()).color ==
-                                                      Colors.red) ? charts
-                                                      .MaterialPalette.red
-                                                      .shadeDefault.darker :
-                                                  (rangeColor(
-                                                      averageMood(sevenDaysData)
-                                                          .toInt()).color ==
-                                                      Colors.yellow) ? charts
-                                                      .MaterialPalette.yellow
-                                                      .shadeDefault.darker :
-                                                  (rangeColor(
-                                                      averageMood(sevenDaysData)
-                                                          .toInt()).color ==
-                                                      Colors.teal)
-                                                      ? charts.MaterialPalette
-                                                      .teal.shadeDefault.darker
-                                                      : charts.MaterialPalette
-                                                      .pink.shadeDefault;
-                                                },
-                                                domainFn: (TimeSeriesMoods moods,
-                                                    _) => moods.time,
-                                                measureFn: (TimeSeriesMoods moods,
-                                                    _) => moods.value,
-                                                data: sevenDaysData,
-                                              )
-                                            ]),
-                                      ),
-                                    ),
-
-
-                                    ///                                                      LIST 7 DAYS
-                                    (sevenDaysData.isEmpty)
-                                        ? Text("Pas d'entrée")
-                                        :
-                                    Flexible(flex: 2,
-                                      child: makeList(sevenDaysData),
-                                    ),
-
-                                  ]),
+                                      ]),
+                                ),
+                              ],
                             ),
+
+
+
+
+                          ]),
+                      bottomNavigationBar: BottomAppBar(
+                        shape: CircularNotchedRectangle(),
+                        child: new Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            TabBar(dragStartBehavior: DragStartBehavior.down,
+                                isScrollable: true,
+                                tabs: <Widget>[
+                                  //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
+                                  Container(height: MediaQuery.of(context).size.height / 20,
+                                      width: MediaQuery.of(context).size.width-100,
+                                      child: Center(child: Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceEvenly,
+                                        children: <Widget>[
+                                          Icon(Icons.show_chart, color: Colors.teal),
+                                          Text('7j',
+                                            style: TextStyle(color: Colors.teal),)
+                                        ],))),
+
+                                ]),
                           ],
                         ),
+                        color: Colors.white,
+                      ),
+                      floatingActionButton: FloatingActionButton(
+                        child: Icon(Icons.add),
+                        onPressed: () {
+                          showMenuAddMoodOtherDate(snapshot);
+                        },
+                      ),
+                      floatingActionButtonLocation: FloatingActionButtonLocation
+                          .centerDocked,
 
-
-
-
-                      ]),
-                  bottomNavigationBar: BottomAppBar(
-                    shape: CircularNotchedRectangle(),
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        TabBar(dragStartBehavior: DragStartBehavior.down,
-                            isScrollable: true,
-                            tabs: <Widget>[
-                              //Container(height:screenSize.height/20,width: screenSize.width/8,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: <Widget>[Icon(Icons.add_circle_outline,color: Colors.teal),],)),
-                              Container(height: MediaQuery.of(context).size.height / 20,
-                                  width: MediaQuery.of(context).size.width-100,
-                                  child: Center(child: Row(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .spaceEvenly,
-                                    children: <Widget>[
-                                      Icon(Icons.show_chart, color: Colors.teal),
-                                      Text('7j',
-                                        style: TextStyle(color: Colors.teal),)
-                                    ],))),
-
-                            ]),
-                      ],
-                    ),
-                    color: Colors.white,
+              ),
                   ),
-                  floatingActionButton: FloatingActionButton(
-                    child: Icon(Icons.add),
-                    onPressed: () {
-                      showMenuAddMoodOtherDate(snapshot);
-                    },
-                  ),
-                  floatingActionButtonLocation: FloatingActionButtonLocation
-                      .centerDocked,
-
-            ),
-              );
-            }
-          }),
+                );
+              }
+            }),
+      ),
     );
   }
 
@@ -1274,36 +1278,6 @@ class _DashBoardState extends State<DashBoard> {
                                 ),
                               ),
                             ),
-                          InkWell(onTap: (){Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => WordsPage(oldDate)));},
-                              child: Container(
-                                height: MediaQuery.of(context).size.width/4,
-                                width:MediaQuery.of(context).size.width/4,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(60)),
-                                  color: Colors.grey[100],
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[300],
-                                      blurRadius: 2.0, // soften the shadow
-                                      spreadRadius: 2.0, //extend the shadow
-                                      offset: Offset(
-                                        2.0, // Move to right 10  horizontally
-                                        2.0, // Move to bottom 10 Vertically
-                                      ),
-                                    ),
-                                    BoxShadow(
-                                      color: Colors.white,
-                                      blurRadius: 2.0, // soften the shadow
-                                      spreadRadius: 2.0, //extend the shadow
-                                      offset: Offset(
-                                        -2.0, // Move to right 10  horizontally
-                                        -2.0, // Move to bottom 10 Vertically
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                child: Center(child: Text("Emotions",textScaleFactor:1.1,style:TextStyle(fontFamily: 'dot',color:Colors.teal),)),)),
                           ],),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
@@ -1384,6 +1358,7 @@ class _DashBoardState extends State<DashBoard> {
                                   setState(() {
                                     getData();
                                     checkMedals();
+
                                   });
                                   //ToDo : Find a way to notify when new medals arrive
                                   /*for(int i=0; i<dataMedals.length;i++){
@@ -1396,7 +1371,8 @@ class _DashBoardState extends State<DashBoard> {
                                     if(dataMoods.length==medalList[i].nbRecords)
                                       _showMedal(dataMoods.length, today);
                                   }
-                                  //Navigator.pop(context);
+                                  Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) => WordsPage(oldDate)));
                                 }
                                 else {
                                     dialogEntryExists("Humeur déjà enregistrée pour cette date.", "Modifier ?", snapshot,oldDate);
@@ -1967,7 +1943,7 @@ class _DashBoardState extends State<DashBoard> {
         padding: const EdgeInsets.all(5.0),
         child: new Chip(backgroundColor: groupColor(list[i].group),
           
-          label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 0.8,),),
+          label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 1,),),
         //backgroundColor: groupColor(list[i].group)
       ));
     }
@@ -2089,7 +2065,8 @@ class _DashBoardState extends State<DashBoard> {
                   getData();
                   checkMedals();
                   Navigator.pop(context);
-                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => WordsPage(date)));
                   //ToDo : Find a way to notify when new medals arrive
                   /*for(int i=0; i<dataMedals.length;i++){
                     if(dataMedals[i].date==today){

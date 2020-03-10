@@ -7,6 +7,7 @@ import 'medals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
+
 class MedalsPage extends StatefulWidget {
   @override
   _MedalsPageState createState() => _MedalsPageState();
@@ -22,7 +23,8 @@ class _MedalsPageState extends State<MedalsPage> {
   }
   @override
   Widget build(BuildContext context) {
-double newMedalIconSize=20;
+
+    double newMedalIconSize=20;
     return Scaffold(
         appBar: AppBar(
           elevation: 10.0,
@@ -53,8 +55,8 @@ double newMedalIconSize=20;
                       padding: const EdgeInsets.only(right: 8.0,),
                       child: ClayContainer(
                         borderRadius: 75,
-                        depth: 20,
-                        spread: 10,
+                        depth: 10,
+                        spread: 7,
                         width: 40,
                         height: 40,
                         color: Colors.teal,

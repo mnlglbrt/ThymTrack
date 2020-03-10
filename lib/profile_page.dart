@@ -46,8 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     padding: const EdgeInsets.only(right: 8.0,),
                     child: ClayContainer(
                       borderRadius: 75,
-                      depth: 20,
-                      spread: 10,
+                      depth: 10,
+                      spread: 7,
                       width: 40,
                       height: 40,
                       color: Colors.teal,

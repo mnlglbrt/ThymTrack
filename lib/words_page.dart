@@ -17,8 +17,12 @@ class WordsPage extends StatefulWidget {
 }
 
 
-class _WordsPageState extends State<WordsPage> {
+class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   DateTime myDate;
+  AnimationController animationController;
+  bool isPlaying=false;
+  Widget headerContent;
+  String addButtonContent;
 
   _WordsPageState(this.myDate);
 
@@ -31,9 +35,19 @@ class _WordsPageState extends State<WordsPage> {
     for(int i=0;i<allWords.length;i++){
       isSelected.add(false);}
     getWords();
-
+    animationController=AnimationController(vsync: this, duration: Duration(seconds: 1));
+    headerContent=Container();
+    addButtonContent="0";
     super.initState();
   }
+
+  @override
+  void dispose(){
+    super.dispose();
+    animationController.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     updateToday();
@@ -73,8 +87,8 @@ class _WordsPageState extends State<WordsPage> {
                       padding: const EdgeInsets.only(right: 8.0,),
                       child: ClayContainer(
                         borderRadius: 75,
-                        depth: 20,
-                        spread: 10,
+                        depth: 10,
+                        spread: 7,
                         width: 40,
                         height: 40,
                         color: Colors.teal,
@@ -101,43 +115,69 @@ class _WordsPageState extends State<WordsPage> {
         ),
 
         body: Center(
-            child: Container(
-              //height: MediaQuery.of(context).size.height,
-              child:SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  //height: MediaQuery.of(context).size.height,
+                  child:Column(
+                    
+                    children: <Widget>[
 
-                    Wrap(alignment: WrapAlignment.spaceEvenly,
-                      children: wordsToInputChipList(allWords,isSelected)
-                    ),
-                  ],
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+
+                              Wrap(alignment: WrapAlignment.spaceEvenly,
+                                children: wordsToInputChipList(allWords,isSelected)
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      (selectedWords.length>0)?Container(
+                          height: 50.0,
+                          width: MediaQuery.of(context).size.width,
+                          color: Colors.teal,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Expanded(child: SingleChildScrollView(child: headerContent,scrollDirection: Axis.horizontal,)),
+                                Padding(
+                                  padding: const EdgeInsets.only(right:15.0),
+                                  child: RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: new BorderRadius.circular(18.0),
+                                        side: BorderSide(color: Colors.teal[300])
+                                    ),
+                                   color : Colors.teal,
+                                    child: Text('Enregistrer',style: TextStyle(color: Colors.white),),
+                                    onPressed:(){
+                                      Map<String, String>newEntry = {};
+                                      for(int i=0; i<selectedWords.length;i++){
+                                        newEntry[selectedWords[i].word]=selectedWords[i].group;
+                                      }
+                                      data_instance.collection('users').document(
+                                          uid).collection(
+                                          "feels")
+                                          .document(myDate.toString()).setData(newEntry);
+                                      setState(() {
+                                        getWords();
+                                      });
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(builder: (context) {
+                                            return DashBoard();
+                                          }), ModalRoute.withName('/'));
+                                    },
+                                  ),
+                                ),])
+                      ):Container(),
+                    ],
+                  )
                 ),
-              )
+              ],
             )
         ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_circle_outline),
-        backgroundColor: Colors.teal,
-      onPressed:(){
-
-         Map<String, String>newEntry = {};
-         for(int i=0; i<selectedWords.length;i++){
-           newEntry[selectedWords[i].word]=selectedWords[i].group;
-    }
-         data_instance.collection('users').document(
-            uid).collection(
-            "feels")
-            .document(myDate.toString()).setData(newEntry);
-          setState(() {
-           getWords();
-         });
-         Navigator.of(context).pushAndRemoveUntil(
-             MaterialPageRoute(builder: (context) {
-               return DashBoard();
-             }), ModalRoute.withName('/'));
-        
-      },
-      ),
     );
   }
 
@@ -169,6 +209,12 @@ class _WordsPageState extends State<WordsPage> {
                 print(selectedWordsToday);
               }):selectedWords=selectedWords;
               print(selectedWords);
+              setState(() {
+                addButtonContent=selectedWords.length.toString();
+                headerContent=Wrap(direction: Axis.vertical,
+                  children: wordsToChipList(selectedWords)
+                );
+              });
               if(selectedWords.isNotEmpty){
 
               }
@@ -178,6 +224,21 @@ class _WordsPageState extends State<WordsPage> {
       ));
     }
 return widgetList;
+  }
+
+  wordsToChipList (List<Word> list){
+    List<Widget> widgetList=[];
+
+    for(int i=0;i<list.length;i++){
+      widgetList.add(Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: new Chip(backgroundColor: groupColor(list[i].group),
+
+          label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 1,),),
+        //backgroundColor: groupColor(list[i].group)
+      ));
+    }
+    return widgetList;
   }
 
   Color groupColor(String group){

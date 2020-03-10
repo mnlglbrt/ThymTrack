@@ -32,6 +32,7 @@ List<Word>allWords=[
   new Word("amusé", "Joie"),
   new Word("comblé", "Joie"),
   new Word("vivifié", "Joie"),
+  new Word("euphorique", "Joie"),
 
   //ESTIME DE SOI +
   new Word("Estime de soi", "Estime de soi"),
