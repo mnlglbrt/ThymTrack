@@ -1409,25 +1409,27 @@ class _DashBoardState extends State<DashBoard> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Modifier l'humeur du ${dayFormatter.format(date)}?",textAlign: TextAlign.center,style:TextStyle(color:Colors.grey[600]),),
+          title: Text("Modifier l'humeur ?",textAlign: TextAlign.center,style:TextStyle(color:Colors.grey[600]),),
           content: Container(
             height: MediaQuery.of(context).size.height/3,
-              child:makeList(dataMoods.where((element) => element.time==date).toList())),
+              child:showEntry(dataMoods.where((element) => element.time==date).toList())),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Modifier',style: TextStyle(color:Colors.grey[600]),),
-              onPressed: () {
-                showMenuChangeMoodOtherDate(date);
-              },
-
-            ),
             FlatButton(
               child: Text('Fermer'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-
             ),
+            OutlineButton(
+              child: Text('Modifier', style: TextStyle(color: Colors.teal)),
+              color: Colors.teal,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(20.0)),
+              onPressed: () {
+                showMenuChangeMoodOtherDate(date);
+              },
+            ),
+
 
           ],
         );
@@ -1968,6 +1970,7 @@ class _DashBoardState extends State<DashBoard> {
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: InkWell(
+                onTap: (){(dataNotes.where((note) => note.date==myData[index].time).isNotEmpty)?showNote(myData[index].time):{};},
                 onLongPress: ()=>changeMoodDialog(myData[index].time),
                 child: ClayContainer(
                   borderRadius: 10,
@@ -1984,8 +1987,8 @@ class _DashBoardState extends State<DashBoard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Padding(padding: const EdgeInsets.only(
-                              left: 0.0, bottom: 5.0, top: 5.0),
-                            child: Container(width: 130.0,
+                              right: 0, bottom: 5.0, top: 5.0),
+                            child: Container(width: 100.0,
                               height: 40.0,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1998,7 +2001,7 @@ class _DashBoardState extends State<DashBoard> {
                                       ),
                                 ],
                               ),),),
-                          new Text("     ", textAlign: TextAlign.left,),
+                          new Text("  ", textAlign: TextAlign.left,),
                           ClayContainer(
                             height: 20,
                             width: 80,
@@ -2012,6 +2015,11 @@ class _DashBoardState extends State<DashBoard> {
                                   myData[index].value).shade],)))),
                             color: Colors.grey[100],
                             surfaceColor: Colors.grey[150],
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left:18.0),
+                            child: Icon((dataNotes.where((note) => note.date==myData[index].time).isNotEmpty)?Icons.chat_bubble_outline:null,color: Colors.teal,),
                           ),
 
                         ],
@@ -2030,6 +2038,91 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
+
+  showEntry(myData) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: ListView.builder
+        (reverse: false,
+          controller: ScrollController(initialScrollOffset: 100.0),
+          itemCount: myData.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            //print('datedFeelings.keys ${datedFeelings.keys}');
+            // print('myData[0].time ${myData[4].time}');
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: ClayContainer(
+                borderRadius: 10,
+                //height: 160.0,
+                width: 300,
+                depth: 10,
+                spread: 7,
+                color: Colors.grey[100],
+                surfaceColor: Colors.grey[50],
+
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(padding: const EdgeInsets.only(
+                            right: 0, bottom: 5.0, top: 5.0),
+                          child: Container(width: 100.0,
+                            height: 40.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                new Text(dayFormatter.format(myData[index].time).toString(),
+                                  textScaleFactor: 1.1,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),),),
+                        new Text("  ", textAlign: TextAlign.left,),
+                        ClayContainer(
+                          height: 20,
+                          width: 80,
+                          borderRadius: 30,
+                          //curveType: CurveType.convex,
+                          child: Center(child: Opacity(
+                              opacity: 1.0, child: new Text(myData[index].value
+                              .toString(), textScaleFactor: 1.2, style: TextStyle(
+                            fontFamily: 'dot',
+                            color: rangeColor(myData[index].value).color[rangeColor(
+                                myData[index].value).shade],)))),
+                          color: Colors.grey[100],
+                          surfaceColor: Colors.grey[150],
+                        ),
+
+
+
+                      ],
+                    ),
+                    //(datedFeelings.containsKey(myData[index].time))?{
+                    (datedFeelings[myData[index].time]==null)?Container():Wrap(children: wordsToChipList(datedFeelings[myData[index].time]),),
+                    (dataNotes.where((note) => note.date==myData[index].time).isEmpty)?Container():Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left:20.0,right: 10,top:20,bottom:20),
+                          child: Icon((dataNotes.where((note) => note.date==myData[index].time).isNotEmpty)?Icons.chat_bubble_outline:null,color: Colors.teal,),
+                        ),
+                        Expanded(
+                            child: Text((dataNotes.where((note) => note.date==myData[index].time).isNotEmpty)?dataNotes.firstWhere((note) => note.date==myData[index].time).note.substring(1,dataNotes.firstWhere((note) => note.date==myData[index].time).note.length-1):null,)),
+
+                      ],
+                    ),
+                    //}:Container(),
+
+                  ],
+                ),
+              ),
+            );
+          }
+      ),
+    );
+  }
 
   wordsToChipList (List<Word> list){
     List<Widget> widgetList=[];
@@ -2058,6 +2151,37 @@ class _DashBoardState extends State<DashBoard> {
 
   }
 
+  Future<void> showNote(DateTime date) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("${dayFormatter.format(date)}",textScaleFactor:0.8,textAlign: TextAlign.center,style:TextStyle(color:Colors.teal),),
+          content: SingleChildScrollView(
+              child:Center(
+                child: Container(
+                  color: Colors.grey[100],
+                  child: Text((dataNotes.where((note) => note.date==date).isNotEmpty)?dataNotes.firstWhere((note) => note.date==date).note.substring(1,dataNotes.firstWhere((note) => note.date==date).note.length-1):"Pas de note")
+
+                ),
+              )
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(''),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+
+            ),
+
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> ladderDialog() async {
     return showDialog<void>(
       context: context,
@@ -2065,47 +2189,37 @@ class _DashBoardState extends State<DashBoard> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Echelle thymique",textAlign: TextAlign.center,style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
-          content: SingleChildScrollView(
-            child:Center(
-              child: Container(
-                color: Colors.grey[100],
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: ListView.builder(reverse: true,
-                    controller: ScrollController(),
-                    itemCount: moodLadder.length,
-                    itemBuilder: (BuildContext context, int i) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            color:moodLadder[i].color,
-                            //border: Border(top: (i==10 || i==8 || i==6 || i==3 || i==1)?BorderSide(width: 2.0,color: moodLadder[i].color):BorderSide(width: 0.0)),
-                            borderRadius:(i==10 || i==8 || i==6 || i==3 || i==1)? BorderRadius.only(topRight: Radius.circular(40.0),topLeft: Radius.circular(0.0),):(i==9 || i==7 || i==4 || i==2 || i==0)?BorderRadius.only(bottomLeft: Radius.circular(40.0),bottomRight: Radius.circular(0.0),):BorderRadius.only()),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left:10.0,right:10.0,top:20.0,bottom:20.0),
-                          child: Column(
-                            children: <Widget>[
+          content: ListView.builder(reverse: true,
+              controller: ScrollController(),
+              itemCount: moodLadder.length,
+              itemBuilder: (BuildContext context, int i) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color:moodLadder[i].color,),
+                      //border: Border(top: (i==10 || i==8 || i==6 || i==3 || i==1)?BorderSide(width: 2.0,color: moodLadder[i].color):BorderSide(width: 0.0)),
+                      //borderRadius:(i==10 || i==8 || i==6 || i==3 || i==1)? BorderRadius.only(topRight: Radius.circular(40.0),topLeft: Radius.circular(0.0),):(i==9 || i==7 || i==4 || i==2 || i==0)?BorderRadius.only(bottomLeft: Radius.circular(40.0),bottomRight: Radius.circular(0.0),):BorderRadius.only()),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left:10.0,right:10.0,top:20.0,bottom:20.0),
+                    child: Column(
+                      children: <Widget>[
 
 
-                              (i==1 || i==10 || i==3 || i==5 || i==8)?Text(moodLadder[i].name,textScaleFactor: 2.0,style: TextStyle(fontFamily: 'dot',color:Colors.black),textAlign: TextAlign.center,):Container(),
-                              (moodLadder[i].start < 0&& i!=5) ?Text(moodLadder[i].end.toString(), style:TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0) : Container(),
-                              (moodLadder[i].start < 0) ?Icon(Icons.arrow_upward,color: Colors.black.withOpacity(0.2), size:30) : Container(),
-                              (moodLadder[i].start < 0) ?Text(moodLadder[i].detail,textAlign:TextAlign.center,textScaleFactor: 1.3,style: TextStyle(fontFamily: 'productSans',color:Colors.grey[700])):Container(),
-                              (moodLadder[i].end==100)?Text('100',style: TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0,):Container(),
-                              (moodLadder[i].start==-100)?Text('-100',style: TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0):Container(),
-                              (moodLadder[i].start > 0) ?Text(moodLadder[i].detail,textAlign:TextAlign.center,textScaleFactor: 1.3,style: TextStyle(fontFamily: 'productSans',color:Colors.grey[700])):Container(),
-                              (moodLadder[i].start > 0 && i!=5) ?Icon(Icons.arrow_downward,color: Colors.black.withOpacity(0.2),size:30) : Container(),
-                              (moodLadder[i].start > 0 && i!=5) ?Text(moodLadder[i].start.toString(), style:TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0) : Container(),
+                        (i==1 || i==10 || i==3 || i==5 || i==8)?Text(moodLadder[i].name,textScaleFactor: 2.0,style: TextStyle(fontFamily: 'dot',color:Colors.black),textAlign: TextAlign.center,):Container(),
+                        (moodLadder[i].start < 0&& i!=5) ?Text(moodLadder[i].end.toString(), style:TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0) : Container(),
+                        (moodLadder[i].start < 0) ?Icon(Icons.arrow_upward,color: Colors.black.withOpacity(0.2), size:30) : Container(),
+                        (moodLadder[i].start < 0) ?Text(moodLadder[i].detail,textAlign:TextAlign.center,textScaleFactor: 1.3,style: TextStyle(fontFamily: 'productSans',color:Colors.grey[700])):Container(),
+                        (moodLadder[i].end==100)?Text('100',style: TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0,):Container(),
+                        (moodLadder[i].start==-100)?Text('-100',style: TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0):Container(),
+                        (moodLadder[i].start > 0) ?Text(moodLadder[i].detail,textAlign:TextAlign.center,textScaleFactor: 1.3,style: TextStyle(fontFamily: 'productSans',color:Colors.grey[700])):Container(),
+                        (moodLadder[i].start > 0 && i!=5) ?Icon(Icons.arrow_downward,color: Colors.black.withOpacity(0.2),size:30) : Container(),
+                        (moodLadder[i].start > 0 && i!=5) ?Text(moodLadder[i].start.toString(), style:TextStyle(backgroundColor:moodLadder[i].color,fontFamily: 'dot',color:Colors.grey[900]),textScaleFactor: 2.0) : Container(),
 
 
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-
-              ),
-            )
-          ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
           actions: <Widget>[
             FlatButton(
               child: Text('Fermer'),

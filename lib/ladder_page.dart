@@ -81,9 +81,9 @@ class _LadderPageState extends State<LadderPage> {
     itemBuilder: (BuildContext context, int i) {
       return Container(
         decoration: BoxDecoration(
-            color:moodLadder[i].color,
+            color:moodLadder[i].color,),
             //border: Border(top: (i==10 || i==8 || i==6 || i==3 || i==1)?BorderSide(width: 2.0,color: moodLadder[i].color):BorderSide(width: 0.0)),
-            borderRadius:(i==10 || i==8 || i==6 || i==3 || i==1)? BorderRadius.only(topRight: Radius.circular(40.0),topLeft: Radius.circular(0.0),):(i==9 || i==7 || i==4 || i==2 || i==0)?BorderRadius.only(bottomLeft: Radius.circular(40.0),bottomRight: Radius.circular(0.0),):BorderRadius.only()),
+            //borderRadius:(i==10 || i==8 || i==6 || i==3 || i==1)? BorderRadius.only(topRight: Radius.circular(40.0),topLeft: Radius.circular(0.0),):(i==9 || i==7 || i==4 || i==2 || i==0)?BorderRadius.only(bottomLeft: Radius.circular(40.0),bottomRight: Radius.circular(0.0),):BorderRadius.only()),
         child: Padding(
           padding: const EdgeInsets.only(left:10.0,right:10.0,top:20.0,bottom:20.0),
           child: Column(

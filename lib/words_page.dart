@@ -35,16 +35,20 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
     myWords=datedFeelings[myDate];
     selectedWords=(datedFeelings.containsKey(myDate))?datedFeelings[myDate]:[];
     List<int> listOfIndex=[];
+
+    if(myWords!=null){
     for(int i=0;i<allWords.length;i++){
       bool present=false;
       for(int j=0;j<myWords.length;j++){
-
         if (!present){
         if(allWords[i].word==myWords[j].word){present=true;}
       }}
       isSelected.add(present);
-
-
+    }
+    }else{
+      for(int i=0;i<allWords.length;i++){
+        isSelected.add(false);
+      }
     }
     print("HERE $isSelected");
 
