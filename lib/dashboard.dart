@@ -23,6 +23,7 @@ import 'medals_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'words_page.dart';
 import 'words.dart';
+import 'notes.dart';
 //import 'first_connection_screen.dart';
 
 
@@ -47,6 +48,7 @@ class _DashBoardState extends State<DashBoard> {
     newMedal=newMedalToday(getLength(dataMoods));
     getMedals();
     getWords();
+    getNotes();
     getReminderPrefs().then((bool){
       setState(() {
         reminderButtonVisible=bool;
@@ -1076,7 +1078,24 @@ class _DashBoardState extends State<DashBoard> {
   ///
   ///
   ///
+  Future<List<Note>> getNotes() async {
+    var col = getNotesCollection();
+    List<Note> myData = [];
+    col.then((coll) {
+      dataNotes.clear();
+      coll.forEach((note) {
+        myData.add(Note(
+            DateTime.parse(note.keys.toString().substring(1, 11)),
+            note.values.toString()));
 
+      });
+      setState(() {
+        dataNotes.clear();
+        dataNotes = myData;
+      });
+    });
+    return myData;
+  }
 
   Future<Null> getWords() async {
     var col = getFeelingsCollection();

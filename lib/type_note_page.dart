@@ -27,6 +27,7 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
   @override
   void initState() {
     getNotes();
+
     super.initState();
   }
   
