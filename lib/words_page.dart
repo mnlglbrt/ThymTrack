@@ -33,7 +33,7 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   void initState() {
     getWords();
     myWords=datedFeelings[myDate];
-    selectedWords=myWords;
+    selectedWords=(datedFeelings.containsKey(myDate))?datedFeelings[myDate]:[];
     List<int> listOfIndex=[];
     for(int i=0;i<allWords.length;i++){
       bool present=false;
@@ -61,7 +61,7 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
 
     updateToday();
-    selectedWords=(datedFeelings.containsKey(myDate))?datedFeelings[myDate]:[];
+
     selectedWordsToday={myDate:selectedWords};
 
     footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
@@ -155,7 +155,7 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Expanded(child: SingleChildScrollView(child: footerContent,scrollDirection: Axis.horizontal,)),
+                                Expanded(child: SingleChildScrollView(child: Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords)),scrollDirection: Axis.horizontal,)),
                                 Padding(
                                   padding: const EdgeInsets.only(right:15.0),
                                   child: RaisedButton(
@@ -216,13 +216,13 @@ setState(() {
 
             if(selectedWords.length<3){
               if(isSelected[i]==false){
-
+                print('A');
                 isSelected[i]=true;
                 selectedWords.add(allWords[i]);
                 print(selectedWords.length);
 
               }else if(isSelected[i]==true){
-
+                print('B');
                   isSelected[i]=false;
                   selectedWords.removeWhere((word) => word.word==allWords[i].word);
                   print(selectedWords.length);
@@ -230,15 +230,21 @@ setState(() {
             }
             }
 
-            else if(selectedWords.length==3){
+            else if(selectedWords.length<4){
+
               if(isSelected[i]==true){
-
+                print('C');
+                print(selectedWords.length);
+                print(selectedWords);
                   isSelected[i]=false;
-                  selectedWords.removeWhere((word) => word.word==allWords[i].word);
+                  setState(() {
+                    selectedWords.removeWhere((word) => word.word==allWords[i].word);
+                  });
                   print(selectedWords.length);
+                print(selectedWords);
 
               }else if(isSelected[i]==false){
-
+                print('D');
                   print("deja 3 mots");
 
               }
