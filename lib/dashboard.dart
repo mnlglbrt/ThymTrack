@@ -43,12 +43,12 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     super.initState();
-    dataMoods.clear();
     getData();
-    newMedal=newMedalToday(getLength(dataMoods));
     getMedals();
     getWords();
     getNotes();
+    dataMoods.clear();
+    newMedal=newMedalToday(getLength(dataMoods));
     getReminderPrefs().then((bool){
       setState(() {
         reminderButtonVisible=bool;
