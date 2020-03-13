@@ -2,8 +2,8 @@ import 'package:bipo/mood_ranges.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'time_series_moods.dart';
-import 'time_series_words.dart';
 import 'words.dart';
+import 'notes.dart';
 
 Map<DateTime,List<Word>> selectedWordsToday={today:[]};
 
@@ -17,7 +17,8 @@ List<TimeSeriesMoods>dataMoods = [];
 
 List<TimeSeriesMoods>selectedData=[];
 
-List<TimeSeriesWords>dataWords = [];
+List<Note> dataNotes =[];
+
 
 
 

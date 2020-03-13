@@ -56,7 +56,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   PageController pageController = PageController();
-  int moodFromSlide = 0;
+  int moodFromSlide = (dataMoods.where((element) => element.time==today).isEmpty)?0:dataMoods.firstWhere((element) => element.time==today).value;
   var sliderColor = Colors.teal;
   var addButtonRadius = BorderRadius.circular(30.0);
   var addButtonColor = Colors.red;
@@ -1384,14 +1384,45 @@ class _DashBoardState extends State<DashBoard> {
         });
   }
 
+  Future<void> changeMoodDialog(DateTime date) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Modifier l'humeur du ${dayFormatter.format(date)}?",textAlign: TextAlign.center,style:TextStyle(color:Colors.grey[600]),),
+          content: Container(
+            height: MediaQuery.of(context).size.height/3,
+              child:makeList(dataMoods.where((element) => element.time==date).toList())),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Modifier',style: TextStyle(color:Colors.grey[600]),),
+              onPressed: () {
+                showMenuChangeMoodOtherDate(date);
+              },
 
-  showMenuAddMood(snapshot) async {
+            ),
+            FlatButton(
+              child: Text('Fermer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+
+            ),
+
+          ],
+        );
+      },
+    );
+  }
+
+  showMenuChangeMoodOtherDate(DateTime date) async {
+    DateTime oldDate=date;
     showModalBottomSheet(backgroundColor: Colors.transparent,
         context: context,
         builder: (context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-                updateToday();
                 return Container(
                   decoration: BoxDecoration(color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -1400,16 +1431,66 @@ class _DashBoardState extends State<DashBoard> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Row(mainAxisAlignment: MainAxisAlignment.end,
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right:25.0),
-                          child: InkWell(
+
+                          InkWell(
                             onTap:(){ladderDialog();},
                             child: Container(
+                              height: 40,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(Radius.circular(60)),
-                                color: Colors.white,
+                                color:Colors.white,
+                                /*boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[300],
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      2.0, // Move to right 10  horizontally
+                                      2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    blurRadius: 2.0, // soften the shadow
+                                    spreadRadius: 2.0, //extend the shadow
+                                    offset: Offset(
+                                      -2.0, // Move to right 10  horizontally
+                                      -2.0, // Move to bottom 10 Vertically
+                                    ),
+                                  )
+                                ],*/
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text("ECHELLE",style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          InkWell(
+                            onTap:()async{
+                              final DateTime pickedDate = await showDatePicker(
+                                context: context,
+                                firstDate: new DateTime(2019),
+                                lastDate: today,
+                                initialDate: today,
+                                locale: Locale('fr','FR'),
+                              );
+                              if (pickedDate != null){
+                                setState(() {
+                                  oldDate=pickedDate;
+                                });
+
+                              }},
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(60)),
+                                color: Colors.grey[100],
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey[300],
@@ -1432,12 +1513,17 @@ class _DashBoardState extends State<DashBoard> {
                                 ],
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text("ECHELLE",style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(dayFormatter.format(oldDate),style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),),
+                                      Icon(Icons.calendar_today, color: Colors.teal,),
+                                    ],
+                                  )
                               ),
                             ),
-                          )
-                        )],),
+                          ),
+                        ],),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(message, textScaleFactor: 1.2,
@@ -1505,19 +1591,19 @@ class _DashBoardState extends State<DashBoard> {
                               onPressed: () =>
                               {setState(() {
                                 updateToday();
-                                if (todayMood == null) {
-                                  todayMood = TimeSeriesMoods(today, moodFromSlide);
+                                if (oldDate.isBefore(DateTime.now())) {
                                   Map<String, int>newEntry = {
-                                    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,).toString(): moodFromSlide
+                                    DateTime(oldDate.year, oldDate.month, oldDate.day,).toString(): moodFromSlide
                                   };
                                   dataInstance.collection('users').document(
                                       uid).collection(
                                       "moods")
-                                      .document(today.toString())
+                                      .document(oldDate.toString())
                                       .setData(newEntry);
                                   setState(() {
                                     getData();
                                     checkMedals();
+
                                   });
                                   //ToDo : Find a way to notify when new medals arrive
                                   /*for(int i=0; i<dataMedals.length;i++){
@@ -1528,16 +1614,10 @@ class _DashBoardState extends State<DashBoard> {
                                   animateContainerGoRectangle();
                                   for(int i=0;i<medalList.length;i++){
                                     if(dataMoods.length==medalList[i].nbRecords)
-                                    _showMedal(dataMoods.length, today);
+                                      _showMedal(dataMoods.length, today);
                                   }
-                                  //Navigator.pop(context);
-                                }
-                                else {
-                                  setState(() {
-                                    dialogEntryExists("Humeur déjà enregistrée",
-                                        "Attendez demain ou modifiez l'humeur d'aujourd'hui.",
-                                        snapshot,today);
-                                  });
+                                  Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) => WordsPage(oldDate)));
                                 }
                               })},
                             ),
@@ -1868,58 +1948,61 @@ class _DashBoardState extends State<DashBoard> {
            // print('myData[0].time ${myData[4].time}');
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: ClayContainer(
-                borderRadius: 10,
-                //height: 160.0,
-                width: 300,
-                depth: 10,
-                spread: 7,
-                color: Colors.grey[100],
-                surfaceColor: Colors.grey[50],
+              child: InkWell(
+                onLongPress: ()=>changeMoodDialog(myData[index].time),
+                child: ClayContainer(
+                  borderRadius: 10,
+                  //height: 160.0,
+                  width: 300,
+                  depth: 10,
+                  spread: 7,
+                  color: Colors.grey[100],
+                  surfaceColor: Colors.grey[50],
 
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(padding: const EdgeInsets.only(
-                            left: 0.0, bottom: 5.0, top: 5.0),
-                          child: Container(width: 130.0,
-                            height: 40.0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new Text(dayFormatter.format(myData[index].time).toString(),
-                                    textScaleFactor: 1.1,
-                              textAlign: TextAlign.left,
-                                    style: TextStyle(color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                    ),
-                              ],
-                            ),),),
-                        new Text("     ", textAlign: TextAlign.left,),
-                        ClayContainer(
-                          height: 20,
-                          width: 80,
-                          borderRadius: 30,
-                          //curveType: CurveType.convex,
-                          child: Center(child: Opacity(
-                              opacity: 1.0, child: new Text(myData[index].value
-                              .toString(), textScaleFactor: 1.6, style: TextStyle(
-                            fontFamily: 'dot',
-                            color: rangeColor(myData[index].value).color[rangeColor(
-                                myData[index].value).shade],)))),
-                          color: Colors.grey[100],
-                          surfaceColor: Colors.grey[150],
-                        ),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(padding: const EdgeInsets.only(
+                              left: 0.0, bottom: 5.0, top: 5.0),
+                            child: Container(width: 130.0,
+                              height: 40.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  new Text(dayFormatter.format(myData[index].time).toString(),
+                                      textScaleFactor: 1.1,
+                                textAlign: TextAlign.left,
+                                      style: TextStyle(color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                      ),
+                                ],
+                              ),),),
+                          new Text("     ", textAlign: TextAlign.left,),
+                          ClayContainer(
+                            height: 20,
+                            width: 80,
+                            borderRadius: 30,
+                            //curveType: CurveType.convex,
+                            child: Center(child: Opacity(
+                                opacity: 1.0, child: new Text(myData[index].value
+                                .toString(), textScaleFactor: 1.6, style: TextStyle(
+                              fontFamily: 'dot',
+                              color: rangeColor(myData[index].value).color[rangeColor(
+                                  myData[index].value).shade],)))),
+                            color: Colors.grey[100],
+                            surfaceColor: Colors.grey[150],
+                          ),
 
-                      ],
-                    ),
-                    //(datedFeelings.containsKey(myData[index].time))?{
-                    (datedFeelings[myData[index].time]==null)?Container():Wrap(children: wordsToChipList(datedFeelings[myData[index].time]),),
-                  //}:Container(),
-                    
-                  ],
+                        ],
+                      ),
+                      //(datedFeelings.containsKey(myData[index].time))?{
+                      (datedFeelings[myData[index].time]==null)?Container():Wrap(children: wordsToChipList(datedFeelings[myData[index].time]),),
+                    //}:Container(),
+
+                    ],
+                  ),
                 ),
               ),
             );

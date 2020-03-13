@@ -1,4 +1,5 @@
 import 'package:bipo/dashboard.dart';
+import 'package:bipo/type_note_page.dart';
 import 'package:flutter/material.dart';
 import 'words.dart';
 import 'package:clay_containers/clay_containers.dart';
@@ -17,39 +18,53 @@ class WordsPage extends StatefulWidget {
 
 class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   DateTime myDate;
-  AnimationController animationController;
   bool isPlaying=false;
-  Widget headerContent;
+  Widget footerContent;
   String addButtonContent;
-
+  List<Word> selectedWords;
   _WordsPageState(this.myDate);
-
   List<bool> isSelected=[];
-  List<Word> selectedWords=[];
+  List<Word>myWords=[];
+
+
 
 
   @override
   void initState() {
-    for(int i=0;i<allWords.length;i++){
-      isSelected.add(false);}
     getWords();
-    animationController=AnimationController(vsync: this, duration: Duration(seconds: 1));
-    headerContent=Container();
+    myWords=datedFeelings[myDate];
+    selectedWords=myWords;
+    List<int> listOfIndex=[];
+    for(int i=0;i<allWords.length;i++){
+      bool present=false;
+      for(int j=0;j<myWords.length;j++){
+
+        if (!present){
+        if(allWords[i].word==myWords[j].word){present=true;}
+      }}
+      isSelected.add(present);
+
+
+    }
+    print("HERE $isSelected");
+
+
     addButtonContent="0";
+
     super.initState();
+
   }
 
-  @override
-  void dispose(){
-    super.dispose();
-    animationController.dispose();
-  }
 
 
   @override
   Widget build(BuildContext context) {
+
     updateToday();
-    selectedWordsToday={today:selectedWords};
+    selectedWords=(datedFeelings.containsKey(myDate))?datedFeelings[myDate]:[];
+    selectedWordsToday={myDate:selectedWords};
+
+    footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
     return Scaffold(
         appBar: AppBar(
           elevation: 10.0,
@@ -140,7 +155,7 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Expanded(child: SingleChildScrollView(child: headerContent,scrollDirection: Axis.horizontal,)),
+                                Expanded(child: SingleChildScrollView(child: footerContent,scrollDirection: Axis.horizontal,)),
                                 Padding(
                                   padding: const EdgeInsets.only(right:15.0),
                                   child: RaisedButton(
@@ -162,10 +177,8 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
                                       setState(() {
                                         getWords();
                                       });
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute(builder: (context) {
-                                            return DashBoard();
-                                          }), ModalRoute.withName('/'));
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => TypeNotePage(myDate)));
                                     },
                                   ),
                                 ),])
@@ -183,8 +196,8 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   wordsToInputChipList (List<Word> list, List<bool> isSelected){
     List<Widget> widgetList=[];
 
+//print("ISSELECTED: $isSelected");
     for(int i=0;i<list.length;i++){
-      isSelected.add(false);
       widgetList.add(Padding(
         padding: const EdgeInsets.all(8.0),
         child:(list[i].word=="Joie" || list[i].group!=list[i-1].group)?
@@ -192,30 +205,77 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color:groupColor(list[i].group),width: 1.2))),
             child:Center(child: Text(list[i].group,textScaleFactor: 2.0,style: TextStyle(color: groupColor(list[i].group)),))):
 
-        new InputChip(backgroundColor: groupColor(list[i].group),selectedColor: Colors.green,selected:isSelected[i],
-            onSelected: (bool value) {
-              (selectedWords.length<3 && isSelected[i]==false)?
-              setState(() {
-                isSelected[i] = value;
-                selectedWords.add(list[i]);
-                print(selectedWordsToday);
-              }):(isSelected[i]==true)?
+        new InputChip(
+          backgroundColor: groupColor(list[i].group),
+          selectedColor: Colors.white,
+          selected:isSelected[i],
+            onPressed: () {
+setState(() {
 
-              setState(() {
-                isSelected[i] = value;
-                selectedWords.remove(list[i]);
-                print(selectedWordsToday);
-              }):selectedWords=selectedWords;
-              print(selectedWords);
-              setState(() {
-                addButtonContent=selectedWords.length.toString();
-                headerContent=Wrap(direction: Axis.vertical,
-                  children: wordsToChipList(selectedWords)
-                );
-              });
-              if(selectedWords.isNotEmpty){
+
+
+            if(selectedWords.length<3){
+              if(isSelected[i]==false){
+
+                isSelected[i]=true;
+                selectedWords.add(allWords[i]);
+                print(selectedWords.length);
+
+              }else if(isSelected[i]==true){
+
+                  isSelected[i]=false;
+                  selectedWords.removeWhere((word) => word.word==allWords[i].word);
+                  print(selectedWords.length);
+
+            }
+            }
+
+            else if(selectedWords.length==3){
+              if(isSelected[i]==true){
+
+                  isSelected[i]=false;
+                  selectedWords.removeWhere((word) => word.word==allWords[i].word);
+                  print(selectedWords.length);
+
+              }else if(isSelected[i]==false){
+
+                  print("deja 3 mots");
 
               }
+
+
+            }
+});
+/*
+            /// - de 3 mots selectionnes et clique sur non-selec
+              if(selectedWords.length<3 && isSelected[i]==false){
+                print(1);
+                setState(() {
+                  isSelected[i] = true;
+                  selectedWords.add(allWords[i]);
+                  footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
+                });}else if(selectedWords.length<3 && isSelected[i]==true){ /// - de 3 mots selectionnes clique sur selec
+                print(3);
+                setState(() {
+                  isSelected[i] = false;
+                  selectedWords.removeWhere((thisWord) => thisWord.word==allWords[i].word);
+                  selectedWords=selectedWords;
+                  footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
+                });}
+              else if(selectedWords.length==3 && isSelected[i]==true){/// 3 mots selectionnes et clique sur selec
+                print(2);
+                setState(() {
+                  isSelected[i] = false;
+                  selectedWords.remove(allWords[i]);
+                  print(selectedWords.length);
+                  footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
+                });}
+
+              setState(() {
+                addButtonContent=selectedWords.length.toString();
+                footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
+              });
+              print("SelectedWords : $selectedWords");*/
             }
         ,label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 1.3,),),
         //backgroundColor: groupColor(list[i].group)
