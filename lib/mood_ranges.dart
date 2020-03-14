@@ -8,9 +8,9 @@ class MyColor{
 }
 
  rangeColor(int mood){
-  return(mood<-49)?MyColor(Colors.red,200):
-            (mood<-9)?MyColor(Colors.yellow,600):
-              (mood<50)?MyColor(Colors.teal,400):
-                (mood<70)?MyColor(Colors.yellow,600):
-                  (mood<=100)?MyColor(Colors.red,200):MyColor(Colors.grey,900);
+  return(mood<-49)?MyColor(Colors.red,700):
+            (mood<-9)?MyColor(Colors.yellow,700):
+              (mood<50)?MyColor(Colors.teal,700):
+                (mood<70)?MyColor(Colors.yellow,700):
+                  (mood<=100)?MyColor(Colors.red,700):MyColor(Colors.grey,900);
 }

@@ -18,6 +18,7 @@ class WordsPage extends StatefulWidget {
 
 class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   DateTime myDate;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isPlaying=false;
   Widget footerContent;
   String addButtonContent;
@@ -25,6 +26,8 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
   _WordsPageState(this.myDate);
   List<bool> isSelected=[];
   List<Word>myWords=[];
+TextEditingController controller;
+  bool textFieldVisible=false;
 
 
 
@@ -70,6 +73,7 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
 
     footerContent=(selectedWords.isEmpty)?Container():Wrap(direction: Axis.vertical, children: wordsToChipList(selectedWords));
     return Scaffold(
+      key: _scaffoldKey,
         appBar: AppBar(
           elevation: 10.0,
           centerTitle: true,
@@ -148,11 +152,42 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
                               Wrap(alignment: WrapAlignment.spaceEvenly,
                                 children: wordsToInputChipList(allWords,isSelected)
                               ),
+                              (textFieldVisible)?Container():Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(icon:new Icon(Icons.person_add, color:Colors.teal),onPressed: (){setState(() {
+                                    textFieldVisible=!textFieldVisible;
+                                  });},),
+                                  Text("Enrichir",style: TextStyle(color:Colors.teal),),
+                                ],
+                              )
                             ],
                           ),
                         ),
                       ),
-                      (selectedWords.length>0)?Container(
+                      (textFieldVisible)?Stack(
+                        children: <Widget>[
+                          TextField(cursorColor: Colors.teal,
+                            cursorWidth: 10.0,
+                            cursorRadius: Radius.circular(60),
+                            controller: controller,
+                            decoration: InputDecoration(hintText: "Demander l'ajout d'une émotion"),
+                            onSubmitted: (input){
+                            Map<String, String>newWord = {};
+                            newWord[today.toString()+name+uid+input]=input;
+                            dataInstance.collection('askedWords')
+                                .document(today.toString()+name+uid+input).setData(newWord);
+                            _showSnackBar(context);
+                            setState(() {
+                              textFieldVisible=!textFieldVisible;
+                            });
+                          },),
+                          Positioned(right:0,child: FlatButton(child: Icon(Icons.clear),onPressed:(){ setState(() {
+                            textFieldVisible=!textFieldVisible;
+                          });}))
+                        ],
+                      ):Container(),
+                      (!textFieldVisible)?Container(
                           height: 50.0,
                           width: MediaQuery.of(context).size.width,
                           color: Colors.teal,
@@ -210,14 +245,12 @@ class _WordsPageState extends State<WordsPage> with TickerProviderStateMixin {
             child:Center(child: Text(list[i].group,textScaleFactor: 2.0,style: TextStyle(color: groupColor(list[i].group)),))):
 
         new InputChip(
+            label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 1.3,),
           backgroundColor: groupColor(list[i].group),
           selectedColor: Colors.white,
           selected:isSelected[i],
             onPressed: () {
-setState(() {
-
-
-
+              setState(() {
             if(selectedWords.length<3){
               if(isSelected[i]==false){
                 print('A');
@@ -287,12 +320,22 @@ setState(() {
               });
               print("SelectedWords : $selectedWords");*/
             }
-        ,label:Text(list[i].word,style: TextStyle(color: Colors.black),textScaleFactor: 1.3,),),
+        ),
         //backgroundColor: groupColor(list[i].group)
       ));
     }
 return widgetList;
   }
+
+  _showSnackBar(BuildContext context) {
+    final snackBar =
+    SnackBar(content: Text('Merci. Votre émotion sera ajoutée prochainement.'),
+      duration:Duration(seconds: 3),
+      backgroundColor: Colors.teal,
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
 
   wordsToChipList (List<Word> list){
     List<Widget> widgetList=[];

@@ -17,11 +17,10 @@ class TypeNotePage extends StatefulWidget {
 
 class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMixin {
   _TypeNotePageState(this.myDate);
+
   DateTime myDate;
 
-  TextAlign textAlign=TextAlign.center;
-
-
+  TextAlign textAlign = TextAlign.center;
 
 
   @override
@@ -30,13 +29,20 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
 
     super.initState();
   }
-  
 
 
   @override
   Widget build(BuildContext context) {
-    String previousNote=(dataNotes.where((element) => element.date==myDate).isEmpty)?""
-        :dataNotes.firstWhere((element) => element.date==myDate).note.substring(1,dataNotes.firstWhere((element) => element.date==myDate).note.length-1);
+    String previousNote = (dataNotes
+        .where((element) => element.date == myDate)
+        .isEmpty) ? ""
+        : dataNotes
+        .firstWhere((element) => element.date == myDate)
+        .note
+        .substring(1, dataNotes
+        .firstWhere((element) => element.date == myDate)
+        .note
+        .length - 1);
     return Scaffold(
       appBar: AppBar(
         elevation: 10.0,
@@ -48,10 +54,12 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
             new Text(
               "Ajouter un note", textAlign: TextAlign.center,
               textScaleFactor: 0.8,
-            style: new TextStyle(
+              style: new TextStyle(
                 fontFamily: 'dot',
                 color: Colors.white,),),
-            (myDate==today)?Container():Opacity(opacity:0.5,child: Text("Pour le ${dayFormatter.format(myDate)}", textScaleFactor: 0.8,)),
+            (myDate == today) ? Container() : Opacity(opacity: 0.5,
+                child: Text("Pour le ${dayFormatter.format(myDate)}",
+                  textScaleFactor: 0.8,)),
           ],
         ),
 
@@ -67,7 +75,8 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
               Tooltip(message: 'Retour',
                 child: FlatButton(
                   onPressed: () {
-                    Navigator.pop(context);},
+                    Navigator.pop(context);
+                  },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0,),
                     child: ClayContainer(
@@ -103,66 +112,61 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
           child: Stack(
             children: <Widget>[
               Container(color: Colors.grey[100],
-                //height: MediaQuery.of(context).size.height,
-                  child:Column(
+                  //height: MediaQuery.of(context).size.height,
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
 
                     children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: ClayContainer(
-                        borderRadius: 40,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Center(
-                            child: TextFormField(
-                              autofocus: true,
-                                initialValue: previousNote,
-                                textCapitalization: TextCapitalization.sentences,
-                                textInputAction: TextInputAction.send,
-                                style: TextStyle(color:Colors.grey[800]),
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Quels évènements ont \nmarqué cette journée ?'
-
-
-
-
-
-
-                                ),
-                                textAlign: textAlign,
-                                onChanged: (textInput){
-                                (textInput!="")?setState(() {
-                                  textAlign=TextAlign.start;
-                                }):
-                                setState(() {
-                                  textAlign=TextAlign.center;
-                                });
-                                },
-                                onFieldSubmitted: (textInput) =>
-                                {setState(() {
-                                  updateToday();
-                                  Map<String, String>newEntry = {
-                                    today.toString(): textInput
-                                  };
-                                  dataInstance.collection('users').document(
-                                      uid).collection(
-                                      "notes")
-                                      .document(today.toString())
-                                      .setData(newEntry);
-                                  getNotes();
-                                Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(builder: (context) {
-                                return DashBoard();
-                                }), ModalRoute.withName('/'));
-                                })}
+                      Padding(
+                        padding: const EdgeInsets.all(40.0),
+                        child: ClayContainer(
+                          borderRadius: 40,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Center(
+                              child: TextFormField(
+                                  autofocus: true,
+                                  initialValue: previousNote,
+                                  textCapitalization: TextCapitalization
+                                      .sentences,
+                                  textInputAction: TextInputAction.send,
+                                  style: TextStyle(color: Colors.grey[800]),
+                                  maxLines: null,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Quels évènements ont \nmarqué cette journée ?'
+                                  ),
+                                  textAlign: textAlign,
+                                  onChanged: (textInput) {
+                                    (textInput != "") ? setState(() {
+                                      textAlign = TextAlign.start;
+                                    }) :
+                                    setState(() {
+                                      textAlign = TextAlign.center;
+                                    });
+                                  },
+                                  onFieldSubmitted: (textInput) =>
+                                  {setState(() {
+                                    updateToday();
+                                    Map<String, String>newEntry = {
+                                      today.toString(): textInput
+                                    };
+                                    dataInstance.collection('users').document(
+                                        uid).collection(
+                                        "notes")
+                                        .document(today.toString())
+                                        .setData(newEntry);
+                                    getNotes();
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(builder: (context) {
+                                          return DashBoard();
+                                        }), ModalRoute.withName('/'));
+                                  })}
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
 
                     ],
@@ -175,7 +179,6 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
   }
 
 
-
   Future<List<Note>> getNotes() async {
     var col = getNotesCollection();
     List<Note> myData = [];
@@ -185,7 +188,6 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
         myData.add(Note(
             DateTime.parse(note.keys.toString().substring(1, 11)),
             note.values.toString()));
-
       });
       setState(() {
         dataNotes.clear();
@@ -194,4 +196,5 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
     });
     return myData;
   }
+
 }

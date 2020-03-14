@@ -1322,14 +1322,14 @@ class _DashBoardState extends State<DashBoard> {
                                 moodFromSlide.toString(), textScaleFactor: 2.2,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: 'dot', color: sliderColor),),
+                                    fontFamily: 'dot', color: sliderColor.shade700),),
                             ],),
                         ),
                       ),
 
                       Slider(
                         inactiveColor: Colors.transparent,
-                        activeColor: sliderColor.shade300,
+                        activeColor: sliderColor.shade700,
                         min: -100.5,
                         max: 100.5,
                         value: moodFromSlide.toDouble(),
@@ -1574,14 +1574,14 @@ class _DashBoardState extends State<DashBoard> {
                                 moodFromSlide.toString(), textScaleFactor: 2.2,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: 'dot', color: sliderColor),),
+                                    fontFamily: 'dot', color: sliderColor.shade700),),
                             ],),
                         ),
                       ),
 
                       Slider(
                         inactiveColor: Colors.transparent,
-                        activeColor: sliderColor.shade300,
+                        activeColor: sliderColor.shade700,
                         min: -100.5,
                         max: 100.5,
                         value: moodFromSlide.toDouble(),
