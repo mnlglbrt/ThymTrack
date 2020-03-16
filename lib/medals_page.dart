@@ -186,6 +186,9 @@ void _showMedal(nbRecords,date){
   builder: (BuildContext context){
     return SingleChildScrollView(
       child: AlertDialog(backgroundColor: Colors.grey[200],
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))
+        ),
         content:Column(
           children: <Widget>[
             Text("${dayFormatter.format(date)}"),

@@ -187,41 +187,7 @@ class _DashBoardState extends State<DashBoard> {
                           ],
                         ),
 
-                        (newMedalToday(getLength(dataMoods)))?Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Tooltip(message: 'Nouveau trophée !',
-                              child: FlatButton(
-                                onPressed: () {
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(builder: (context) {
-                                        return MedalsPage();
-                                      }), ModalRoute.withName('/'));
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0,),
-                                  child: ClayContainer(
-                                    borderRadius: 75,
-                                    depth: 10,
-                                    spread: 7,
-                                    width: 40,
-                                    height: 40,
-                                    color: Colors.teal,
-                                    child: CircleAvatar(
-                                      radius: 35,
-                                      child: CircleAvatar(
-                                        radius: 34,
-                                        backgroundColor: Colors.teal,
-                                        foregroundColor: Colors.white,
-                                        child: Icon(Icons.menu,),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ):Container(),
+
                       ],
                     ),
 
@@ -247,6 +213,7 @@ class _DashBoardState extends State<DashBoard> {
                                               padding: const EdgeInsets.only(left:20.0),
                                               child: Text('7 derniers jours', style: TextStyle(fontFamily: 'dot',color:Colors.grey[600], ),),
                                             ),
+                                           // Icon(Icons.pie_chart_outlined, color: Colors.teal[200],),
                                             Row(
                                               children: <Widget>[
                                                 Text('Moyenne :',style: TextStyle(color: Colors.grey[400]),),
@@ -1409,6 +1376,9 @@ class _DashBoardState extends State<DashBoard> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
           title: Text("Modifier l'humeur ?",textAlign: TextAlign.center,style:TextStyle(color:Colors.grey[600]),),
           content: Container(
             height: MediaQuery.of(context).size.height/3,
@@ -1958,6 +1928,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
   makeList(myData) {
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: ListView.builder
@@ -1965,6 +1936,7 @@ class _DashBoardState extends State<DashBoard> {
           controller: ScrollController(initialScrollOffset: 100000.0),
           itemCount: myData.length,
           itemBuilder: (BuildContext ctxt, int index) {
+            print(dataNotes.where((note) => note.date==myData[index].time));
             //print('datedFeelings.keys ${datedFeelings.keys}');
            // print('myData[0].time ${myData[4].time}');
             return Padding(
@@ -2019,7 +1991,7 @@ class _DashBoardState extends State<DashBoard> {
 
                           Padding(
                             padding: const EdgeInsets.only(left:18.0),
-                            child: Icon((dataNotes.where((note) => note.date==myData[index].time).isNotEmpty)?Icons.chat_bubble_outline:null,color: Colors.teal,),
+                            child: Icon((dataNotes.where((note) => note.date==myData[index].time).isNotEmpty)?Icons.chat_bubble_outline:null,color: Colors.teal[200],),
                           ),
 
                         ],
@@ -2144,6 +2116,7 @@ class _DashBoardState extends State<DashBoard> {
       (group=="Estime de soi")?Colors.pink[200]:
       (group=="Actif")?Colors.deepOrange[400]:
       (group=="Pleinitude")?Colors.teal[300]:
+      (group=="État physique")?Colors.lime:
       (group=="Mauvaise estime de soi")?Colors.indigo[200]:
       (group=="Solitude")?Colors.grey:
       (group=="Stress")?Colors.red[300]:
@@ -2157,15 +2130,29 @@ class _DashBoardState extends State<DashBoard> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("${dayFormatter.format(date)}",textScaleFactor:0.8,textAlign: TextAlign.center,style:TextStyle(color:Colors.teal),),
-          content: SingleChildScrollView(
-              child:Center(
-                child: Container(
-                  color: Colors.grey[100],
-                  child: Text((dataNotes.where((note) => note.date==date).isNotEmpty)?dataNotes.firstWhere((note) => note.date==date).note.substring(1,dataNotes.firstWhere((note) => note.date==date).note.length-1):"Pas de note")
-
-                ),
-              )
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
+          //title: Text("${dayFormatter.format(date)}",textScaleFactor:0.8,textAlign: TextAlign.center,style:TextStyle(color:Colors.teal),),
+          content: Container(
+            decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.grey[100],
+              borderRadius:
+              new BorderRadius.all(new Radius.circular(32.0)),
+            ),
+            child: SingleChildScrollView(
+                child:Center(
+                  child: Container(
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius:
+                        new BorderRadius.all(new Radius.circular(32.0)),
+                      ),
+                    child: Text((dataNotes.where((note) => note.date==date).isNotEmpty)?dataNotes.firstWhere((note) => note.date==date).note.substring(1,dataNotes.firstWhere((note) => note.date==date).note.length-1):"Pas de note")
+                  ),
+                )
+            ),
           ),
           actions: <Widget>[
             FlatButton(
@@ -2188,6 +2175,9 @@ class _DashBoardState extends State<DashBoard> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
           title: Text("Echelle thymique",textAlign: TextAlign.center,style:TextStyle(fontFamily: 'dot',color:Colors.teal),),
           content: ListView.builder(reverse: true,
               controller: ScrollController(),
@@ -2241,6 +2231,9 @@ class _DashBoardState extends State<DashBoard> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
           title: Text(title),
           content: SingleChildScrollView(
             child: ListBody(
@@ -2350,6 +2343,9 @@ class _DashBoardState extends State<DashBoard> {
     showDialog(context: context,
         builder: (BuildContext context){
           return AlertDialog(backgroundColor: Colors.grey[200],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))
+            ),
             content:Container(
               child: Column(
                 children: <Widget>[

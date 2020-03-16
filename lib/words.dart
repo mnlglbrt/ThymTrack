@@ -71,6 +71,14 @@ List<Word>allWords=[
   new Word("calme", "Pleinitude"),
   new Word("détendu", "Pleinitude"),
 
+  //ETAT PHYSIQUE
+  new Word("État physique", "État physique"),
+  new Word("en forme", "État physique"),
+  new Word("fatigué", "État physique"),
+  new Word("extenué", "État physique"),
+  new Word("malade", "État physique"),
+  new Word("fiévreux", "État physique"),
+
 
   //MAUVAISE ESTIME DE SOI
   new Word("Mauvaise estime de soi", "Mauvaise estime de soi"),
@@ -120,6 +128,7 @@ List<Word>allWords=[
   // STRESS
   new Word("Stress", "Stress"),
   new Word("stressé", "Stress"),
+  new Word("énervé", "Stress"),
   new Word("dépassé", "Stress"),
   new Word("fragile", "Stress"),
   new Word("impuissant", "Stress"),

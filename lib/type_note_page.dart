@@ -149,12 +149,12 @@ class _TypeNotePageState extends State<TypeNotePage> with TickerProviderStateMix
                                   {setState(() {
                                     updateToday();
                                     Map<String, String>newEntry = {
-                                      today.toString(): textInput
+                                      myDate.toString(): textInput
                                     };
                                     dataInstance.collection('users').document(
                                         uid).collection(
                                         "notes")
-                                        .document(today.toString())
+                                        .document(myDate.toString())
                                         .setData(newEntry);
                                     getNotes();
                                     Navigator.of(context).pushAndRemoveUntil(

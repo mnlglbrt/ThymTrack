@@ -358,6 +358,7 @@ return widgetList;
       (group=="Estime de soi")?Colors.pink[200]:
       (group=="Actif")?Colors.deepOrange[400]:
       (group=="Pleinitude")?Colors.teal[300]:
+      (group=="État physique")?Colors.lime:
       (group=="Mauvaise estime de soi")?Colors.indigo[200]:
       (group=="Solitude")?Colors.grey:
       (group=="Stress")?Colors.red[300]:
